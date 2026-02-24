@@ -6,6 +6,9 @@ library;
 
 /// Application route paths.
 abstract final class AppRoutes {
+  /// Login Screen
+  static const String login = '/login';
+
   /// Home/Timer screen (main screen)
   static const String timer = '/';
 
@@ -21,6 +24,7 @@ abstract final class AppRoutes {
 
 /// Route names for navigation.
 abstract final class RouteNames {
+  static const String login = 'login';
   static const String timer = 'timer';
   static const String history = 'history';
   static const String shop = 'shop';

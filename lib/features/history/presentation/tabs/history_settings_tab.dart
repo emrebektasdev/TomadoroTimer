@@ -300,7 +300,7 @@ class _SwitchSetting extends StatelessWidget {
         subtitle,
         style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
       ),
-      activeColor: AppColors.tomatoRed,
+      activeThumbColor: AppColors.tomatoRed,
       value: value,
       onChanged: onChanged,
     );

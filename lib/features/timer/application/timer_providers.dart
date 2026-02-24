@@ -10,6 +10,7 @@ import 'timer_state.dart';
 import '../data/datasources/timer_local_datasource.dart';
 import '../data/repositories/timer_repository_impl.dart';
 import '../domain/repositories/timer_repository.dart';
+import '../../../core/network/api_client.dart';
 
 // ============ Data Layer Providers ============
 
@@ -44,7 +45,8 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
 ) {
   final repository = ref.watch(timerRepositoryProvider);
   final ticker = ref.watch(tickerProvider);
-  return TimerNotifier(repository, ticker);
+  final apiClient = ref.watch(apiClientProvider);
+  return TimerNotifier(repository, ticker, apiClient);
 });
 
 // ============ Selector Providers ============

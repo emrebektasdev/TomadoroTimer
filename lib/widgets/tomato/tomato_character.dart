@@ -231,7 +231,7 @@ class _TomatoCharacterState extends State<TomatoCharacter>
       stageKey = 2;
     }
 
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
       // Kırmızı arka plan kaldırıldı - domates artık büyük görünecek

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/entities/timer_mode.dart';
 import '../domain/entities/timer_snapshot.dart';
 import '../domain/repositories/timer_repository.dart';
+import '../../../core/network/api_client.dart';
 import 'ticker.dart';
 import 'timer_state.dart';
 
@@ -17,9 +18,11 @@ import 'timer_state.dart';
 class TimerNotifier extends StateNotifier<TimerState> {
   final TimerRepository _repository;
   final Ticker _ticker;
+  final ApiClient _apiClient;
   StreamSubscription<int>? _tickerSubscription;
 
-  TimerNotifier(this._repository, this._ticker) : super(TimerState.initial()) {
+  TimerNotifier(this._repository, this._ticker, this._apiClient)
+    : super(TimerState.initial()) {
     _restoreState();
   }
 
@@ -177,6 +180,34 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
     // NOTE: Actual session recording should be done by listening to this state change
     // in the UI or a coordinator provider that calls UserNotifier / HistoryNotifier.
+
+    // BACKEND SYNC: If this was a completed focus session, send to our Node.js API
+    if (state.mode == TimerMode.focus) {
+      _syncSessionToBackend(state.initialDuration);
+    }
+  }
+
+  Future<void> _syncSessionToBackend(int durationMinutes) async {
+    try {
+      final response = await _apiClient.post(
+        '/sessions',
+        body: {
+          'durationMinutes': durationMinutes,
+          'status': 'completed',
+          // 'taskId': optional
+        },
+      );
+      if (response.statusCode == 201) {
+        // ignore: avoid_print
+        print('✅ Session synced to backend successfully');
+      } else {
+        // ignore: avoid_print
+        print('❌ Failed to sync session. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('❌ Error syncing session to backend: $e');
+    }
   }
 
   void _completeSession({required bool earnedTomato}) {
