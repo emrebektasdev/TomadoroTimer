@@ -64,4 +64,12 @@ abstract class HistoryRepository {
     int additionalMinutes,
     int additionalTomatoes,
   );
+
+  // ============ Sync ============
+
+  /// Syncs unsynced local sessions to the backend.
+  Future<Either<Failure, Unit>> syncUnsyncedSessions(String uid);
+
+  /// Restores sessions from backend to local storage.
+  Future<Either<Failure, Unit>> restoreSessionsFromBackend(String uid);
 }

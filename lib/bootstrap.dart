@@ -12,6 +12,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'features/history/data/models/focus_session_model.dart';
 import 'core/constants/storage_keys.dart';
@@ -21,6 +23,8 @@ import 'core/constants/storage_keys.dart';
 /// This should be called in [main] before [runApp].
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize Hive for local storage
   await _initializeHive();

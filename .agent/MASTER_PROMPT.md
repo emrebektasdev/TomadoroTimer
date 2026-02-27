@@ -59,7 +59,7 @@ bir ürüne dönüştürmektir.
 - Profesyonel, sade ve yetişkin bir estetik korunacak
 - Görsel bağırma yok
 - Denge, boşluk ve hiyerarşi öncelikli olacak
-- Uygulama "satın alınmış tema" hissi vermeli ama hiçbir hazır tema veya tema paketi kullanılmayacak
+
 
 ### 4. TEKNİK PRENSİPLER
 

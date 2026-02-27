@@ -6,6 +6,9 @@ library;
 
 import 'package:dartz/dartz.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -368,6 +371,102 @@ class UserRepositoryImpl implements UserRepository {
       return Left(
         Failure.unexpected(
           message: 'Failed to check purchase',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> syncWithBackend() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return const Right(unit); // Wait until user is logged in
+
+      final profile = await getProfile();
+      final equipped = await getEquippedItems();
+      final purchases = await getPurchasedItemIds();
+
+      if (profile.isLeft() || equipped.isLeft() || purchases.isLeft()) {
+        return Left(
+          Failure.unexpected(message: 'Failed to read local data for sync'),
+        );
+      }
+
+      final p = profile.getOrElse(() => throw Exception());
+      final e = equipped.getOrElse(() => throw Exception());
+      final purchased = purchases.getOrElse(() => throw Exception());
+
+      final localData = {
+        'tomatoBalance': p.tomatoBalance,
+        'currentStreak': p.currentStreak,
+        'totalFocusMinutes': p.totalFocusMinutes,
+        'equippedBackground': e.backgroundId,
+        'equippedAccessory': e.accessoryId,
+        'equippedSound': e.soundId,
+        'purchasedItems': purchased,
+        'lastActiveDate': p.lastActiveDate?.toIso8601String(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid);
+
+      // Perform a merge so we don't overwrite if the backend has newer fields
+      // For a robust sync, you might want to read first, compare, then write.
+      // Here we will do a basic read and merge.
+      final docSnapshot = await userDocRef.get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data()!;
+
+        // Simple logic: If local data seems newer or we just prefer local state:
+        // Updating remote with local changes.
+        await userDocRef.set(localData, SetOptions(merge: true));
+
+        // Similarly read fields from remote to local
+        await _localDataSource.setTomatoBalance(
+          data['tomatoBalance'] ?? p.tomatoBalance,
+        );
+        await _localDataSource.setCurrentStreak(
+          data['currentStreak'] ?? p.currentStreak,
+        );
+        await _localDataSource.setTotalFocusMinutes(
+          data['totalFocusMinutes'] ?? p.totalFocusMinutes,
+        );
+
+        if (data['equippedBackground'] != null)
+          await _localDataSource.setEquippedBackground(
+            data['equippedBackground'],
+          );
+        if (data['equippedAccessory'] != null)
+          await _localDataSource.setEquippedAccessory(
+            data['equippedAccessory'],
+          );
+        if (data['equippedSound'] != null)
+          await _localDataSource.setEquippedSound(data['equippedSound']);
+
+        if (data['lastActiveDate'] != null) {
+          await _localDataSource.setLastActiveDate(
+            DateTime.parse(data['lastActiveDate']),
+          );
+        }
+
+        final items = List<String>.from(data['purchasedItems'] ?? []);
+        for (final item in items) {
+          await _localDataSource.addPurchasedItem(item);
+        }
+      } else {
+        // Doc doesn't exist, create it from local data
+        await userDocRef.set(localData);
+      }
+
+      return const Right(unit);
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Network error during sync',
           originalError: e,
         ),
       );

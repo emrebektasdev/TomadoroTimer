@@ -29,6 +29,9 @@ class FocusSessionModel extends HiveObject {
   @HiveField(5)
   final bool completed;
 
+  @HiveField(6)
+  final bool isSynced;
+
   FocusSessionModel({
     required this.id,
     required this.startTime,
@@ -36,6 +39,7 @@ class FocusSessionModel extends HiveObject {
     required this.durationMinutes,
     required this.tomatoesEarned,
     required this.completed,
+    this.isSynced = false,
   });
 
   /// Creates a model from a domain entity.
@@ -47,6 +51,7 @@ class FocusSessionModel extends HiveObject {
       durationMinutes: entity.durationMinutes,
       tomatoesEarned: entity.tomatoesEarned,
       completed: entity.completed,
+      isSynced: entity.isSynced,
     );
   }
 
@@ -59,6 +64,7 @@ class FocusSessionModel extends HiveObject {
       durationMinutes: durationMinutes,
       tomatoesEarned: tomatoesEarned,
       completed: completed,
+      isSynced: isSynced,
     );
   }
 }

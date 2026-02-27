@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../core/constants/storage_keys.dart';
 import '../data/datasources/history_local_datasource.dart';
+import '../data/datasources/history_remote_datasource.dart';
 import '../data/repositories/history_repository_impl.dart';
 import '../domain/entities/daily_stats.dart';
 import '../domain/entities/weekly_stats.dart';
@@ -28,10 +29,18 @@ final historyLocalDataSourceProvider = Provider<HistoryLocalDataSource>((ref) {
   return HistoryLocalDataSource(box);
 });
 
+/// Provides the history remote data source.
+final historyRemoteDataSourceProvider = Provider<HistoryRemoteDataSource>((
+  ref,
+) {
+  return HistoryRemoteDataSource();
+});
+
 /// Provides the history repository implementation.
 final historyRepositoryProvider = Provider<HistoryRepository>((ref) {
-  final dataSource = ref.watch(historyLocalDataSourceProvider);
-  return HistoryRepositoryImpl(dataSource);
+  final localDataSource = ref.watch(historyLocalDataSourceProvider);
+  final remoteDataSource = ref.watch(historyRemoteDataSourceProvider);
+  return HistoryRepositoryImpl(localDataSource, remoteDataSource);
 });
 
 // ============ Application Layer Providers ============

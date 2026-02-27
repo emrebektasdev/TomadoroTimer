@@ -23,13 +23,14 @@ class FocusSessionModelAdapter extends TypeAdapter<FocusSessionModel> {
       durationMinutes: fields[3] as int,
       tomatoesEarned: fields[4] as int,
       completed: fields[5] as bool,
+      isSynced: fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, FocusSessionModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class FocusSessionModelAdapter extends TypeAdapter<FocusSessionModel> {
       ..writeByte(4)
       ..write(obj.tomatoesEarned)
       ..writeByte(5)
-      ..write(obj.completed);
+      ..write(obj.completed)
+      ..writeByte(6)
+      ..write(obj.isSynced);
   }
 
   @override

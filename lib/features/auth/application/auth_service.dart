@@ -1,67 +1,62 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../data/auth_repository.dart';
-import 'token_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../user/application/user_providers.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  final authRepository = ref.watch(authRepositoryProvider);
-  final tokenService = ref.watch(tokenServiceProvider);
-  return AuthService(authRepository, tokenService);
+  return AuthService();
 });
 
 // A simple StateNotifier to hold the auth state
-final authStateProvider = StateNotifierProvider<AuthStateNotifier, bool>((ref) {
+final authStateProvider = StateNotifierProvider<AuthStateNotifier, User?>((
+  ref,
+) {
   final authService = ref.watch(authServiceProvider);
-  final tokenService = ref.watch(tokenServiceProvider);
-  return AuthStateNotifier(authService, tokenService);
+  final onAuthSuccess = () {
+    ref.read(userNotifierProvider.notifier).syncWithBackend();
+  };
+  return AuthStateNotifier(authService, onAuthSuccess);
 });
 
-class AuthStateNotifier extends StateNotifier<bool> {
+class AuthStateNotifier extends StateNotifier<User?> {
   final AuthService _authService;
-  final TokenService _tokenService;
+  final void Function() _onAuthSuccess;
 
-  AuthStateNotifier(this._authService, this._tokenService) : super(false) {
+  AuthStateNotifier(this._authService, this._onAuthSuccess)
+    : super(FirebaseAuth.instance.currentUser) {
     _checkInitialAuth();
   }
 
-  Future<void> _checkInitialAuth() async {
-    final hasTokens = await _tokenService.hasTokens();
-    if (hasTokens) {
-      state = true;
-    }
+  void _checkInitialAuth() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      state = user;
+      if (user != null) {
+        _onAuthSuccess();
+      }
+    });
   }
 
   Future<void> signInWithGoogle() async {
     try {
       await _authService.signInWithGoogle();
-      // If success, user is logged in
-      state = true;
+      // the authStateChanges listener will handle updating state and syncing
     } catch (e) {
-      // ignore: avoid_print
       print('Sign in failed: $e');
-      state = false;
       rethrow;
     }
   }
 
   Future<void> signOut() async {
     await _authService.signOut();
-    state = false;
   }
 }
 
 class AuthService {
-  final AuthRepository _repository;
-  final TokenService _tokenService;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-    serverClientId:
-        '39587895878-8dh4tvqo3ejorj3fudt2ln8qa8nt6dfo.apps.googleusercontent.com', // Web Client ID from backend
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
-  AuthService(this._repository, this._tokenService);
+  AuthService();
 
-  Future<void> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     try {
       // Step 1: Start Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -69,29 +64,21 @@ class AuthService {
         throw Exception('User canceled the login process');
       }
 
-      // Step 2: Obtain auth details (ID Token)
+      // Step 2: Obtain auth details
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      final idToken = googleAuth.idToken;
 
-      if (idToken == null) {
-        throw Exception('Failed to retrieve ID token from Google');
-      }
-
-      // Step 3: Send ID token to our backend
-      final authData = await _repository.loginWithGoogle(idToken);
-
-      final accessToken = authData['accessToken'];
-      final refreshToken = authData['refreshToken'];
-
-      // Securely store these tokens
-      await _tokenService.saveTokens(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
-      // ignore: avoid_print
-      print('Login Success! AccessToken is saved.');
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      print('Login Success with Firebase Auth!');
+      return userCredential.user;
     } catch (e) {
       rethrow;
     }
@@ -99,7 +86,6 @@ class AuthService {
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
-    // Clear tokens from secure storage
-    await _tokenService.deleteTokens();
+    await FirebaseAuth.instance.signOut();
   }
 }

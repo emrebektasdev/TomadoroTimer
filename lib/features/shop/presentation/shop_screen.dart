@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../auth/application/auth_service.dart';
 import '../../user/application/user_providers.dart';
 import '../domain/entities/shop_category.dart';
 import 'widgets/shop_category_tab.dart';
@@ -125,22 +126,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen>
           const Expanded(child: SizedBox()),
 
           // Sign In / Settings Button (RIGHT)
-          // For now, mirroring legacy "Sign In" button functionality roughly,
-          // but maybe just a simple icon or placeholder if auth isn't in scope yet.
-          // Legacy had a Google Sign In button.
-          // I'll add a placeholder icon button for now to maintain layout balance.
-          IconButton(
-            onPressed: () {
-              // Placeholder for auth dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Multi-device sync coming soon!')),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle_outlined,
-              color: AppColors.textPrimary,
-            ),
-          ),
+          _buildProfileButton(ref),
         ],
       ),
     );
@@ -193,6 +179,93 @@ class _ShopScreenState extends ConsumerState<ShopScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProfileButton(WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+
+    return PopupMenuButton<int>(
+      offset: const Offset(0, 48),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 8,
+      tooltip: 'Profile',
+      child: CircleAvatar(
+        radius: 16,
+        backgroundColor: AppColors.tomatoRed.withOpacity(0.1),
+        backgroundImage: authState?.photoURL != null
+            ? NetworkImage(authState!.photoURL!)
+            : null,
+        child: authState?.photoURL == null
+            ? const Icon(Icons.person, size: 20, color: AppColors.tomatoRed)
+            : null,
+      ),
+      itemBuilder: (context) => [
+        if (authState == null)
+          PopupMenuItem<int>(
+            value: 0,
+            onTap: () {
+              ref.read(authStateProvider.notifier).signInWithGoogle();
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.login, color: AppColors.textPrimary),
+                SizedBox(width: 12),
+                Text(
+                  'Sign in with Google',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          PopupMenuItem<int>(
+            enabled: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  authState.displayName ?? 'Tomadoro User',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  authState.email ?? '',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Divider(),
+              ],
+            ),
+          ),
+          PopupMenuItem<int>(
+            value: 1,
+            onTap: () {
+              ref.read(authStateProvider.notifier).signOut();
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.logout, color: Colors.red),
+                SizedBox(width: 12),
+                Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

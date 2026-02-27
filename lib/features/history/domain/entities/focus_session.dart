@@ -28,6 +28,9 @@ class FocusSession with _$FocusSession {
 
     /// Whether the session was completed (not abandoned)
     @Default(true) bool completed,
+
+    /// Whether the session has been synced to the backend
+    @Default(false) bool isSynced,
   }) = _FocusSession;
 
   const FocusSession._();

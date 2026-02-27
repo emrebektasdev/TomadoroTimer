@@ -13,12 +13,14 @@ import '../../domain/entities/focus_session.dart';
 import '../../domain/entities/weekly_stats.dart';
 import '../../domain/repositories/history_repository.dart';
 import '../datasources/history_local_datasource.dart';
+import '../datasources/history_remote_datasource.dart';
 
 /// Implementation of [HistoryRepository].
 class HistoryRepositoryImpl implements HistoryRepository {
   final HistoryLocalDataSource _localDataSource;
+  final HistoryRemoteDataSource _remoteDataSource;
 
-  HistoryRepositoryImpl(this._localDataSource);
+  HistoryRepositoryImpl(this._localDataSource, this._remoteDataSource);
 
   @override
   Future<Either<Failure, FocusSession>> recordSession(
@@ -233,6 +235,57 @@ class HistoryRepositoryImpl implements HistoryRepository {
     } catch (e) {
       return Left(
         Failure.unexpected(message: 'Failed to update stats', originalError: e),
+      );
+    }
+  }
+
+  // ============ Sync ============
+
+  @override
+  Future<Either<Failure, Unit>> syncUnsyncedSessions(String uid) async {
+    try {
+      final unsynced = _localDataSource.getUnsyncedSessions();
+      if (unsynced.isEmpty) return const Right(unit);
+
+      await _remoteDataSource.saveSessions(uid, unsynced);
+
+      // Mark as synced locally
+      for (final session in unsynced) {
+        final syncedSession = session.copyWith(isSynced: true);
+        await _localDataSource.updateOrSaveSession(syncedSession);
+      }
+
+      return const Right(unit);
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to sync sessions',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> restoreSessionsFromBackend(String uid) async {
+    try {
+      final sessions = await _remoteDataSource.getSessions(uid);
+
+      for (final session in sessions) {
+        await _localDataSource.updateOrSaveSession(session);
+        // We also need to recalculate daily stats for these restored sessions
+        // This is a simplified approach. In a more robust system, we might want
+        // to fully rebuild the daily stats cache.
+        _localDataSource.getDailyStats(session.startTime);
+      }
+
+      return const Right(unit);
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to restore sessions',
+          originalError: e,
+        ),
       );
     }
   }

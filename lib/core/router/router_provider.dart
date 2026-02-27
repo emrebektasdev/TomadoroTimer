@@ -12,7 +12,6 @@ import '../../features/shop/presentation/shop_screen.dart';
 import '../../features/home/presentation/timer_screen.dart';
 import '../../features/shell/presentation/shell_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
-import '../../features/auth/application/auth_service.dart';
 import 'routes.dart';
 
 /// Global key for the root navigator to allow overlays/dialogs without context.
@@ -20,20 +19,11 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Provider for the GoRouter configuration.
 final routerProvider = Provider<GoRouter>((ref) {
-  final isLoggedIn = ref.watch(authStateProvider);
-
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.timer,
     redirect: (context, state) {
-      final isLoggingIn = state.matchedLocation == AppRoutes.login;
-
-      // If text not logged in and not heading to login, redirect to login
-      if (!isLoggedIn && !isLoggingIn) return AppRoutes.login;
-
-      // If logged in and heading to login, redirect to home
-      if (isLoggedIn && isLoggingIn) return AppRoutes.timer;
-
+      // Login zorunluluğu kaldırıldığı için her sayfaya direkt izin veriyoruz
       return null;
     },
     routes: [

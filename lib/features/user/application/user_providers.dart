@@ -11,6 +11,7 @@ import '../../../core/constants/storage_keys.dart';
 import '../data/datasources/user_local_datasource.dart';
 import '../data/repositories/user_repository_impl.dart';
 import '../domain/repositories/user_repository.dart';
+import '../../history/application/history_providers.dart';
 import 'user_notifier.dart';
 import 'user_state.dart';
 
@@ -42,7 +43,8 @@ final userNotifierProvider = StateNotifierProvider<UserNotifier, UserState>((
   ref,
 ) {
   final repository = ref.watch(userRepositoryProvider);
-  return UserNotifier(repository);
+  final historyRepository = ref.watch(historyRepositoryProvider);
+  return UserNotifier(repository, historyRepository);
 });
 
 // ============ Selector Providers (for granular rebuilds) ============

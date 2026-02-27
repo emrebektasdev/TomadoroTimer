@@ -8,13 +8,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/user_settings.dart';
 import '../domain/repositories/user_repository.dart';
+import '../../history/domain/repositories/history_repository.dart';
 import 'user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// StateNotifier for managing user state.
 class UserNotifier extends StateNotifier<UserState> {
   final UserRepository _repository;
+  final HistoryRepository _historyRepository;
 
-  UserNotifier(this._repository) : super(UserState.initial()) {
+  UserNotifier(this._repository, this._historyRepository)
+    : super(UserState.initial()) {
     // Load user data when notifier is created
     _loadUserData();
   }
@@ -131,8 +135,14 @@ class UserNotifier extends StateNotifier<UserState> {
     final result = await _repository.recordFocusSession(minutes);
     result.fold(
       (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (updatedProfile) =>
-          state = state.copyWith(profile: updatedProfile, errorMessage: null),
+      (updatedProfile) {
+        state = state.copyWith(profile: updatedProfile, errorMessage: null);
+        // Try to sync history to backend silently
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid != null) {
+          _historyRepository.syncUnsyncedSessions(uid);
+        }
+      },
     );
   }
 
@@ -273,5 +283,35 @@ class UserNotifier extends StateNotifier<UserState> {
   /// Clears any error message.
   void clearError() {
     state = state.copyWith(errorMessage: null);
+  }
+
+  // ============ Sync Operations ============
+
+  /// Synchronizes local data with backend cloud.
+  Future<void> syncWithBackend() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    // Sync User Profile Data
+    final authUid = FirebaseAuth.instance.currentUser?.uid;
+    final result = await _repository.syncWithBackend();
+
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: failure.displayMessage,
+        );
+      },
+      (_) async {
+        // Sync History Data
+        if (authUid != null) {
+          await _historyRepository.restoreSessionsFromBackend(authUid);
+          await _historyRepository.syncUnsyncedSessions(authUid);
+        }
+
+        // Reload all data after a successful sync to update UI
+        await _loadUserData();
+      },
+    );
   }
 }

@@ -34,6 +34,9 @@ mixin _$FocusSession {
   /// Whether the session was completed (not abandoned)
   bool get completed => throw _privateConstructorUsedError;
 
+  /// Whether the session has been synced to the backend
+  bool get isSynced => throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $FocusSessionCopyWith<FocusSession> get copyWith =>
       throw _privateConstructorUsedError;
@@ -51,7 +54,8 @@ abstract class $FocusSessionCopyWith<$Res> {
       DateTime endTime,
       int durationMinutes,
       int tomatoesEarned,
-      bool completed});
+      bool completed,
+      bool isSynced});
 }
 
 /// @nodoc
@@ -73,6 +77,7 @@ class _$FocusSessionCopyWithImpl<$Res, $Val extends FocusSession>
     Object? durationMinutes = null,
     Object? tomatoesEarned = null,
     Object? completed = null,
+    Object? isSynced = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -99,6 +104,10 @@ class _$FocusSessionCopyWithImpl<$Res, $Val extends FocusSession>
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
               as bool,
+      isSynced: null == isSynced
+          ? _value.isSynced
+          : isSynced // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -117,7 +126,8 @@ abstract class _$$FocusSessionImplCopyWith<$Res>
       DateTime endTime,
       int durationMinutes,
       int tomatoesEarned,
-      bool completed});
+      bool completed,
+      bool isSynced});
 }
 
 /// @nodoc
@@ -137,6 +147,7 @@ class __$$FocusSessionImplCopyWithImpl<$Res>
     Object? durationMinutes = null,
     Object? tomatoesEarned = null,
     Object? completed = null,
+    Object? isSynced = null,
   }) {
     return _then(_$FocusSessionImpl(
       id: null == id
@@ -163,6 +174,10 @@ class __$$FocusSessionImplCopyWithImpl<$Res>
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
               as bool,
+      isSynced: null == isSynced
+          ? _value.isSynced
+          : isSynced // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -176,7 +191,8 @@ class _$FocusSessionImpl extends _FocusSession {
       required this.endTime,
       required this.durationMinutes,
       required this.tomatoesEarned,
-      this.completed = true})
+      this.completed = true,
+      this.isSynced = false})
       : super._();
 
   /// Unique identifier
@@ -204,9 +220,14 @@ class _$FocusSessionImpl extends _FocusSession {
   @JsonKey()
   final bool completed;
 
+  /// Whether the session has been synced to the backend
+  @override
+  @JsonKey()
+  final bool isSynced;
+
   @override
   String toString() {
-    return 'FocusSession(id: $id, startTime: $startTime, endTime: $endTime, durationMinutes: $durationMinutes, tomatoesEarned: $tomatoesEarned, completed: $completed)';
+    return 'FocusSession(id: $id, startTime: $startTime, endTime: $endTime, durationMinutes: $durationMinutes, tomatoesEarned: $tomatoesEarned, completed: $completed, isSynced: $isSynced)';
   }
 
   @override
@@ -223,12 +244,14 @@ class _$FocusSessionImpl extends _FocusSession {
             (identical(other.tomatoesEarned, tomatoesEarned) ||
                 other.tomatoesEarned == tomatoesEarned) &&
             (identical(other.completed, completed) ||
-                other.completed == completed));
+                other.completed == completed) &&
+            (identical(other.isSynced, isSynced) ||
+                other.isSynced == isSynced));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, id, startTime, endTime,
-      durationMinutes, tomatoesEarned, completed);
+      durationMinutes, tomatoesEarned, completed, isSynced);
 
   @JsonKey(ignore: true)
   @override
@@ -244,7 +267,8 @@ abstract class _FocusSession extends FocusSession {
       required final DateTime endTime,
       required final int durationMinutes,
       required final int tomatoesEarned,
-      final bool completed}) = _$FocusSessionImpl;
+      final bool completed,
+      final bool isSynced}) = _$FocusSessionImpl;
   const _FocusSession._() : super._();
 
   @override
@@ -271,6 +295,10 @@ abstract class _FocusSession extends FocusSession {
 
   /// Whether the session was completed (not abandoned)
   bool get completed;
+  @override
+
+  /// Whether the session has been synced to the backend
+  bool get isSynced;
   @override
   @JsonKey(ignore: true)
   _$$FocusSessionImplCopyWith<_$FocusSessionImpl> get copyWith =>

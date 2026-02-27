@@ -92,6 +92,33 @@ class HistoryLocalDataSource {
     return getAllSessions().map((s) => s.dateKey).toSet();
   }
 
+  /// Gets all unsynced sessions.
+  List<FocusSession> getUnsyncedSessions() {
+    return getAllSessions().where((s) => !s.isSynced).toList();
+  }
+
+  /// Marks a session as synced or updates it if it exists.
+  Future<void> updateOrSaveSession(FocusSession session) async {
+    try {
+      final sessions = _getSessions();
+      final index = sessions.indexWhere((s) => s['id'] == session.id);
+
+      if (index >= 0) {
+        sessions[index] = _sessionToJson(session);
+      } else {
+        sessions.add(_sessionToJson(session));
+      }
+
+      await _historyBox.put(_sessionsKey, jsonEncode(sessions));
+    } catch (e, stackTrace) {
+      throw CacheException(
+        'Failed to update session',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   // ============ Daily Stats Operations ============
 
   /// Gets daily stats for a date.
@@ -200,6 +227,7 @@ class HistoryLocalDataSource {
       'durationMinutes': session.durationMinutes,
       'tomatoesEarned': session.tomatoesEarned,
       'completed': session.completed,
+      'isSynced': session.isSynced,
     };
   }
 
@@ -211,6 +239,7 @@ class HistoryLocalDataSource {
       durationMinutes: json['durationMinutes'] as int,
       tomatoesEarned: json['tomatoesEarned'] as int,
       completed: json['completed'] as bool? ?? true,
+      isSynced: json['isSynced'] as bool? ?? false,
     );
   }
 

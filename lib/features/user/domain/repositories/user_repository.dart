@@ -66,4 +66,9 @@ abstract class UserRepository {
 
   /// Checks if an item is already purchased.
   Future<Either<Failure, bool>> isItemPurchased(String itemId);
+
+  // ============ Sync Operations ============
+
+  /// Synchronizes local data with the backend cloud.
+  Future<Either<Failure, Unit>> syncWithBackend();
 }
