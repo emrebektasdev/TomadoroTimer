@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/entities/user_settings.dart';
 import '../domain/repositories/user_repository.dart';
 import '../../history/domain/repositories/history_repository.dart';
+import '../domain/entities/timer_profile.dart';
 import 'user_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -23,6 +24,34 @@ class UserNotifier extends StateNotifier<UserState> {
     _loadUserData();
   }
 
+  // ============ Auth State Transitions ============
+
+  /// Clears user session data on logout.
+  Future<void> clearUserData() async {
+    state = state.copyWith(isLoading: true);
+    final result = await _repository.clearLocalData();
+    result.fold(
+      (failure) => state = state.copyWith(
+        isLoading: false,
+        errorMessage: failure.displayMessage,
+      ),
+      (_) {
+        state = UserState.initial();
+      },
+    );
+  }
+
+  /// Fetches cloud data when a new user signs in.
+  Future<void> initFromCloud() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    // Attempt download of profile and settings overrides
+    await _repository.fetchFromCloud();
+
+    // Reload state regardless of success to reflect any fetched elements
+    await _loadUserData();
+  }
+
   /// Loads all user data from storage.
   Future<void> _loadUserData() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -33,46 +62,69 @@ class UserNotifier extends StateNotifier<UserState> {
     final equippedResult = await _repository.getEquippedItems();
     final purchasedResult = await _repository.getPurchasedItemIds();
 
-    // Combine results
-    profileResult.fold(
-      (failure) => state = state.copyWith(
-        isLoading: false,
-        errorMessage: failure.displayMessage,
-      ),
-      (profile) {
-        settingsResult.fold(
-          (failure) => state = state.copyWith(
-            isLoading: false,
-            errorMessage: failure.displayMessage,
-          ),
-          (settings) {
-            equippedResult.fold(
-              (failure) => state = state.copyWith(
-                isLoading: false,
-                errorMessage: failure.displayMessage,
-              ),
-              (equipped) {
-                purchasedResult.fold(
-                  (failure) => state = state.copyWith(
-                    isLoading: false,
-                    errorMessage: failure.displayMessage,
-                  ),
-                  (purchased) {
-                    state = state.copyWith(
-                      profile: profile,
-                      settings: settings,
-                      equippedItems: equipped,
-                      purchasedItemIds: purchased,
-                      isLoading: false,
-                      errorMessage: null,
-                    );
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
+    // Check for any failures
+    if (profileResult.isLeft()) {
+      profileResult.fold(
+        (f) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: f.displayMessage,
+        ),
+        (_) {},
+      );
+      return;
+    }
+    if (settingsResult.isLeft()) {
+      settingsResult.fold(
+        (f) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: f.displayMessage,
+        ),
+        (_) {},
+      );
+      return;
+    }
+    if (equippedResult.isLeft()) {
+      equippedResult.fold(
+        (f) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: f.displayMessage,
+        ),
+        (_) {},
+      );
+      return;
+    }
+    if (purchasedResult.isLeft()) {
+      purchasedResult.fold(
+        (f) => state = state.copyWith(
+          isLoading: false,
+          errorMessage: f.displayMessage,
+        ),
+        (_) {},
+      );
+      return;
+    }
+
+    // All calls succeeded — extract values
+    final profile = profileResult.getOrElse(() => throw Exception());
+    final settings = settingsResult.getOrElse(() => throw Exception());
+    final equipped = equippedResult.getOrElse(() => throw Exception());
+    final purchased = purchasedResult.getOrElse(() => throw Exception());
+
+    // Load daily sessions (async, properly awaited now)
+    final sessionMapResult = await _repository.getDailyProfileSessions();
+    final Map<String, int> dailySessionsMap = sessionMapResult.fold(
+      (l) => {},
+      (r) => r,
+    );
+
+    state = state.copyWith(
+      profile: profile,
+      settings: settings,
+      equippedItems: equipped,
+      purchasedItemIds: purchased,
+      dailyProfileSessions: dailySessionsMap,
+      isLoading: false,
+      errorMessage: null,
     );
   }
 
@@ -98,6 +150,7 @@ class UserNotifier extends StateNotifier<UserState> {
           ),
           errorMessage: null,
         );
+        _syncToCloudSilently();
         return newBalance;
       },
     );
@@ -123,6 +176,7 @@ class UserNotifier extends StateNotifier<UserState> {
           profile: state.profile.copyWith(tomatoBalance: newBalance),
           errorMessage: null,
         );
+        _syncToCloudSilently();
         return true;
       },
     );
@@ -131,19 +185,52 @@ class UserNotifier extends StateNotifier<UserState> {
   // ============ Focus Session Recording ============
 
   /// Records a completed focus session.
-  Future<void> recordFocusSession(int minutes) async {
-    final result = await _repository.recordFocusSession(minutes);
-    result.fold(
-      (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (updatedProfile) {
-        state = state.copyWith(profile: updatedProfile, errorMessage: null);
-        // Try to sync history to backend silently
-        final uid = FirebaseAuth.instance.currentUser?.uid;
-        if (uid != null) {
-          _historyRepository.syncUnsyncedSessions(uid);
-        }
-      },
+  Future<void> recordFocusSession(int minutes, {String? profileId}) async {
+    // ignore: avoid_print
+    print(
+      '[DEBUG_SESSION] UserNotifier.recordFocusSession called: minutes=$minutes, profileId=$profileId',
     );
+    final result = await _repository.recordFocusSession(
+      minutes,
+      profileId: profileId,
+    );
+    // ignore: avoid_print
+    print('[DEBUG_SESSION] Repository result isRight: ${result.isRight()}');
+
+    if (result.isLeft()) {
+      result.fold(
+        (failure) =>
+            state = state.copyWith(errorMessage: failure.displayMessage),
+        (_) {},
+      );
+      return;
+    }
+
+    final updatedProfile = result.getOrElse(() => state.profile);
+
+    // Refresh the daily sessions map from local repository
+    final sessionMapResult = await _repository.getDailyProfileSessions();
+    final Map<String, int> dailySessionsMap = sessionMapResult.fold(
+      (l) => state.dailyProfileSessions,
+      (r) => r,
+    );
+
+    state = state.copyWith(
+      profile: updatedProfile,
+      dailyProfileSessions: dailySessionsMap,
+      errorMessage: null,
+    );
+    // ignore: avoid_print
+    print(
+      '[DEBUG_SESSION] State updated. dailyProfileSessions=${state.dailyProfileSessions}',
+    );
+
+    // Try to sync history to backend silently
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      _historyRepository.syncUnsyncedSessions(uid);
+    }
+    _syncToCloudSilently();
   }
 
   // ============ Settings Operations ============
@@ -153,7 +240,10 @@ class UserNotifier extends StateNotifier<UserState> {
     final result = await _repository.saveSettings(newSettings);
     result.fold(
       (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (_) => state = state.copyWith(settings: newSettings, errorMessage: null),
+      (_) {
+        state = state.copyWith(settings: newSettings, errorMessage: null);
+        _syncToCloudSilently();
+      },
     );
   }
 
@@ -184,21 +274,62 @@ class UserNotifier extends StateNotifier<UserState> {
     await updateSettings(state.settings.copyWith(weeklyGoalMinutes: minutes));
   }
 
-  /// Updates focus duration.
-  Future<void> setFocusDuration(int minutes) async {
+  // ============ Timer Profile Settings ============
+
+  /// Adds a new timer profile and optionally sets it as active.
+  Future<void> addTimerProfile(
+    TimerProfile profile, {
+    bool makeActive = true,
+  }) async {
+    final currentProfiles = List<TimerProfile>.from(state.settings.profiles);
+    if (!currentProfiles.any((p) => p.id == profile.id)) {
+      currentProfiles.add(profile);
+      await updateSettings(
+        state.settings.copyWith(
+          profiles: currentProfiles,
+          activeProfileId: makeActive
+              ? profile.id
+              : state.settings.activeProfileId,
+        ),
+      );
+    }
+  }
+
+  /// Updates an existing timer profile.
+  Future<void> updateTimerProfile(TimerProfile profile) async {
+    final currentProfiles = List<TimerProfile>.from(state.settings.profiles);
+    final index = currentProfiles.indexWhere((p) => p.id == profile.id);
+    if (index != -1) {
+      currentProfiles[index] = profile;
+      await updateSettings(state.settings.copyWith(profiles: currentProfiles));
+    }
+  }
+
+  /// Deletes a custom timer profile. Default profiles cannot be deleted.
+  Future<void> deleteTimerProfile(String id) async {
+    if (id == 'default_pomodoro') return;
+
+    final currentProfiles = List<TimerProfile>.from(state.settings.profiles);
+    currentProfiles.removeWhere((p) => p.id == id);
+
+    String newActiveId = state.settings.activeProfileId;
+    if (newActiveId == id) {
+      newActiveId = 'default_pomodoro';
+    }
+
     await updateSettings(
-      state.settings.copyWith(focusDurationMinutes: minutes),
+      state.settings.copyWith(
+        profiles: currentProfiles,
+        activeProfileId: newActiveId,
+      ),
     );
   }
 
-  /// Updates short break duration.
-  Future<void> setShortBreakDuration(int minutes) async {
-    await updateSettings(state.settings.copyWith(shortBreakMinutes: minutes));
-  }
-
-  /// Updates long break duration.
-  Future<void> setLongBreakDuration(int minutes) async {
-    await updateSettings(state.settings.copyWith(longBreakMinutes: minutes));
+  /// Sets the currently active timer profile.
+  Future<void> setActiveTimerProfile(String id) async {
+    if (state.settings.profiles.any((p) => p.id == id)) {
+      await updateSettings(state.settings.copyWith(activeProfileId: id));
+    }
   }
 
   // ============ Equipment Operations ============
@@ -211,10 +342,13 @@ class UserNotifier extends StateNotifier<UserState> {
     final result = await _repository.equipAccessory(accessoryId);
     result.fold(
       (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (_) => state = state.copyWith(
-        equippedItems: state.equippedItems.copyWith(accessoryId: accessoryId),
-        errorMessage: null,
-      ),
+      (_) {
+        state = state.copyWith(
+          equippedItems: state.equippedItems.copyWith(accessoryId: accessoryId),
+          errorMessage: null,
+        );
+        _syncToCloudSilently();
+      },
     );
   }
 
@@ -225,10 +359,15 @@ class UserNotifier extends StateNotifier<UserState> {
     final result = await _repository.equipBackground(backgroundId);
     result.fold(
       (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (_) => state = state.copyWith(
-        equippedItems: state.equippedItems.copyWith(backgroundId: backgroundId),
-        errorMessage: null,
-      ),
+      (_) {
+        state = state.copyWith(
+          equippedItems: state.equippedItems.copyWith(
+            backgroundId: backgroundId,
+          ),
+          errorMessage: null,
+        );
+        _syncToCloudSilently();
+      },
     );
   }
 
@@ -239,10 +378,13 @@ class UserNotifier extends StateNotifier<UserState> {
     final result = await _repository.equipSound(soundId);
     result.fold(
       (failure) => state = state.copyWith(errorMessage: failure.displayMessage),
-      (_) => state = state.copyWith(
-        equippedItems: state.equippedItems.copyWith(soundId: soundId),
-        errorMessage: null,
-      ),
+      (_) {
+        state = state.copyWith(
+          equippedItems: state.equippedItems.copyWith(soundId: soundId),
+          errorMessage: null,
+        );
+        _syncToCloudSilently();
+      },
     );
   }
 
@@ -275,6 +417,7 @@ class UserNotifier extends StateNotifier<UserState> {
           purchasedItemIds: [...state.purchasedItemIds, itemId],
           errorMessage: null,
         );
+        _syncToCloudSilently();
         return true;
       },
     );
@@ -313,5 +456,13 @@ class UserNotifier extends StateNotifier<UserState> {
         await _loadUserData();
       },
     );
+  }
+
+  /// Pushes local data to the backend silently without showing loading indicators.
+  void _syncToCloudSilently() {
+    final authUid = FirebaseAuth.instance.currentUser?.uid;
+    if (authUid != null) {
+      _repository.syncWithBackend();
+    }
   }
 }

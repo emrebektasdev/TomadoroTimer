@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../domain/entities/timer_profile.dart';
 
 /// Local data source for user-related data using Hive.
 class UserLocalDataSource {
@@ -107,6 +108,42 @@ class UserLocalDataSource {
     await _userBox.put(key, value);
   }
 
+  // ============ Timer Profiles ============
+
+  /// Gets the list of saved timer profiles.
+  List<TimerProfile> getTimerProfiles() {
+    final list = _userBox.get(SettingsKeys.timerProfiles);
+    if (list != null && list is List) {
+      return list
+          .map(
+            (e) => TimerProfile.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+    }
+    // If no profiles exist, return a default list with Pomodoro.
+    return [TimerProfile.pomodoro()];
+  }
+
+  /// Sets the list of timer profiles.
+  Future<void> setTimerProfiles(List<TimerProfile> profiles) async {
+    final list = profiles.map((p) => p.toJson()).toList();
+    await _userBox.put(SettingsKeys.timerProfiles, list);
+  }
+
+  /// Gets the ID of the active timer profile.
+  String getActiveTimerProfileId() {
+    return _userBox.get(
+          SettingsKeys.activeTimerProfile,
+          defaultValue: 'default_pomodoro',
+        )
+        as String;
+  }
+
+  /// Sets the ID of the active timer profile.
+  Future<void> setActiveTimerProfileId(String id) async {
+    await _userBox.put(SettingsKeys.activeTimerProfile, id);
+  }
+
   // ============ Equipped Items ============
 
   /// Gets equipped accessory ID.
@@ -174,6 +211,23 @@ class UserLocalDataSource {
     return getPurchasedItemIds().contains(itemId);
   }
 
+  // ============ Daily Session Tracking ============
+
+  /// Gets the map tracking how many sessions were completed per profile today.
+  Map<String, int> getDailyProfileSessions() {
+    final dynamic data = _userBox.get(UserProfileKeys.dailyProfileSessions);
+    if (data == null) return {};
+    if (data is Map) {
+      return data.map((key, value) => MapEntry(key.toString(), value as int));
+    }
+    return {};
+  }
+
+  /// Sets the daily profile sessions tracking map.
+  Future<void> setDailyProfileSessions(Map<String, int> sessions) async {
+    await _userBox.put(UserProfileKeys.dailyProfileSessions, sessions);
+  }
+
   // ============ Migration Support ============
 
   /// Migrates data from SharedPreferences (one-time migration).
@@ -204,12 +258,6 @@ class UserLocalDataSource {
       if (data.containsKey('longestStreak')) {
         await setLongestStreak(data['longestStreak'] as int);
       }
-      if (data.containsKey('lastActiveDate')) {
-        await _userBox.put(
-          UserProfileKeys.lastActiveDate,
-          data['lastActiveDate'],
-        );
-      }
       if (data.containsKey('purchasedItemIds')) {
         await _userBox.put(
           UserProfileKeys.purchasedItemIds,
@@ -234,6 +282,34 @@ class UserLocalDataSource {
         originalError: e,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  // ============ Auth State Management ============
+
+  /// Clears all user-specific data from local storage.
+  /// Typically called when a user signs out to prevent data leaks.
+  Future<void> clearUserData() async {
+    final keysToClear = [
+      UserProfileKeys.tomatoBalance,
+      UserProfileKeys.totalTomatoesEarned,
+      UserProfileKeys.totalFocusMinutes,
+      UserProfileKeys.currentStreak,
+      UserProfileKeys.longestStreak,
+      UserProfileKeys.lastActiveDate,
+      UserProfileKeys.purchasedItemIds,
+      UserProfileKeys.equippedAccessory,
+      UserProfileKeys.equippedBackground,
+      UserProfileKeys.equippedSound,
+      UserProfileKeys.dailyProfileSessions,
+      SettingsKeys.dailyGoalMinutes,
+      SettingsKeys.weeklyGoalMinutes,
+      SettingsKeys.timerProfiles,
+      SettingsKeys.activeTimerProfile,
+    ];
+
+    for (final key in keysToClear) {
+      await _userBox.delete(key);
     }
   }
 }

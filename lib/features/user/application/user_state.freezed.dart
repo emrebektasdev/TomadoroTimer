@@ -28,6 +28,10 @@ mixin _$UserState {
   /// List of purchased item IDs
   List<String> get purchasedItemIds => throw _privateConstructorUsedError;
 
+  /// Daily count of sessions completed mapped by Profile ID
+  Map<String, int> get dailyProfileSessions =>
+      throw _privateConstructorUsedError;
+
   /// Whether the state is currently loading
   bool get isLoading => throw _privateConstructorUsedError;
 
@@ -49,6 +53,7 @@ abstract class $UserStateCopyWith<$Res> {
       UserSettings settings,
       EquippedItems equippedItems,
       List<String> purchasedItemIds,
+      Map<String, int> dailyProfileSessions,
       bool isLoading,
       String? errorMessage});
 
@@ -74,6 +79,7 @@ class _$UserStateCopyWithImpl<$Res, $Val extends UserState>
     Object? settings = null,
     Object? equippedItems = null,
     Object? purchasedItemIds = null,
+    Object? dailyProfileSessions = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -94,6 +100,10 @@ class _$UserStateCopyWithImpl<$Res, $Val extends UserState>
           ? _value.purchasedItemIds
           : purchasedItemIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      dailyProfileSessions: null == dailyProfileSessions
+          ? _value.dailyProfileSessions
+          : dailyProfileSessions // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -143,6 +153,7 @@ abstract class _$$UserStateImplCopyWith<$Res>
       UserSettings settings,
       EquippedItems equippedItems,
       List<String> purchasedItemIds,
+      Map<String, int> dailyProfileSessions,
       bool isLoading,
       String? errorMessage});
 
@@ -169,6 +180,7 @@ class __$$UserStateImplCopyWithImpl<$Res>
     Object? settings = null,
     Object? equippedItems = null,
     Object? purchasedItemIds = null,
+    Object? dailyProfileSessions = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -189,6 +201,10 @@ class __$$UserStateImplCopyWithImpl<$Res>
           ? _value._purchasedItemIds
           : purchasedItemIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      dailyProfileSessions: null == dailyProfileSessions
+          ? _value._dailyProfileSessions
+          : dailyProfileSessions // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -209,9 +225,11 @@ class _$UserStateImpl extends _UserState {
       required this.settings,
       required this.equippedItems,
       required final List<String> purchasedItemIds,
+      final Map<String, int> dailyProfileSessions = const {},
       this.isLoading = false,
       this.errorMessage})
       : _purchasedItemIds = purchasedItemIds,
+        _dailyProfileSessions = dailyProfileSessions,
         super._();
 
   /// User profile data (balance, stats, streak)
@@ -238,6 +256,19 @@ class _$UserStateImpl extends _UserState {
     return EqualUnmodifiableListView(_purchasedItemIds);
   }
 
+  /// Daily count of sessions completed mapped by Profile ID
+  final Map<String, int> _dailyProfileSessions;
+
+  /// Daily count of sessions completed mapped by Profile ID
+  @override
+  @JsonKey()
+  Map<String, int> get dailyProfileSessions {
+    if (_dailyProfileSessions is EqualUnmodifiableMapView)
+      return _dailyProfileSessions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_dailyProfileSessions);
+  }
+
   /// Whether the state is currently loading
   @override
   @JsonKey()
@@ -249,7 +280,7 @@ class _$UserStateImpl extends _UserState {
 
   @override
   String toString() {
-    return 'UserState(profile: $profile, settings: $settings, equippedItems: $equippedItems, purchasedItemIds: $purchasedItemIds, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'UserState(profile: $profile, settings: $settings, equippedItems: $equippedItems, purchasedItemIds: $purchasedItemIds, dailyProfileSessions: $dailyProfileSessions, isLoading: $isLoading, errorMessage: $errorMessage)';
   }
 
   @override
@@ -264,6 +295,8 @@ class _$UserStateImpl extends _UserState {
                 other.equippedItems == equippedItems) &&
             const DeepCollectionEquality()
                 .equals(other._purchasedItemIds, _purchasedItemIds) &&
+            const DeepCollectionEquality()
+                .equals(other._dailyProfileSessions, _dailyProfileSessions) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -277,6 +310,7 @@ class _$UserStateImpl extends _UserState {
       settings,
       equippedItems,
       const DeepCollectionEquality().hash(_purchasedItemIds),
+      const DeepCollectionEquality().hash(_dailyProfileSessions),
       isLoading,
       errorMessage);
 
@@ -293,6 +327,7 @@ abstract class _UserState extends UserState {
       required final UserSettings settings,
       required final EquippedItems equippedItems,
       required final List<String> purchasedItemIds,
+      final Map<String, int> dailyProfileSessions,
       final bool isLoading,
       final String? errorMessage}) = _$UserStateImpl;
   const _UserState._() : super._();
@@ -313,6 +348,10 @@ abstract class _UserState extends UserState {
 
   /// List of purchased item IDs
   List<String> get purchasedItemIds;
+  @override
+
+  /// Daily count of sessions completed mapped by Profile ID
+  Map<String, int> get dailyProfileSessions;
   @override
 
   /// Whether the state is currently loading

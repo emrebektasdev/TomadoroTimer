@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../timer/application/timer_providers.dart';
 import '../../../timer/domain/entities/timer_mode.dart';
+import '../../../user/application/user_providers.dart';
 
 class ModeSelector extends ConsumerWidget {
   const ModeSelector({super.key});
@@ -14,8 +15,19 @@ class ModeSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = ref.watch(timerModeProvider);
-    final sessionsCompleted = ref.watch(
-      timerNotifierProvider.select((s) => s.sessionsCompleted),
+
+    // Dynamic Active Profile Tracking
+    final userSettings = ref.watch(userSettingsProvider);
+    final activeProfile = userSettings.activeProfile;
+
+    // Get daily completed sessions specific to this profile from User State
+    final userState = ref.watch(userNotifierProvider);
+    final sessionsCompleted =
+        userState.dailyProfileSessions[activeProfile.id] ?? 0;
+
+    // ignore: avoid_print
+    print(
+      '[DEBUG_SESSION] ModeSelector: profileId=${activeProfile.id}, sessionsCompleted=$sessionsCompleted, fullMap=${userState.dailyProfileSessions}',
     );
 
     return Container(
@@ -45,7 +57,7 @@ class ModeSelector extends ConsumerWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            mode.displayName,
+            mode == TimerMode.focus ? activeProfile.name : mode.displayName,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,

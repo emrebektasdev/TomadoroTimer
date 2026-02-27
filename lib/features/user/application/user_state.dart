@@ -27,6 +27,9 @@ class UserState with _$UserState {
     /// List of purchased item IDs
     required List<String> purchasedItemIds,
 
+    /// Daily count of sessions completed mapped by Profile ID
+    @Default({}) Map<String, int> dailyProfileSessions,
+
     /// Whether the state is currently loading
     @Default(false) bool isLoading,
 
@@ -42,6 +45,7 @@ class UserState with _$UserState {
     settings: UserSettings.defaults(),
     equippedItems: EquippedItems.none(),
     purchasedItemIds: const [],
+    dailyProfileSessions: const {},
     isLoading: true,
   );
 

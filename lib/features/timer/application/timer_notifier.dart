@@ -21,8 +21,24 @@ class TimerNotifier extends StateNotifier<TimerState> {
   final Ticker _ticker;
   StreamSubscription<int>? _tickerSubscription;
 
+  // Active profile durations (updated externally from provider listener)
+  int _focusDuration = 25;
+  int _shortBreakDuration = 5;
+  int _longBreakDuration = 15;
+
   TimerNotifier(this._repository, this._ticker) : super(TimerState.initial()) {
     _restoreState();
+  }
+
+  /// Called by the provider when user settings change to keep durations in sync.
+  void updateProfileDurations({
+    required int focus,
+    required int shortBreak,
+    required int longBreak,
+  }) {
+    _focusDuration = focus;
+    _shortBreakDuration = shortBreak;
+    _longBreakDuration = longBreak;
   }
 
   /// Restores timer state from persistence.
@@ -240,12 +256,31 @@ class TimerNotifier extends StateNotifier<TimerState> {
     ); // Argument ignored by internal logic for now
   }
 
-  void _setMode(TimerMode mode) {
+  void _setMode(TimerMode mode, [int? customDuration]) {
     _tickerSubscription?.cancel();
+
+    // Use stored profile durations, falling back to enum defaults as last resort.
+    int duration;
+    if (customDuration != null) {
+      duration = customDuration;
+    } else {
+      switch (mode) {
+        case TimerMode.focus:
+          duration = _focusDuration;
+          break;
+        case TimerMode.shortBreak:
+          duration = _shortBreakDuration;
+          break;
+        case TimerMode.longBreak:
+          duration = _longBreakDuration;
+          break;
+      }
+    }
+
     state = state.copyWith(
       mode: mode,
-      initialDuration: mode.defaultMinutes,
-      remainingSeconds: mode.defaultMinutes * 60,
+      initialDuration: duration,
+      remainingSeconds: duration * 60,
       isRunning: false,
       startTime: null,
       isCompleted: false,
@@ -255,6 +290,9 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
   // ============ DEBUG METHODS ============
   // Bu metodlar SADECE test amaçlıdır, production'da kaldırılmalıdır
+
+  /// Extracted for provider configuration to fetch inner mode without triggering infinite cycle
+  TimerMode debugStateMode() => state.mode;
 
   /// [DEBUG] Kalan süreyi direkt olarak ayarlar
   void debugSetRemainingSeconds(int seconds) {

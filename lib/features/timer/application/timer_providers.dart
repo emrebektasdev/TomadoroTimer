@@ -10,6 +10,8 @@ import 'timer_state.dart';
 import '../data/datasources/timer_local_datasource.dart';
 import '../data/repositories/timer_repository_impl.dart';
 import '../domain/repositories/timer_repository.dart';
+import '../domain/entities/timer_mode.dart';
+import '../../user/application/user_providers.dart';
 
 // ============ Data Layer Providers ============
 
@@ -44,7 +46,50 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
 ) {
   final repository = ref.watch(timerRepositoryProvider);
   final ticker = ref.watch(tickerProvider);
-  return TimerNotifier(repository, ticker);
+
+  final notifier = TimerNotifier(repository, ticker);
+
+  // Seed profile durations from current settings immediately
+  final initialSettings = ref.read(userSettingsProvider);
+  notifier.updateProfileDurations(
+    focus: initialSettings.activeProfile.focusDurationMinutes,
+    shortBreak: initialSettings.activeProfile.shortBreakMinutes,
+    longBreak: initialSettings.activeProfile.longBreakMinutes,
+  );
+
+  // Listen to UserSettings changes
+  ref.listen(userSettingsProvider, (previous, next) {
+    if (next == null) return;
+
+    // Keep stored durations in sync for mode transitions
+    notifier.updateProfileDurations(
+      focus: next.activeProfile.focusDurationMinutes,
+      shortBreak: next.activeProfile.shortBreakMinutes,
+      longBreak: next.activeProfile.longBreakMinutes,
+    );
+
+    // Calculate active durations based on the active profile
+    final currentMode = notifier.debugStateMode();
+    int nextDuration;
+    switch (currentMode) {
+      case TimerMode.focus:
+        nextDuration = next.activeProfile.focusDurationMinutes;
+        break;
+      case TimerMode.shortBreak:
+        nextDuration = next.activeProfile.shortBreakMinutes;
+        break;
+      case TimerMode.longBreak:
+        nextDuration = next.activeProfile.longBreakMinutes;
+        break;
+      default:
+        nextDuration = next.activeProfile.focusDurationMinutes;
+    }
+
+    // Update the timer duration if it's currently stopped or matches this phase
+    notifier.updateDuration(nextDuration);
+  });
+
+  return notifier;
 });
 
 // ============ Selector Providers ============

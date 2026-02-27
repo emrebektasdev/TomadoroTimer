@@ -16,6 +16,7 @@ import '../../../../core/extensions/datetime_extensions.dart';
 import '../../domain/entities/equipped_items.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/entities/user_settings.dart';
+import '../../domain/entities/timer_profile.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_local_datasource.dart';
 
@@ -94,14 +95,29 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfile>> recordFocusSession(int minutes) async {
+  Future<Either<Failure, UserProfile>> recordFocusSession(
+    int minutes, {
+    String? profileId,
+  }) async {
     try {
       // Update total focus minutes
       final currentMinutes = _localDataSource.getTotalFocusMinutes();
       await _localDataSource.setTotalFocusMinutes(currentMinutes + minutes);
 
-      // Update streak
+      // Update streak FIRST — this also clears dailyProfileSessions if it's a new day
       await _updateStreak();
+
+      // Specific profile session tracking (AFTER streak update so new-day clearing happened already)
+      if (profileId != null) {
+        final sessionMap = _localDataSource.getDailyProfileSessions();
+        final currentCount = sessionMap[profileId] ?? 0;
+        sessionMap[profileId] = currentCount + 1;
+        await _localDataSource.setDailyProfileSessions(sessionMap);
+        // ignore: avoid_print
+        print(
+          '[DEBUG_SESSION] Repo: profileId=$profileId, count=${currentCount + 1}, fullMap=$sessionMap',
+        );
+      }
 
       // Return updated profile
       return getProfile();
@@ -111,6 +127,20 @@ class UserRepositoryImpl implements UserRepository {
       return Left(
         Failure.unexpected(
           message: 'Failed to record session',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, int>>> getDailyProfileSessions() async {
+    try {
+      return Right(_localDataSource.getDailyProfileSessions());
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to get daily sessions map',
           originalError: e,
         ),
       );
@@ -151,6 +181,15 @@ class UserRepositoryImpl implements UserRepository {
     }
 
     await _localDataSource.setCurrentStreak(currentStreak);
+
+    // Clear the session Map if the active day has changed (new day)
+    if (lastActiveDate != null) {
+      final difference = today.difference(lastActiveDate.dateOnly).inDays;
+      if (difference != 0) {
+        await _localDataSource.setDailyProfileSessions({});
+      }
+    }
+
     await _localDataSource.setLastActiveDate(today);
   }
 
@@ -180,18 +219,8 @@ class UserRepositoryImpl implements UserRepository {
           SettingsKeys.weeklyGoalMinutes,
           defaultValue: 600,
         ),
-        focusDurationMinutes: _localDataSource.getIntSetting(
-          SettingsKeys.focusDuration,
-          defaultValue: 25,
-        ),
-        shortBreakMinutes: _localDataSource.getIntSetting(
-          SettingsKeys.shortBreakDuration,
-          defaultValue: 5,
-        ),
-        longBreakMinutes: _localDataSource.getIntSetting(
-          SettingsKeys.longBreakDuration,
-          defaultValue: 15,
-        ),
+        profiles: _localDataSource.getTimerProfiles(),
+        activeProfileId: _localDataSource.getActiveTimerProfileId(),
       );
       return Right(settings);
     } catch (e) {
@@ -227,18 +256,8 @@ class UserRepositoryImpl implements UserRepository {
         SettingsKeys.weeklyGoalMinutes,
         settings.weeklyGoalMinutes,
       );
-      await _localDataSource.setIntSetting(
-        SettingsKeys.focusDuration,
-        settings.focusDurationMinutes,
-      );
-      await _localDataSource.setIntSetting(
-        SettingsKeys.shortBreakDuration,
-        settings.shortBreakMinutes,
-      );
-      await _localDataSource.setIntSetting(
-        SettingsKeys.longBreakDuration,
-        settings.longBreakMinutes,
-      );
+      await _localDataSource.setTimerProfiles(settings.profiles);
+      await _localDataSource.setActiveTimerProfileId(settings.activeProfileId);
       return const Right(unit);
     } catch (e) {
       return Left(
@@ -378,6 +397,145 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> clearLocalData() async {
+    try {
+      await _localDataSource.clearUserData();
+      return const Right(unit);
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to clear local user data',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> fetchFromCloud() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return const Right(unit);
+
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid);
+      final docSnapshot = await userDocRef.get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data()!;
+
+        if (data['tomatoBalance'] != null) {
+          await _localDataSource.setTomatoBalance(data['tomatoBalance'] as int);
+        }
+        if (data['currentStreak'] != null) {
+          await _localDataSource.setCurrentStreak(data['currentStreak'] as int);
+        }
+        if (data['totalFocusMinutes'] != null) {
+          await _localDataSource.setTotalFocusMinutes(
+            data['totalFocusMinutes'] as int,
+          );
+        }
+        if (data['equippedBackground'] != null) {
+          await _localDataSource.setEquippedBackground(
+            data['equippedBackground'] as String?,
+          );
+        }
+        if (data['equippedAccessory'] != null) {
+          await _localDataSource.setEquippedAccessory(
+            data['equippedAccessory'] as String?,
+          );
+        }
+        if (data['equippedSound'] != null) {
+          await _localDataSource.setEquippedSound(
+            data['equippedSound'] as String?,
+          );
+        }
+        if (data['lastActiveDate'] != null) {
+          await _localDataSource.setLastActiveDate(
+            DateTime.parse(data['lastActiveDate'] as String),
+          );
+        }
+
+        if (data['dailyProfileSessions'] != null) {
+          final sessionData =
+              data['dailyProfileSessions'] as Map<String, dynamic>;
+          final Map<String, int> sessionMap = sessionData.map(
+            (key, value) => MapEntry(key, value as int),
+          );
+          await _localDataSource.setDailyProfileSessions(sessionMap);
+        }
+
+        final items = List<String>.from(data['purchasedItems'] ?? []);
+        for (final item in items) {
+          await _localDataSource.addPurchasedItem(item);
+        }
+
+        // Apply settings and profiles if they exist
+        if (data['settings'] != null) {
+          final settingsData = data['settings'] as Map<String, dynamic>;
+
+          if (settingsData['notificationsEnabled'] != null) {
+            await _localDataSource.setBoolSetting(
+              SettingsKeys.notificationsEnabled,
+              settingsData['notificationsEnabled'] as bool,
+            );
+          }
+          if (settingsData['soundEnabled'] != null) {
+            await _localDataSource.setBoolSetting(
+              SettingsKeys.soundEnabled,
+              settingsData['soundEnabled'] as bool,
+            );
+          }
+          if (settingsData['vibrationEnabled'] != null) {
+            await _localDataSource.setBoolSetting(
+              SettingsKeys.vibrationEnabled,
+              settingsData['vibrationEnabled'] as bool,
+            );
+          }
+          if (settingsData['dailyGoalMinutes'] != null) {
+            await _localDataSource.setIntSetting(
+              SettingsKeys.dailyGoalMinutes,
+              settingsData['dailyGoalMinutes'] as int,
+            );
+          }
+          if (settingsData['weeklyGoalMinutes'] != null) {
+            await _localDataSource.setIntSetting(
+              SettingsKeys.weeklyGoalMinutes,
+              settingsData['weeklyGoalMinutes'] as int,
+            );
+          }
+          if (settingsData['activeTimerProfile'] != null) {
+            await _localDataSource.setActiveTimerProfileId(
+              settingsData['activeTimerProfile'] as String,
+            );
+          }
+          if (settingsData['timerProfiles'] != null) {
+            final profilesList = settingsData['timerProfiles'] as List;
+            final profiles = profilesList
+                .map(
+                  (e) => TimerProfile.fromJson(
+                    Map<String, dynamic>.from(e as Map),
+                  ),
+                )
+                .toList();
+            await _localDataSource.setTimerProfiles(profiles);
+          }
+        }
+      }
+
+      return const Right(unit);
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to fetch user data from cloud',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
   Future<Either<Failure, Unit>> syncWithBackend() async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -386,8 +544,12 @@ class UserRepositoryImpl implements UserRepository {
       final profile = await getProfile();
       final equipped = await getEquippedItems();
       final purchases = await getPurchasedItemIds();
+      final settings = await getSettings();
 
-      if (profile.isLeft() || equipped.isLeft() || purchases.isLeft()) {
+      if (profile.isLeft() ||
+          equipped.isLeft() ||
+          purchases.isLeft() ||
+          settings.isLeft()) {
         return Left(
           Failure.unexpected(message: 'Failed to read local data for sync'),
         );
@@ -396,6 +558,7 @@ class UserRepositoryImpl implements UserRepository {
       final p = profile.getOrElse(() => throw Exception());
       final e = equipped.getOrElse(() => throw Exception());
       final purchased = purchases.getOrElse(() => throw Exception());
+      final s = settings.getOrElse(() => throw Exception());
 
       final localData = {
         'tomatoBalance': p.tomatoBalance,
@@ -405,8 +568,18 @@ class UserRepositoryImpl implements UserRepository {
         'equippedAccessory': e.accessoryId,
         'equippedSound': e.soundId,
         'purchasedItems': purchased,
+        'dailyProfileSessions': _localDataSource.getDailyProfileSessions(),
         'lastActiveDate': p.lastActiveDate?.toIso8601String(),
         'updatedAt': FieldValue.serverTimestamp(),
+        'settings': {
+          'notificationsEnabled': s.notificationsEnabled,
+          'soundEnabled': s.soundEnabled,
+          'vibrationEnabled': s.vibrationEnabled,
+          'dailyGoalMinutes': s.dailyGoalMinutes,
+          'weeklyGoalMinutes': s.weeklyGoalMinutes,
+          'activeTimerProfile': s.activeProfileId,
+          'timerProfiles': s.profiles.map((pr) => pr.toJson()).toList(),
+        },
       };
 
       final userDocRef = FirebaseFirestore.instance
@@ -451,6 +624,15 @@ class UserRepositoryImpl implements UserRepository {
           await _localDataSource.setLastActiveDate(
             DateTime.parse(data['lastActiveDate']),
           );
+        }
+
+        if (data['dailyProfileSessions'] != null) {
+          final sessionData =
+              data['dailyProfileSessions'] as Map<String, dynamic>;
+          final Map<String, int> sessionMap = sessionData.map(
+            (key, value) => MapEntry(key, value as int),
+          );
+          await _localDataSource.setDailyProfileSessions(sessionMap);
         }
 
         final items = List<String>.from(data['purchasedItems'] ?? []);

@@ -4,6 +4,7 @@
 library;
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'timer_profile.dart';
 
 part 'user_settings.freezed.dart';
 
@@ -26,18 +27,25 @@ class UserSettings with _$UserSettings {
     /// Weekly focus goal in minutes (default: 500 = 25 * 20)
     @Default(500) int weeklyGoalMinutes,
 
-    /// Focus session duration in minutes (default: 25)
-    @Default(25) int focusDurationMinutes,
+    /// List of available timer profiles
+    @Default([]) List<TimerProfile> profiles,
 
-    /// Short break duration in minutes (default: 5)
-    @Default(5) int shortBreakMinutes,
-
-    /// Long break duration in minutes (default: 15)
-    @Default(15) int longBreakMinutes,
+    /// ID of the currently active timer profile
+    @Default('default_pomodoro') String activeProfileId,
   }) = _UserSettings;
 
   const UserSettings._();
 
+  /// Gets the currently active profile
+  TimerProfile get activeProfile {
+    if (profiles.isEmpty) return TimerProfile.pomodoro();
+    return profiles.firstWhere(
+      (p) => p.id == activeProfileId,
+      orElse: () => profiles.first,
+    );
+  }
+
   /// Creates default settings.
-  factory UserSettings.defaults() => const UserSettings();
+  factory UserSettings.defaults() =>
+      UserSettings(profiles: [TimerProfile.pomodoro()]);
 }

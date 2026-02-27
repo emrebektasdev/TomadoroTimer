@@ -29,7 +29,13 @@ abstract class UserRepository {
   /// Records focus minutes and updates streak.
   ///
   /// This should be called when a focus session completes.
-  Future<Either<Failure, UserProfile>> recordFocusSession(int minutes);
+  Future<Either<Failure, UserProfile>> recordFocusSession(
+    int minutes, {
+    String? profileId,
+  });
+
+  /// Retrieves the current map tracking daily sessions per profile.
+  Future<Either<Failure, Map<String, int>>> getDailyProfileSessions();
 
   // ============ Settings Operations ============
 
@@ -68,6 +74,12 @@ abstract class UserRepository {
   Future<Either<Failure, bool>> isItemPurchased(String itemId);
 
   // ============ Sync Operations ============
+
+  /// Clears local user data when signing out
+  Future<Either<Failure, Unit>> clearLocalData();
+
+  /// Fetches authoritative user data from the cloud on login
+  Future<Either<Failure, Unit>> fetchFromCloud();
 
   /// Synchronizes local data with the backend cloud.
   Future<Either<Failure, Unit>> syncWithBackend();

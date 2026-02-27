@@ -12,26 +12,38 @@ final authStateProvider = StateNotifierProvider<AuthStateNotifier, User?>((
   ref,
 ) {
   final authService = ref.watch(authServiceProvider);
-  final onAuthSuccess = () {
-    ref.read(userNotifierProvider.notifier).syncWithBackend();
-  };
-  return AuthStateNotifier(authService, onAuthSuccess);
+  void onAuthSuccess() {
+    ref.read(userNotifierProvider.notifier).initFromCloud();
+  }
+
+  void onAuthSignOut() {
+    ref.read(userNotifierProvider.notifier).clearUserData();
+  }
+
+  return AuthStateNotifier(authService, onAuthSuccess, onAuthSignOut);
 });
 
 class AuthStateNotifier extends StateNotifier<User?> {
   final AuthService _authService;
   final void Function() _onAuthSuccess;
+  final void Function() _onAuthSignOut;
 
-  AuthStateNotifier(this._authService, this._onAuthSuccess)
+  AuthStateNotifier(this._authService, this._onAuthSuccess, this._onAuthSignOut)
     : super(FirebaseAuth.instance.currentUser) {
     _checkInitialAuth();
   }
 
   void _checkInitialAuth() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      final previousState = state;
       state = user;
-      if (user != null) {
+
+      if (user != null && previousState == null) {
+        // User just logged in
         _onAuthSuccess();
+      } else if (user == null && previousState != null) {
+        // User just logged out
+        _onAuthSignOut();
       }
     });
   }

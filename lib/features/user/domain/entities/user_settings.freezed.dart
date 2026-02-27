@@ -31,14 +31,11 @@ mixin _$UserSettings {
   /// Weekly focus goal in minutes (default: 500 = 25 * 20)
   int get weeklyGoalMinutes => throw _privateConstructorUsedError;
 
-  /// Focus session duration in minutes (default: 25)
-  int get focusDurationMinutes => throw _privateConstructorUsedError;
+  /// List of available timer profiles
+  List<TimerProfile> get profiles => throw _privateConstructorUsedError;
 
-  /// Short break duration in minutes (default: 5)
-  int get shortBreakMinutes => throw _privateConstructorUsedError;
-
-  /// Long break duration in minutes (default: 15)
-  int get longBreakMinutes => throw _privateConstructorUsedError;
+  /// ID of the currently active timer profile
+  String get activeProfileId => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $UserSettingsCopyWith<UserSettings> get copyWith =>
@@ -57,9 +54,8 @@ abstract class $UserSettingsCopyWith<$Res> {
       bool vibrationEnabled,
       int dailyGoalMinutes,
       int weeklyGoalMinutes,
-      int focusDurationMinutes,
-      int shortBreakMinutes,
-      int longBreakMinutes});
+      List<TimerProfile> profiles,
+      String activeProfileId});
 }
 
 /// @nodoc
@@ -80,9 +76,8 @@ class _$UserSettingsCopyWithImpl<$Res, $Val extends UserSettings>
     Object? vibrationEnabled = null,
     Object? dailyGoalMinutes = null,
     Object? weeklyGoalMinutes = null,
-    Object? focusDurationMinutes = null,
-    Object? shortBreakMinutes = null,
-    Object? longBreakMinutes = null,
+    Object? profiles = null,
+    Object? activeProfileId = null,
   }) {
     return _then(_value.copyWith(
       notificationsEnabled: null == notificationsEnabled
@@ -105,18 +100,14 @@ class _$UserSettingsCopyWithImpl<$Res, $Val extends UserSettings>
           ? _value.weeklyGoalMinutes
           : weeklyGoalMinutes // ignore: cast_nullable_to_non_nullable
               as int,
-      focusDurationMinutes: null == focusDurationMinutes
-          ? _value.focusDurationMinutes
-          : focusDurationMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      shortBreakMinutes: null == shortBreakMinutes
-          ? _value.shortBreakMinutes
-          : shortBreakMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      longBreakMinutes: null == longBreakMinutes
-          ? _value.longBreakMinutes
-          : longBreakMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
+      profiles: null == profiles
+          ? _value.profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<TimerProfile>,
+      activeProfileId: null == activeProfileId
+          ? _value.activeProfileId
+          : activeProfileId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -135,9 +126,8 @@ abstract class _$$UserSettingsImplCopyWith<$Res>
       bool vibrationEnabled,
       int dailyGoalMinutes,
       int weeklyGoalMinutes,
-      int focusDurationMinutes,
-      int shortBreakMinutes,
-      int longBreakMinutes});
+      List<TimerProfile> profiles,
+      String activeProfileId});
 }
 
 /// @nodoc
@@ -156,9 +146,8 @@ class __$$UserSettingsImplCopyWithImpl<$Res>
     Object? vibrationEnabled = null,
     Object? dailyGoalMinutes = null,
     Object? weeklyGoalMinutes = null,
-    Object? focusDurationMinutes = null,
-    Object? shortBreakMinutes = null,
-    Object? longBreakMinutes = null,
+    Object? profiles = null,
+    Object? activeProfileId = null,
   }) {
     return _then(_$UserSettingsImpl(
       notificationsEnabled: null == notificationsEnabled
@@ -181,18 +170,14 @@ class __$$UserSettingsImplCopyWithImpl<$Res>
           ? _value.weeklyGoalMinutes
           : weeklyGoalMinutes // ignore: cast_nullable_to_non_nullable
               as int,
-      focusDurationMinutes: null == focusDurationMinutes
-          ? _value.focusDurationMinutes
-          : focusDurationMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      shortBreakMinutes: null == shortBreakMinutes
-          ? _value.shortBreakMinutes
-          : shortBreakMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      longBreakMinutes: null == longBreakMinutes
-          ? _value.longBreakMinutes
-          : longBreakMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
+      profiles: null == profiles
+          ? _value._profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<TimerProfile>,
+      activeProfileId: null == activeProfileId
+          ? _value.activeProfileId
+          : activeProfileId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -206,10 +191,10 @@ class _$UserSettingsImpl extends _UserSettings {
       this.vibrationEnabled = true,
       this.dailyGoalMinutes = 100,
       this.weeklyGoalMinutes = 500,
-      this.focusDurationMinutes = 25,
-      this.shortBreakMinutes = 5,
-      this.longBreakMinutes = 15})
-      : super._();
+      final List<TimerProfile> profiles = const [],
+      this.activeProfileId = 'default_pomodoro'})
+      : _profiles = profiles,
+        super._();
 
   /// Whether push notifications are enabled
   @override
@@ -236,24 +221,26 @@ class _$UserSettingsImpl extends _UserSettings {
   @JsonKey()
   final int weeklyGoalMinutes;
 
-  /// Focus session duration in minutes (default: 25)
-  @override
-  @JsonKey()
-  final int focusDurationMinutes;
+  /// List of available timer profiles
+  final List<TimerProfile> _profiles;
 
-  /// Short break duration in minutes (default: 5)
+  /// List of available timer profiles
   @override
   @JsonKey()
-  final int shortBreakMinutes;
+  List<TimerProfile> get profiles {
+    if (_profiles is EqualUnmodifiableListView) return _profiles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_profiles);
+  }
 
-  /// Long break duration in minutes (default: 15)
+  /// ID of the currently active timer profile
   @override
   @JsonKey()
-  final int longBreakMinutes;
+  final String activeProfileId;
 
   @override
   String toString() {
-    return 'UserSettings(notificationsEnabled: $notificationsEnabled, soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, dailyGoalMinutes: $dailyGoalMinutes, weeklyGoalMinutes: $weeklyGoalMinutes, focusDurationMinutes: $focusDurationMinutes, shortBreakMinutes: $shortBreakMinutes, longBreakMinutes: $longBreakMinutes)';
+    return 'UserSettings(notificationsEnabled: $notificationsEnabled, soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, dailyGoalMinutes: $dailyGoalMinutes, weeklyGoalMinutes: $weeklyGoalMinutes, profiles: $profiles, activeProfileId: $activeProfileId)';
   }
 
   @override
@@ -271,12 +258,9 @@ class _$UserSettingsImpl extends _UserSettings {
                 other.dailyGoalMinutes == dailyGoalMinutes) &&
             (identical(other.weeklyGoalMinutes, weeklyGoalMinutes) ||
                 other.weeklyGoalMinutes == weeklyGoalMinutes) &&
-            (identical(other.focusDurationMinutes, focusDurationMinutes) ||
-                other.focusDurationMinutes == focusDurationMinutes) &&
-            (identical(other.shortBreakMinutes, shortBreakMinutes) ||
-                other.shortBreakMinutes == shortBreakMinutes) &&
-            (identical(other.longBreakMinutes, longBreakMinutes) ||
-                other.longBreakMinutes == longBreakMinutes));
+            const DeepCollectionEquality().equals(other._profiles, _profiles) &&
+            (identical(other.activeProfileId, activeProfileId) ||
+                other.activeProfileId == activeProfileId));
   }
 
   @override
@@ -287,9 +271,8 @@ class _$UserSettingsImpl extends _UserSettings {
       vibrationEnabled,
       dailyGoalMinutes,
       weeklyGoalMinutes,
-      focusDurationMinutes,
-      shortBreakMinutes,
-      longBreakMinutes);
+      const DeepCollectionEquality().hash(_profiles),
+      activeProfileId);
 
   @JsonKey(ignore: true)
   @override
@@ -305,9 +288,8 @@ abstract class _UserSettings extends UserSettings {
       final bool vibrationEnabled,
       final int dailyGoalMinutes,
       final int weeklyGoalMinutes,
-      final int focusDurationMinutes,
-      final int shortBreakMinutes,
-      final int longBreakMinutes}) = _$UserSettingsImpl;
+      final List<TimerProfile> profiles,
+      final String activeProfileId}) = _$UserSettingsImpl;
   const _UserSettings._() : super._();
 
   @override
@@ -332,16 +314,12 @@ abstract class _UserSettings extends UserSettings {
   int get weeklyGoalMinutes;
   @override
 
-  /// Focus session duration in minutes (default: 25)
-  int get focusDurationMinutes;
+  /// List of available timer profiles
+  List<TimerProfile> get profiles;
   @override
 
-  /// Short break duration in minutes (default: 5)
-  int get shortBreakMinutes;
-  @override
-
-  /// Long break duration in minutes (default: 15)
-  int get longBreakMinutes;
+  /// ID of the currently active timer profile
+  String get activeProfileId;
   @override
   @JsonKey(ignore: true)
   _$$UserSettingsImplCopyWith<_$UserSettingsImpl> get copyWith =>

@@ -26,6 +26,7 @@ abstract final class UserProfileKeys {
   static const String equippedAccessory = 'equipped_accessory';
   static const String equippedBackground = 'equipped_background';
   static const String equippedSound = 'equipped_sound';
+  static const String dailyProfileSessions = 'daily_profile_sessions';
 }
 
 /// Keys for user settings
@@ -35,9 +36,8 @@ abstract final class SettingsKeys {
   static const String vibrationEnabled = 'vibration_enabled';
   static const String dailyGoalMinutes = 'daily_goal_minutes';
   static const String weeklyGoalMinutes = 'weekly_goal_minutes';
-  static const String focusDuration = 'focus_duration';
-  static const String shortBreakDuration = 'short_break_duration';
-  static const String longBreakDuration = 'long_break_duration';
+  static const String timerProfiles = 'timer_profiles';
+  static const String activeTimerProfile = 'active_timer_profile';
 }
 
 /// Migration tracking keys

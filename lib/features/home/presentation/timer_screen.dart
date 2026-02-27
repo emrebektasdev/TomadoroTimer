@@ -87,7 +87,14 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
     // Update User Stats
     ref.read(userNotifierProvider.notifier).addTomatoes(earned);
-    ref.read(userNotifierProvider.notifier).recordFocusSession(durationMinutes);
+    final activeProfileId = ref.read(userSettingsProvider).activeProfile.id;
+    // ignore: avoid_print
+    print(
+      '[DEBUG_SESSION] _collectTomato: profileId=$activeProfileId, minutes=$durationMinutes',
+    );
+    ref
+        .read(userNotifierProvider.notifier)
+        .recordFocusSession(durationMinutes, profileId: activeProfileId);
 
     // Show animation
     _showCollectAnimation(earned);
@@ -125,8 +132,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
     final choice = await BreakChoiceModal.show(
       context,
-      shortBreakMinutes: settings.shortBreakMinutes,
-      longBreakMinutes: settings.longBreakMinutes,
+      shortBreakMinutes: settings.activeProfile.shortBreakMinutes,
+      longBreakMinutes: settings.activeProfile.longBreakMinutes,
     );
 
     if (choice == null) return;
