@@ -598,8 +598,9 @@ class _GoalCalculatorSettingState extends State<_GoalCalculatorSetting> {
                       : 1))
               .ceil();
       if (_repetitions <= 0) _repetitions = 1;
-      if (_repetitions > widget.maxRepetitions)
+      if (_repetitions > widget.maxRepetitions) {
         _repetitions = widget.maxRepetitions;
+      }
     }
   }
 

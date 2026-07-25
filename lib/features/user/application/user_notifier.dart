@@ -21,7 +21,7 @@ class UserNotifier extends StateNotifier<UserState> {
   UserNotifier(this._repository, this._historyRepository)
     : super(UserState.initial()) {
     // Load user data when notifier is created
-    _loadUserData();
+    Future.microtask(() => _loadUserData());
   }
 
   // ============ Auth State Transitions ============
@@ -54,8 +54,6 @@ class UserNotifier extends StateNotifier<UserState> {
 
   /// Loads all user data from storage.
   Future<void> _loadUserData() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
     // Load profile
     final profileResult = await _repository.getProfile();
     final settingsResult = await _repository.getSettings();

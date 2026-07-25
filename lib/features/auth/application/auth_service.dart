@@ -35,16 +35,18 @@ class AuthStateNotifier extends StateNotifier<User?> {
 
   void _checkInitialAuth() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      final previousState = state;
-      state = user;
+      Future.microtask(() {
+        final previousState = state;
+        state = user;
 
-      if (user != null && previousState == null) {
-        // User just logged in
-        _onAuthSuccess();
-      } else if (user == null && previousState != null) {
-        // User just logged out
-        _onAuthSignOut();
-      }
+        if (user != null && previousState == null) {
+          // User just logged in
+          _onAuthSuccess();
+        } else if (user == null && previousState != null) {
+          // User just logged out
+          _onAuthSignOut();
+        }
+      });
     });
   }
 

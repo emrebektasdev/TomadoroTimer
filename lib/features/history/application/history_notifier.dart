@@ -16,7 +16,7 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
   final Uuid _uuid = const Uuid();
 
   HistoryNotifier(this._repository) : super(HistoryState.initial()) {
-    _loadInitialData();
+    Future.microtask(() => _loadInitialData());
   }
 
   /// Formats a date to YYYY-MM-DD key format.
@@ -26,8 +26,6 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
 
   /// Loads initial data.
   Future<void> _loadInitialData() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
     // Load dates with activity
     final activityResult = await _repository.getDatesWithActivity();
     activityResult.fold(

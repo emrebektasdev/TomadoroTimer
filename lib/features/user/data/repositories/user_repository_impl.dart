@@ -609,16 +609,19 @@ class UserRepositoryImpl implements UserRepository {
           data['totalFocusMinutes'] ?? p.totalFocusMinutes,
         );
 
-        if (data['equippedBackground'] != null)
+        if (data['equippedBackground'] != null) {
           await _localDataSource.setEquippedBackground(
             data['equippedBackground'],
           );
-        if (data['equippedAccessory'] != null)
+        }
+        if (data['equippedAccessory'] != null) {
           await _localDataSource.setEquippedAccessory(
             data['equippedAccessory'],
           );
-        if (data['equippedSound'] != null)
+        }
+        if (data['equippedSound'] != null) {
           await _localDataSource.setEquippedSound(data['equippedSound']);
+        }
 
         if (data['lastActiveDate'] != null) {
           await _localDataSource.setLastActiveDate(

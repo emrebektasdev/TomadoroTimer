@@ -59,9 +59,6 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
 
   // Listen to UserSettings changes
   ref.listen(userSettingsProvider, (previous, next) {
-    if (next == null) return;
-
-    // Keep stored durations in sync for mode transitions
     notifier.updateProfileDurations(
       focus: next.activeProfile.focusDurationMinutes,
       shortBreak: next.activeProfile.shortBreakMinutes,
@@ -81,12 +78,12 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
       case TimerMode.longBreak:
         nextDuration = next.activeProfile.longBreakMinutes;
         break;
-      default:
-        nextDuration = next.activeProfile.focusDurationMinutes;
     }
 
     // Update the timer duration if it's currently stopped or matches this phase
-    notifier.updateDuration(nextDuration);
+    Future.microtask(() {
+      notifier.updateDuration(nextDuration);
+    });
   });
 
   return notifier;

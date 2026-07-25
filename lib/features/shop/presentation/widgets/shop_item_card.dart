@@ -33,31 +33,9 @@ class ShopItemCard extends ConsumerWidget {
             case ShopCategory.sounds:
               await userNotifier.equipSound(isEquipped ? null : item.id);
               // Play/Stop preview
-              // Note: SoundService should really be a provider or accessible via ref if possible
-              // Since it is passed to main app, we can maybe access it via Riverpod if we wrapped it?
-              // The legacy code used context.read<SoundService>().
-              // For now, let's assume we can rely on Global provider or just passed sound service?
-              // Actually, in main.dart we provided it via ChangeNotifierProvider.value.
-              // So we can still use ref.read if we had a provider for it, or use context.read for legacy provider compatibility.
-              // But usually we want to migrate away from provider.
+              // We are using Riverpod.
+              // Note: SoundService is currently passed to app root or accessed globally.
 
-              // Temporary: Use dynamic read for SoundService or assume it's available via legacy context.read if mixing.
-              // But we want to be pure Riverpod if possible.
-              // Let's check main.dart again. It uses ChangeNotifierProvider.value(value: soundService).
-              // We can create a Riverpod provider for soundService easily if not already done.
-              // Let's assume we use the legacy way specifically for SoundService for now as it wasn't refactored yet fully?
-              // Or better: Let's create a soundServiceProvider in core_providers or similar if needed.
-              // Re-reading main.dart in user snippets: existing `soundService` instance is passed around.
-              // Let's just use a simple Provider for it if we want to be clean.
-              // But for now, to avoid scope creep, I will use context.read for SoundService OR just skip preview logic?
-              // Legacy code did `context.read<SoundService>()`.
-              // I will check if I can define `soundServiceProvider` somewhere?
-              // Actually, I can just use `ref.watch(soundServiceProvider)` IF I define it.
-
-              // Plan B: Just use context.read (legacy) for SoundService since it IS in the tree.
-              // But `ConsumerWidget` build method has `ref`. `context` is also there.
-              // We need `import 'package:provider/provider.dart';` to use `context.read<SoundService>()`.
-              // I'll leave it as TODO or just basic logic.
               break;
             case ShopCategory.backgrounds:
               await userNotifier.equipBackground(isEquipped ? null : item.id);

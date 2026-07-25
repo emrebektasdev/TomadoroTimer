@@ -15,13 +15,11 @@ class ShopNotifier extends StateNotifier<ShopState> {
   final ShopRepository _repository;
 
   ShopNotifier(this._repository) : super(const ShopState()) {
-    _loadItems();
+    Future.microtask(() => _loadItems());
   }
 
   /// Loads all shop items.
   Future<void> _loadItems() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
     final result = await _repository.getAllItems();
     result.fold(
       (failure) => state = state.copyWith(

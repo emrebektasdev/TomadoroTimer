@@ -27,7 +27,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
   int _longBreakDuration = 15;
 
   TimerNotifier(this._repository, this._ticker) : super(TimerState.initial()) {
-    _restoreState();
+    Future.microtask(() => _restoreState());
   }
 
   /// Called by the provider when user settings change to keep durations in sync.
@@ -43,8 +43,6 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
   /// Restores timer state from persistence.
   Future<void> _restoreState() async {
-    state = state.copyWith(isLoading: true);
-
     final result = await _repository.loadTimerState();
     result.fold(
       (failure) {

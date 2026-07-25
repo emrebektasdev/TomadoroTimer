@@ -35,10 +35,17 @@ class _TomatoCharacterState extends State<TomatoCharacter>
   late AnimationController _bounceController;
   late AnimationController _glowController;
   late AnimationController _collectibleController;
+  late AnimationController _blinkController; // Controls the eye blink
+  late AnimationController _armController; // Controls arm waving
+
   late Animation<double> _idleAnimation;
   late Animation<double> _bounceAnimation;
   late Animation<double> _glowAnimation;
   late Animation<double> _collectibleAnimation;
+  late Animation<double> _blinkAnimation;
+  late Animation<double> _armAnimation;
+
+  final math.Random _random = math.Random();
 
   @override
   void initState() {
@@ -81,11 +88,78 @@ class _TomatoCharacterState extends State<TomatoCharacter>
       CurvedAnimation(parent: _collectibleController, curve: Curves.easeInOut),
     );
 
+    // Blink Animation (Rapid close and open)
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _blinkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _blinkController, curve: Curves.easeInOut),
+    );
+
+    // Listen to blink completion to schedule the next blink
+    _blinkController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _blinkController.reverse(); // Open eyes
+      } else if (status == AnimationStatus.dismissed) {
+        _scheduleNextBlink();
+      }
+    });
+
+    _scheduleNextBlink();
+
+    // Arm Wave Animation (Waving up and down 3 times)
+    _armController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    // Sine wave for waving back and forth
+    _armAnimation = Tween<double>(
+      begin: 0.0,
+      end: math.pi * 6,
+    ).animate(CurvedAnimation(parent: _armController, curve: Curves.linear));
+
+    _armController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _armController.reset();
+        _scheduleNextWave();
+      }
+    });
+
+    _scheduleNextWave();
+
     if (widget.isCollectible) {
       _glowController.repeat(reverse: true);
       _collectibleController.repeat(reverse: true);
       _idleController.stop(); // Stop idle when collectible/celebrating
     }
+  }
+
+  void _scheduleNextBlink() {
+    if (!mounted) return;
+    // Random blink interval between 2 and 6 seconds
+    final delay = Duration(milliseconds: 2000 + _random.nextInt(4000));
+    Future.delayed(delay, () {
+      if (mounted && !widget.isCollectible && !_blinkController.isAnimating) {
+        _blinkController.forward();
+      } else if (mounted) {
+        // If collectible, schedule another check later
+        _scheduleNextBlink();
+      }
+    });
+  }
+
+  void _scheduleNextWave() {
+    if (!mounted) return;
+    // Random arm wave interval between 5 and 15 seconds
+    final delay = Duration(milliseconds: 5000 + _random.nextInt(10000));
+    Future.delayed(delay, () {
+      if (mounted && !widget.isCollectible && !_armController.isAnimating) {
+        _armController.forward();
+      } else if (mounted) {
+        _scheduleNextWave();
+      }
+    });
   }
 
   @override
@@ -119,6 +193,8 @@ class _TomatoCharacterState extends State<TomatoCharacter>
     _bounceController.dispose();
     _glowController.dispose();
     _collectibleController.dispose();
+    _blinkController.dispose();
+    _armController.dispose();
     super.dispose();
   }
 
@@ -159,9 +235,7 @@ class _TomatoCharacterState extends State<TomatoCharacter>
 
   @override
   Widget build(BuildContext context) {
-    // DEBUG: Get actual screen width to calculate size
     final screenWidth = MediaQuery.of(context).size.width;
-    // Force size to be at least 45% of screen width if widget.size is too small
     final effectiveSize = widget.size < (screenWidth * 0.4)
         ? screenWidth * 0.45
         : widget.size;
@@ -174,21 +248,20 @@ class _TomatoCharacterState extends State<TomatoCharacter>
           _glowAnimation,
           _collectibleAnimation,
           _idleAnimation,
+          _blinkAnimation,
+          _armAnimation,
         ]),
         builder: (context, child) {
-          // Idle vs Collectible transforms
           final scale = widget.isCollectible ? 1.0 : _idleAnimation.value;
           final dy = widget.isCollectible ? _collectibleAnimation.value : 0.0;
 
           return Transform.translate(
-            offset: Offset(0, dy), // Jump action
+            offset: Offset(0, dy),
             child: Transform.scale(
-              scale: scale, // Breathe action
+              scale: scale,
               child: Container(
                 width: effectiveSize,
                 height: effectiveSize,
-                // DEBUG: Uncomment to see container bounds
-                // color: Colors.red.withOpacity(0.3),
                 decoration: widget.isCollectible
                     ? BoxDecoration(
                         shape: BoxShape.circle,
@@ -203,9 +276,7 @@ class _TomatoCharacterState extends State<TomatoCharacter>
                         ],
                       )
                     : null,
-                child: widget.useImageAssets
-                    ? _buildImageTomato(effectiveSize)
-                    : _buildPaintedTomato(),
+                child: _buildPremiumTomato(effectiveSize),
               ),
             ),
           );
@@ -214,391 +285,753 @@ class _TomatoCharacterState extends State<TomatoCharacter>
     );
   }
 
-  /// Build tomato using image assets - SIMPLIFIED VERSION
-  Widget _buildImageTomato(double size) {
-    // Hangi görsel gösterilecek?
-    final String imagePath;
-    final int stageKey;
+  /// Build premium painted tomato with anchor system
+  Widget _buildPremiumTomato(double size) {
+    // Math logic for anchors based on canvas drawing
+    // We establish the exact coordinate scale used by the TomatoPainter
+    final center = Offset(size / 2, size / 2 + size * 0.05);
+    final radius = size * 0.45;
 
-    if (widget.progress < 0.5) {
-      imagePath = 'assets/images/unripe_tomato.png';
-      stageKey = 0;
-    } else if (widget.progress < 1.0 || !widget.isCollectible) {
-      imagePath = 'assets/images/semiripe_tomato.png';
-      stageKey = 1;
-    } else {
-      imagePath = 'assets/images/ripe_tomato.png';
-      stageKey = 2;
-    }
+    // Anchor: Center of the eyes
+    final eyeY = center.dy - radius * 0.05;
+    final eyeAnchor = Offset(center.dx, eyeY);
 
-    return SizedBox(
-      width: size,
-      height: size,
-      // Kırmızı arka plan kaldırıldı - domates artık büyük görünecek
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        child: Image.asset(
-          imagePath,
-          key: ValueKey<int>(stageKey),
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            // Görsel bulunamazsa CustomPaint kullan
-            debugPrint('HATA: Görsel yüklenemedi: $imagePath - $error');
-            return CustomPaint(
-              size: Size(size, size),
-              painter: TomatoPainter(
-                color: _getTomatoColor(),
-                highlightColor: _getTomatoHighlightColor(),
-                progress: widget.progress,
-                isCollectible: widget.isCollectible,
-              ),
-            );
-          },
+    // Anchor: Top of the head / base of the stem
+    final headAnchor = Offset(center.dx, center.dy - radius * 0.95);
+
+    // Anchor: Lower body / neck area
+    final bodyAnchor = Offset(center.dx, center.dy + radius * 0.5);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 1. The Base Tomato
+        Positioned.fill(
+          child: CustomPaint(
+            painter: TomatoPainter(
+              color: _getTomatoColor(),
+              highlightColor: _getTomatoHighlightColor(),
+              progress: widget.progress,
+              isCollectible: widget.isCollectible,
+              blinkAmount: _blinkAnimation.value,
+              armWavePhase: _armAnimation.value,
+            ),
+          ),
         ),
-      ),
+
+        // 2. The Perfectly Aligned Accessory
+        if (widget.accessory != null)
+          _buildAlignedAccessory(
+            widget.accessory!,
+            size,
+            headAnchor,
+            eyeAnchor,
+            bodyAnchor,
+          ),
+      ],
     );
   }
 
-  /// Build painted tomato (fallback/alternative)
-  Widget _buildPaintedTomato() {
-    return CustomPaint(
-      painter: TomatoPainter(
-        color: _getTomatoColor(),
-        highlightColor: _getTomatoHighlightColor(),
-        progress: widget.progress,
-        isCollectible: widget.isCollectible,
-      ),
-      child: _buildAccessory(),
-    );
-  }
+  Widget _buildAlignedAccessory(
+    String accessory,
+    double size,
+    Offset headAnchor,
+    Offset eyeAnchor,
+    Offset bodyAnchor,
+  ) {
+    final accessorySize = size * 0.4; // Base accessory size
 
-  Widget? _buildAccessory() {
-    if (widget.accessory == null) return null;
+    Widget accessoryWidget;
+    Offset anchorPoint;
+    double width;
+    double height;
 
-    return Positioned(
-      top: widget.size * 0.15,
-      left: 0,
-      right: 0,
-      child: Center(child: _getAccessoryWidget(widget.accessory!)),
-    );
-  }
-
-  Widget _getAccessoryWidget(String accessory) {
-    final accessorySize = widget.size * 0.4;
-
+    // Map each accessory to its physical anchor and dimensions
     switch (accessory) {
       case 'sunglasses':
-        return CustomPaint(
-          size: Size(accessorySize, accessorySize * 0.4),
+        width = accessorySize * 1.2;
+        height = accessorySize * 0.45;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: SunglassesPainter(),
         );
+        anchorPoint = eyeAnchor;
+        break;
       case 'eyepatch':
-        return CustomPaint(
-          size: Size(accessorySize * 0.5, accessorySize * 0.4),
+        width = size; // Straps go all the way across
+        height = accessorySize * 0.45;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: EyepatchPainter(),
         );
+        anchorPoint = eyeAnchor;
+        break;
       case 'crown':
-        return CustomPaint(
-          size: Size(accessorySize, accessorySize * 0.5),
+        width = accessorySize * 1.1;
+        height = accessorySize * 0.6;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: CrownPainter(),
         );
+        anchorPoint = Offset(
+          headAnchor.dx,
+          headAnchor.dy - (height * 0.3),
+        ); // Sit slightly above stem base
+        break;
       case 'tophat':
-        return CustomPaint(
-          size: Size(accessorySize * 0.6, accessorySize * 0.7),
+        width = accessorySize * 1.3;
+        height = accessorySize * 1.0;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: TopHatPainter(),
         );
+        anchorPoint = Offset(
+          headAnchor.dx,
+          headAnchor.dy - (height * 0.4),
+        ); // Sit on top of head
+        break;
       case 'headphones':
-        return CustomPaint(
-          size: Size(accessorySize, accessorySize * 0.5),
+        width =
+            size * 0.95; // Wide enough to go around the squished tomato body
+        height = size * 0.7;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: HeadphonesPainter(),
         );
+        anchorPoint = Offset(
+          headAnchor.dx,
+          headAnchor.dy + (height * 0.4),
+        ); // Center around ears
+        break;
       case 'bowtie':
-        return CustomPaint(
-          size: Size(accessorySize * 0.5, accessorySize * 0.3),
+        width = accessorySize * 0.8;
+        height = accessorySize * 0.4;
+        accessoryWidget = CustomPaint(
+          size: Size(width, height),
           painter: BowtiePainter(),
         );
+        anchorPoint = bodyAnchor;
+        break;
       default:
         return const SizedBox.shrink();
     }
+
+    // Position the accessory exactly centered on the chosen anchor point
+    return Positioned(
+      left: anchorPoint.dx - (width / 2),
+      top: anchorPoint.dy - (height / 2),
+      width: width,
+      height: height,
+      child: accessoryWidget,
+    );
   }
+
+  // Removed _getAccessoryWidget as it's replaced by _buildAlignedAccessory
 }
 
-/// Custom painter for the tomato character
 class TomatoPainter extends CustomPainter {
   final Color color;
   final Color highlightColor;
   final double progress;
   final bool isCollectible;
+  final double blinkAmount;
+  final double armWavePhase;
 
   TomatoPainter({
     required this.color,
     required this.highlightColor,
     required this.progress,
     required this.isCollectible,
+    this.blinkAmount = 0.0,
+    this.armWavePhase = 0.0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Determine the mathematical center and base radius
     final center = Offset(size.width / 2, size.height / 2 + size.height * 0.05);
-    final radius =
-        size.width * 0.45; // Increased from 0.4 to make tomato larger
+    final radius = size.width * 0.40; // Slightly smaller to fit limbs
 
-    // Draw shadow
+    // 1. Drop Shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withAlpha(30)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+      ..color = Colors.black.withAlpha(20)
+      ..style = PaintingStyle.fill;
     canvas.drawOval(
       Rect.fromCenter(
-        center: Offset(center.dx, size.height * 0.9),
-        width: radius * 1.5,
-        height: radius * 0.3,
+        center: Offset(center.dx, center.dy + radius * 1.25),
+        width: radius * 1.3,
+        height: radius * 0.2,
       ),
       shadowPaint,
     );
 
-    // Draw tomato body
-    final bodyPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.3, -0.3),
-        radius: 1.2,
-        colors: [highlightColor, color],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
+    // Common stroke paint for all outlines
+    final outlinePaint = Paint()
+      ..color =
+          const Color(0xFF6B1D1D) // Dark red outline
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = radius * 0.08
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
 
-    // Draw slightly squished circle (tomato shape)
+    final leafOutlinePaint = Paint()
+      ..color =
+          const Color(0xFF264A1B) // Dark green outline
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = radius * 0.08
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    // 2. Legs and Shoes
+    _drawLegs(canvas, center, radius, color, outlinePaint, leafOutlinePaint);
+
+    // 3. Left Arm (Idle)
+    _drawLeftArm(canvas, center, radius, color, outlinePaint);
+
+    // 4. Right Arm (Waving based on armWavePhase)
     canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.scale(1.0, 0.9); // Slightly squished vertically
-    canvas.translate(-center.dx, -center.dy);
-    canvas.drawCircle(center, radius, bodyPaint);
+    // Rotate around the shoulder joint
+    final rightShoulder = Offset(
+      center.dx + radius * 0.85,
+      center.dy + radius * 0.2,
+    );
+    canvas.translate(rightShoulder.dx, rightShoulder.dy);
+    // Sine wave motion. Arm starts pointing up and right.
+    // Base angle -math.pi/6, fluctuates by +- 0.2 radians
+    final rotation = -math.pi / 6 + math.sin(armWavePhase) * 0.3;
+    canvas.rotate(rotation);
+    canvas.translate(-rightShoulder.dx, -rightShoulder.dy);
+    _drawRightArm(canvas, rightShoulder, radius, color, outlinePaint);
     canvas.restore();
 
-    // Draw tomato segments (subtle lines)
-    _drawTomatoSegments(canvas, center, radius);
+    // 5. Main Body
+    _drawBody(canvas, center, radius, color, outlinePaint);
 
-    // Draw highlight/shine
-    _drawHighlight(canvas, center, radius);
+    // 6. Highlights & Shading
+    _drawHighlightsAndShading(canvas, center, radius);
 
-    // Draw stem and leaves
-    _drawStemAndLeaves(canvas, size, center, radius);
+    // 7. Stem and Leaves
+    _drawStemAndLeaves(canvas, center, radius, leafOutlinePaint);
 
-    // Draw cute face
+    // 8. Face (Eyes, Mouth, Cheeks, Blinking)
     _drawFace(canvas, center, radius);
 
-    // Draw sparkles if collectible
+    // 9. Collectible Sparkles
     if (isCollectible) {
       _drawSparkles(canvas, center, radius);
     }
   }
 
-  void _drawTomatoSegments(Canvas canvas, Offset center, double radius) {
-    final segmentPaint = Paint()
-      ..color = Colors.black.withAlpha(10)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    // Draw subtle segment lines
-    for (int i = 0; i < 4; i++) {
-      final angle = (i * math.pi / 2) + (math.pi / 4);
-      final path = Path();
-      path.moveTo(
-        center.dx + math.cos(angle) * radius * 0.1,
-        center.dy - radius * 0.8,
-      );
-      path.quadraticBezierTo(
-        center.dx + math.cos(angle) * radius * 0.8,
-        center.dy,
-        center.dx + math.cos(angle) * radius * 0.1,
-        center.dy + radius * 0.7,
-      );
-      canvas.drawPath(path, segmentPaint);
-    }
-  }
-
-  void _drawHighlight(Canvas canvas, Offset center, double radius) {
-    final highlightPaint = Paint()
-      ..color = Colors.white.withAlpha(80)
+  void _drawLegs(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color bodyColor,
+    Paint outlinePaint,
+    Paint leafOutlinePaint,
+  ) {
+    final legFillPaint = Paint()
+      ..color = bodyColor
+      ..style = PaintingStyle.fill;
+    final shoeFillPaint = Paint()
+      ..color = const Color(0xFF5A9E30)
       ..style = PaintingStyle.fill;
 
-    // Main highlight
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(center.dx - radius * 0.25, center.dy - radius * 0.25),
-        width: radius * 0.4,
-        height: radius * 0.25,
-      ),
-      highlightPaint,
+    // Left Leg Setup
+    final leftLegX = center.dx - radius * 0.3;
+    final legTop = center.dy + radius * 0.8;
+    final legBottom = center.dy + radius * 1.1;
+    final legWidth = radius * 0.25;
+
+    // Left Leg rect
+    final leftLegRect = Rect.fromLTRB(
+      leftLegX - legWidth / 2,
+      legTop,
+      leftLegX + legWidth / 2,
+      legBottom,
+    );
+    canvas.drawRect(leftLegRect, legFillPaint);
+
+    // Left Leg Outline (just the sides)
+    canvas.drawLine(
+      Offset(leftLegRect.left, legTop),
+      Offset(leftLegRect.left, legBottom),
+      outlinePaint,
+    );
+    canvas.drawLine(
+      Offset(leftLegRect.right, legTop),
+      Offset(leftLegRect.right, legBottom),
+      outlinePaint,
     );
 
-    // Small secondary highlight
-    final smallHighlightPaint = Paint()..color = Colors.white.withAlpha(60);
-    canvas.drawCircle(
-      Offset(center.dx - radius * 0.35, center.dy - radius * 0.45),
-      radius * 0.08,
-      smallHighlightPaint,
+    // Left Shoe
+    final leftShoeRect = Rect.fromCenter(
+      center: Offset(leftLegX - radius * 0.05, legBottom + radius * 0.05),
+      width: radius * 0.45,
+      height: radius * 0.25,
     );
+    final leftShoeRRect = RRect.fromRectAndCorners(
+      leftShoeRect,
+      topLeft: Radius.circular(radius * 0.2),
+      topRight: Radius.circular(radius * 0.2),
+      bottomLeft: Radius.circular(radius * 0.05),
+      bottomRight: Radius.circular(radius * 0.05),
+    );
+    canvas.drawRRect(leftShoeRRect, shoeFillPaint);
+    canvas.drawRRect(leftShoeRRect, leafOutlinePaint);
+
+    // Right Leg Setup
+    final rightLegX = center.dx + radius * 0.3;
+    final rightLegRect = Rect.fromLTRB(
+      rightLegX - legWidth / 2,
+      legTop,
+      rightLegX + legWidth / 2,
+      legBottom,
+    );
+    canvas.drawRect(rightLegRect, legFillPaint);
+
+    // Right Leg Outline
+    canvas.drawLine(
+      Offset(rightLegRect.left, legTop),
+      Offset(rightLegRect.left, legBottom),
+      outlinePaint,
+    );
+    canvas.drawLine(
+      Offset(rightLegRect.right, legTop),
+      Offset(rightLegRect.right, legBottom),
+      outlinePaint,
+    );
+
+    // Right Shoe
+    final rightShoeRect = Rect.fromCenter(
+      center: Offset(rightLegX + radius * 0.05, legBottom + radius * 0.05),
+      width: radius * 0.45,
+      height: radius * 0.25,
+    );
+    final rightShoeRRect = RRect.fromRectAndCorners(
+      rightShoeRect,
+      topLeft: Radius.circular(radius * 0.2),
+      topRight: Radius.circular(radius * 0.2),
+      bottomLeft: Radius.circular(radius * 0.05),
+      bottomRight: Radius.circular(radius * 0.05),
+    );
+    canvas.drawRRect(rightShoeRRect, shoeFillPaint);
+    canvas.drawRRect(rightShoeRRect, leafOutlinePaint);
+  }
+
+  void _drawLeftArm(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color bodyColor,
+    Paint outlinePaint,
+  ) {
+    final fillPaint = Paint()
+      ..color = bodyColor
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(center.dx - radius * 0.85, center.dy + radius * 0.2);
+    // Curve out and down
+    path.quadraticBezierTo(
+      center.dx - radius * 1.3,
+      center.dy + radius * 0.5,
+      center.dx - radius * 1.1,
+      center.dy + radius * 0.9,
+    );
+    // Hand shape (mittens)
+    path.quadraticBezierTo(
+      center.dx - radius * 0.9,
+      center.dy + radius * 1.05,
+      center.dx - radius * 0.8,
+      center.dy + radius * 0.8,
+    );
+    // Thumb indentation
+    path.quadraticBezierTo(
+      center.dx - radius * 0.9,
+      center.dy + radius * 0.7,
+      center.dx - radius * 0.65,
+      center.dy + radius * 0.55,
+    );
+
+    canvas.drawPath(path, fillPaint);
+    canvas.drawPath(path, outlinePaint);
+  }
+
+  void _drawRightArm(
+    Canvas canvas,
+    Offset shoulder,
+    double radius,
+    Color bodyColor,
+    Paint outlinePaint,
+  ) {
+    final fillPaint = Paint()
+      ..color = bodyColor
+      ..style = PaintingStyle.fill;
+
+    // Draw waving right arm relative to the shoulder joint
+    final path = Path();
+    path.moveTo(shoulder.dx, shoulder.dy);
+    // Curve up and right
+    path.quadraticBezierTo(
+      shoulder.dx + radius * 0.4,
+      shoulder.dy - radius * 0.2,
+      shoulder.dx + radius * 0.6,
+      shoulder.dy - radius * 0.4,
+    );
+    // Mitten fingers
+    path.quadraticBezierTo(
+      shoulder.dx + radius * 0.7,
+      shoulder.dy - radius * 0.6,
+      shoulder.dx + radius * 0.4,
+      shoulder.dy - radius * 0.8,
+    );
+    // Thumb indent
+    path.quadraticBezierTo(
+      shoulder.dx + radius * 0.2,
+      shoulder.dy - radius * 0.7,
+      shoulder.dx - radius * 0.1,
+      shoulder.dy - radius * 0.4,
+    );
+
+    canvas.drawPath(path, fillPaint);
+    canvas.drawPath(path, outlinePaint);
+  }
+
+  void _drawBody(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color bodyColor,
+    Paint outlinePaint,
+  ) {
+    final bodyFillPaint = Paint()
+      ..color = bodyColor
+      ..style = PaintingStyle.fill;
+
+    // Perfect Circle
+    canvas.drawCircle(center, radius, bodyFillPaint);
+    canvas.drawCircle(center, radius, outlinePaint);
+  }
+
+  void _drawHighlightsAndShading(Canvas canvas, Offset center, double radius) {
+    // Inner Crescent Shadow (Bottom Right)
+    final shadowPaint = Paint()
+      ..color =
+          const Color(0xFFBA2A2A) // Darker variant of body color red
+      ..style = PaintingStyle.fill;
+
+    final shadowPath = Path();
+    shadowPath.addOval(
+      Rect.fromCircle(center: center, radius: radius * 0.95),
+    ); // Slightly inside outline
+    final cutShadowPath = Path();
+    cutShadowPath.addOval(
+      Rect.fromCircle(
+        center: Offset(center.dx - radius * 0.08, center.dy - radius * 0.08),
+        radius: radius * 0.96,
+      ),
+    );
+
+    final finalShadowPath = Path.combine(
+      PathOperation.difference,
+      shadowPath,
+      cutShadowPath,
+    );
+    canvas.save();
+    canvas.clipPath(
+      Path()..addOval(Rect.fromCircle(center: center, radius: radius * 0.96)),
+    ); // Ensure it stays inside body
+    canvas.drawPath(finalShadowPath, shadowPaint);
+    canvas.restore();
+
+    // Outer Crescent Gloss Highlight (Top Left)
+    final glossPaint = Paint()
+      ..color = Colors.white.withAlpha(200)
+      ..style = PaintingStyle.fill;
+
+    final glossPath = Path();
+    glossPath.addOval(
+      Rect.fromCircle(
+        center: Offset(center.dx - radius * 0.05, center.dy - radius * 0.05),
+        radius: radius * 0.85,
+      ),
+    );
+    final cutGlossPath = Path();
+    cutGlossPath.addOval(
+      Rect.fromCircle(
+        center: Offset(center.dx + radius * 0.05, center.dy + radius * 0.05),
+        radius: radius * 0.88,
+      ),
+    );
+
+    // Combine difference, but we only want the top-left part, so we'll clip it
+    final finalGlossPath = Path.combine(
+      PathOperation.difference,
+      glossPath,
+      cutGlossPath,
+    );
+
+    canvas.save();
+    // Clip to only keep the top-left quadrant of the highlight
+    canvas.clipRect(
+      Rect.fromLTRB(
+        center.dx - radius,
+        center.dy - radius,
+        center.dx + radius * 0.2,
+        center.dy + radius * 0.2,
+      ),
+    );
+    // Draw the curved highlight
+    canvas.drawPath(finalGlossPath, glossPaint);
+
+    // Add two small highlight spots standard in vector art below the main gloss
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx - radius * 0.75, center.dy - radius * 0.1),
+        width: radius * 0.08,
+        height: radius * 0.15,
+      ),
+      glossPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx - radius * 0.65, center.dy + radius * 0.1),
+        width: radius * 0.06,
+        height: radius * 0.12,
+      ),
+      glossPaint,
+    );
+    canvas.restore();
   }
 
   void _drawStemAndLeaves(
     Canvas canvas,
-    Size size,
     Offset center,
     double radius,
+    Paint leafOutlinePaint,
   ) {
-    final stemPaint = Paint()
-      ..color = AppColors.leafGreenDark
+    final leafFillPaint = Paint()
+      ..color =
+          const Color(0xFF63B838) // Vibrant green
       ..style = PaintingStyle.fill;
 
-    // Draw stem
+    final stemFillPaint = Paint()
+      ..color =
+          const Color(0xFF4C9329) // Slightly darker green for stem
+      ..style = PaintingStyle.fill;
+
+    // Draw Stem
     final stemPath = Path();
-    stemPath.moveTo(center.dx - 4, center.dy - radius * 0.85);
+    stemPath.moveTo(center.dx - radius * 0.05, center.dy - radius * 0.9);
+    stemPath.lineTo(center.dx - radius * 0.02, center.dy - radius * 1.3);
+    // Rounded tip
     stemPath.quadraticBezierTo(
-      center.dx,
-      center.dy - radius * 1.1,
-      center.dx + 4,
-      center.dy - radius * 0.85,
+      center.dx + radius * 0.05,
+      center.dy - radius * 1.35,
+      center.dx + radius * 0.08,
+      center.dy - radius * 1.3,
     );
-    stemPath.lineTo(center.dx + 3, center.dy - radius * 0.8);
-    stemPath.quadraticBezierTo(
-      center.dx,
-      center.dy - radius * 0.95,
-      center.dx - 3,
-      center.dy - radius * 0.8,
-    );
-    stemPath.close();
-    canvas.drawPath(stemPath, stemPaint);
+    stemPath.lineTo(center.dx + radius * 0.05, center.dy - radius * 0.9);
+    canvas.drawPath(stemPath, stemFillPaint);
+    canvas.drawPath(stemPath, leafOutlinePaint);
 
-    // Draw leaves
-    final leafPaint = Paint()
-      ..color = AppColors.leafGreen
-      ..style = PaintingStyle.fill;
+    // Draw 4 Pointy Leaves
+    // We will draw them from back to front
+    // Leaf function helper
+    void drawLeaf(Offset tip, Offset leftCtrl, Offset rightCtrl) {
+      final path = Path();
+      path.moveTo(center.dx, center.dy - radius * 0.85); // Center base
+      path.quadraticBezierTo(leftCtrl.dx, leftCtrl.dy, tip.dx, tip.dy);
+      path.quadraticBezierTo(
+        rightCtrl.dx,
+        rightCtrl.dy,
+        center.dx,
+        center.dy - radius * 0.85,
+      );
+      canvas.drawPath(path, leafFillPaint);
+      canvas.drawPath(path, leafOutlinePaint);
+      // Inner vein
+      final veinPath = Path();
+      veinPath.moveTo(center.dx, center.dy - radius * 0.85);
+      veinPath.quadraticBezierTo(
+        (tip.dx + center.dx) / 2 + radius * 0.05,
+        (tip.dy + center.dy - radius * 0.85) / 2,
+        tip.dx * 0.95,
+        tip.dy * 0.95,
+      );
+      canvas.drawPath(veinPath, leafOutlinePaint..strokeWidth = radius * 0.04);
+      leafOutlinePaint.strokeWidth = radius * 0.08; // Reset
+    }
 
-    // Right leaf
-    final rightLeafPath = Path();
-    rightLeafPath.moveTo(center.dx, center.dy - radius * 0.85);
-    rightLeafPath.quadraticBezierTo(
-      center.dx + radius * 0.5,
-      center.dy - radius * 1.1,
-      center.dx + radius * 0.4,
-      center.dy - radius * 0.7,
+    // Top Right Leaf
+    drawLeaf(
+      Offset(center.dx + radius * 0.6, center.dy - radius * 1.05),
+      Offset(center.dx + radius * 0.3, center.dy - radius * 1.15),
+      Offset(center.dx + radius * 0.4, center.dy - radius * 0.9),
     );
-    rightLeafPath.quadraticBezierTo(
-      center.dx + radius * 0.2,
-      center.dy - radius * 0.85,
-      center.dx,
-      center.dy - radius * 0.85,
-    );
-    canvas.drawPath(rightLeafPath, leafPaint);
 
-    // Left leaf
-    final leftLeafPath = Path();
-    leftLeafPath.moveTo(center.dx, center.dy - radius * 0.85);
-    leftLeafPath.quadraticBezierTo(
-      center.dx - radius * 0.5,
-      center.dy - radius * 1.1,
-      center.dx - radius * 0.4,
-      center.dy - radius * 0.7,
+    // Bottom Right Leaf
+    drawLeaf(
+      Offset(center.dx + radius * 0.7, center.dy - radius * 0.6),
+      Offset(center.dx + radius * 0.4, center.dy - radius * 0.8),
+      Offset(center.dx + radius * 0.4, center.dy - radius * 0.5),
     );
-    leftLeafPath.quadraticBezierTo(
-      center.dx - radius * 0.2,
-      center.dy - radius * 0.85,
-      center.dx,
-      center.dy - radius * 0.85,
+
+    // Top Left Leaf
+    drawLeaf(
+      Offset(center.dx - radius * 0.6, center.dy - radius * 1.05),
+      Offset(center.dx - radius * 0.4, center.dy - radius * 0.9),
+      Offset(center.dx - radius * 0.3, center.dy - radius * 1.15),
     );
-    canvas.drawPath(leftLeafPath, leafPaint);
+
+    // Bottom Left Leaf
+    drawLeaf(
+      Offset(center.dx - radius * 0.7, center.dy - radius * 0.6),
+      Offset(center.dx - radius * 0.4, center.dy - radius * 0.5),
+      Offset(center.dx - radius * 0.4, center.dy - radius * 0.8),
+    );
+
+    // Draw small center green cap to cover leaf joints
+    canvas.drawCircle(
+      Offset(center.dx, center.dy - radius * 0.85),
+      radius * 0.1,
+      stemFillPaint,
+    );
+    canvas.drawCircle(
+      Offset(center.dx, center.dy - radius * 0.85),
+      radius * 0.1,
+      leafOutlinePaint,
+    );
   }
 
   void _drawFace(Canvas canvas, Offset center, double radius) {
-    // Draw CUTER Face
-    // Bigger eyes, positioned lower and closer together for "kawaii" look
+    // Base coordinates
+    final eyeY = center.dy - radius * 0.1;
+    final eyeXOffset = radius * 0.28;
+
+    // Cheek Blushes
+    final cheekPaint = Paint()
+      ..color =
+          const Color(0xFFF25C5C) // Soft red over body color
+      ..style = PaintingStyle.fill;
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx - eyeXOffset * 1.2, center.dy + radius * 0.15),
+        width: radius * 0.25,
+        height: radius * 0.15,
+      ),
+      cheekPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx + eyeXOffset * 1.2, center.dy + radius * 0.15),
+        width: radius * 0.25,
+        height: radius * 0.15,
+      ),
+      cheekPaint,
+    );
+
+    // Mouth
+    final mouthPaint = Paint()
+      ..color =
+          const Color(0xFF3B1D1D) // Dark brown/black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = radius * 0.05
+      ..strokeCap = StrokeCap.round;
+
+    final mouthPath = Path();
+    mouthPath.moveTo(center.dx - radius * 0.15, center.dy + radius * 0.15);
+    mouthPath.quadraticBezierTo(
+      center.dx,
+      center.dy + radius * 0.3,
+      center.dx + radius * 0.15,
+      center.dy + radius * 0.15,
+    );
+    canvas.drawPath(mouthPath, mouthPaint);
+
+    // Eyes
     final eyePaint = Paint()
-      ..color = Colors.black
+      ..color = const Color(0xFF3B1D1D)
       ..style = PaintingStyle.fill;
 
     final eyeWhitePaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    // Eye config
-    final eyeY = center.dy - radius * 0.05; // Slightly lower than before
-    final eyeXOffset = radius * 0.22; // Closer together
-    final eyeWidth = radius * 0.18; // Rounder/Bigger
-    final eyeHeight = radius * 0.22;
+    // Animate eye closure
+    final eyeWidth = radius * 0.18 + (radius * 0.03 * blinkAmount);
+    final eyeHeight = radius * 0.25 * (1.0 - blinkAmount).clamp(0.05, 1.0);
+    final currentEyeY = eyeY + (radius * 0.12 * blinkAmount);
 
-    // LEFT EYE
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(center.dx - eyeXOffset, eyeY),
-        width: eyeWidth,
-        height: eyeHeight,
-      ),
-      eyePaint,
-    );
-    // Left shine (top right of pupil)
-    canvas.drawCircle(
-      Offset(center.dx - eyeXOffset + eyeWidth * 0.2, eyeY - eyeHeight * 0.2),
-      radius * 0.05,
-      eyeWhitePaint,
-    );
+    void drawEye(double centerX) {
+      // Eyelash/Eyebrow curve (only visible when not fully blinking)
+      if (blinkAmount < 0.5) {
+        final lashPath = Path();
+        // Shift eyelash based on side
+        final lashDir = centerX > center.dx ? 1.0 : -1.0;
+        lashPath.moveTo(
+          centerX + lashDir * radius * 0.1,
+          currentEyeY - eyeHeight * 0.6,
+        );
+        lashPath.quadraticBezierTo(
+          centerX + lashDir * radius * 0.2,
+          currentEyeY - eyeHeight * 0.7,
+          centerX + lashDir * radius * 0.25,
+          currentEyeY - eyeHeight * 0.5,
+        );
+        canvas.drawPath(lashPath, mouthPaint); // same dark line as mouth
+      }
 
-    // RIGHT EYE
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(center.dx + eyeXOffset, eyeY),
-        width: eyeWidth,
-        height: eyeHeight,
-      ),
-      eyePaint,
-    );
-    // Right shine
-    canvas.drawCircle(
-      Offset(center.dx + eyeXOffset + eyeWidth * 0.2, eyeY - eyeHeight * 0.2),
-      radius * 0.05,
-      eyeWhitePaint,
-    );
+      // Main Black Oval
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(centerX, currentEyeY),
+          width: eyeWidth,
+          height: eyeHeight,
+        ),
+        eyePaint,
+      );
 
-    // CUTE MOUTH
-    // Smaller, simpler curve
-    final smilePaint = Paint()
-      ..color = Colors.black.withOpacity(0.8)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = radius * 0.03
-      ..strokeCap = StrokeCap.round;
+      // White Highlights
+      if (blinkAmount < 0.5) {
+        final highlightScale = 1.0 - (blinkAmount * 2);
+        canvas.save();
+        canvas.translate(centerX, currentEyeY);
+        canvas.scale(highlightScale);
+        canvas.translate(-centerX, -currentEyeY);
 
-    final smilePath = Path();
-    smilePath.moveTo(center.dx - radius * 0.1, center.dy + radius * 0.15);
-    smilePath.quadraticBezierTo(
-      center.dx,
-      center.dy + radius * 0.22, // Subtle curve
-      center.dx + radius * 0.1,
-      center.dy + radius * 0.15,
-    );
-    canvas.drawPath(smilePath, smilePaint);
+        // Large Top Highlight
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: Offset(
+              centerX + eyeWidth * 0.1,
+              currentEyeY - eyeHeight * 0.2,
+            ),
+            width: eyeWidth * 0.45,
+            height: eyeHeight * 0.4,
+          ),
+          eyeWhitePaint,
+        );
+        // Small Bottom Highlight
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: Offset(
+              centerX - eyeWidth * 0.15,
+              currentEyeY + eyeHeight * 0.2,
+            ),
+            width: eyeWidth * 0.25,
+            height: eyeHeight * 0.2,
+          ),
+          eyeWhitePaint,
+        );
+        canvas.restore();
+      }
+    }
 
-    // CHEEKS
-    // Rosy and soft
-    final cheekPaint = Paint()
-      ..color = const Color(0xFFFF8A80)
-          .withAlpha(100) // Soft red/pink
-      ..style = PaintingStyle.fill;
-
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(center.dx - radius * 0.35, center.dy + radius * 0.08),
-        width: radius * 0.15,
-        height: radius * 0.1,
-      ),
-      cheekPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(center.dx + radius * 0.35, center.dy + radius * 0.08),
-        width: radius * 0.15,
-        height: radius * 0.1,
-      ),
-      cheekPaint,
-    );
+    drawEye(center.dx - eyeXOffset);
+    drawEye(center.dx + eyeXOffset);
   }
 
   void _drawSparkles(Canvas canvas, Offset center, double radius) {
