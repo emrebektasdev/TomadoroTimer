@@ -10,8 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/entities/timer_mode.dart';
 import '../domain/entities/timer_snapshot.dart';
 import '../domain/repositories/timer_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ticker.dart';
 import 'timer_state.dart';
 
@@ -193,33 +191,6 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
     // NOTE: Actual session recording should be done by listening to this state change
     // in the UI or a coordinator provider that calls UserNotifier / HistoryNotifier.
-
-    // BACKEND SYNC: If this was a completed focus session, send to our Node.js API
-    if (state.mode == TimerMode.focus) {
-      _syncSessionToBackend(state.initialDuration);
-    }
-  }
-
-  Future<void> _syncSessionToBackend(int durationMinutes) async {
-    try {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-      if (uid == null) return;
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('sessions')
-          .add({
-            'durationMinutes': durationMinutes,
-            'status': 'completed',
-            'timestamp': FieldValue.serverTimestamp(),
-          });
-      // ignore: avoid_print
-      print('✅ Session synced to Firestore successfully');
-    } catch (e) {
-      // ignore: avoid_print
-      print('❌ Error syncing session to Firestore: $e');
-    }
   }
 
   void _completeSession({required bool earnedTomato}) {

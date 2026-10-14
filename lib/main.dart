@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'bootstrap.dart';
+import 'core/storage/account_gate.dart';
+import 'features/user/application/user_providers.dart';
 import 'core/router/router_provider.dart';
 import 'core/services/sound_service.dart';
 import 'core/theme/app_theme.dart';
-import 'core/di/core_providers.dart';
 
 void main() async {
   // Use bootstrap for initialization
@@ -15,21 +16,18 @@ void main() async {
   final soundService = SoundService();
   await soundService.initialize();
 
-  runApp(ProviderScope(child: TomadoroApp(soundService: soundService)));
+  runApp(TomadoroApp(soundService: soundService));
 }
 
-class TomadoroApp extends ConsumerWidget {
+class TomadoroApp extends StatelessWidget {
   final SoundService soundService;
 
   const TomadoroApp({super.key, required this.soundService});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     // Override the soundServiceProvider with the initialized instance
-    return ProviderScope(
-      overrides: [soundServiceProvider.overrideWithValue(soundService)],
-      child: const _AppRoot(),
-    );
+    return AccountGate(soundService: soundService, child: const _AppRoot());
   }
 }
 
@@ -38,6 +36,7 @@ class _AppRoot extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(userNotifierProvider);
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
