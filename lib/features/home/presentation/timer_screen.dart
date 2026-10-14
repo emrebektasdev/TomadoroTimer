@@ -1,6 +1,7 @@
 /// Main timer screen using Riverpod.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/tomato_state.dart' as legacy_tomato;
@@ -300,8 +301,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
               // ============ DEBUG BUTONLARI ============
               // Bu butonlar SADECE test amaçlıdır
               // Production'da kDebugMode kontrolü ile gizlenebilir
-              if (true) // TODO: kDebugMode ile değiştir
-                _buildDebugButtons(ref),
+              if (kDebugMode) _buildDebugButtons(ref),
 
               const SizedBox(height: 100), // Space for nav bar
             ],

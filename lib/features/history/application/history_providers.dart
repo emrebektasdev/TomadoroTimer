@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/storage/account_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../core/constants/storage_keys.dart';
@@ -40,7 +41,11 @@ final historyRemoteDataSourceProvider = Provider<HistoryRemoteDataSource>((
 final historyRepositoryProvider = Provider<HistoryRepository>((ref) {
   final localDataSource = ref.watch(historyLocalDataSourceProvider);
   final remoteDataSource = ref.watch(historyRemoteDataSourceProvider);
-  return HistoryRepositoryImpl(localDataSource, remoteDataSource);
+  return HistoryRepositoryImpl(
+    localDataSource,
+    remoteDataSource,
+    accountId: ref.watch(accountIdProvider),
+  );
 });
 
 // ============ Application Layer Providers ============

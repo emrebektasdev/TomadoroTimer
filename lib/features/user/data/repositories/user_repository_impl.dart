@@ -24,7 +24,15 @@ import '../datasources/user_local_datasource.dart';
 class UserRepositoryImpl implements UserRepository {
   final UserLocalDataSource _localDataSource;
 
-  UserRepositoryImpl(this._localDataSource);
+  final String? accountId;
+  UserRepositoryImpl(this._localDataSource, {this.accountId});
+  String? _currentAccount() {
+    if (accountId == null) return null;
+    if (FirebaseAuth.instance.currentUser?.uid != accountId) {
+      throw StateError('Account changed');
+    }
+    return accountId;
+  }
 
   // ============ Profile Operations ============
 
@@ -414,7 +422,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, Unit>> fetchFromCloud() async {
     try {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uid = _currentAccount();
       if (uid == null) return const Right(unit);
 
       final userDocRef = FirebaseFirestore.instance
@@ -538,7 +546,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, Unit>> syncWithBackend() async {
     try {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uid = _currentAccount();
       if (uid == null) return const Right(unit); // Wait until user is logged in
 
       final profile = await getProfile();

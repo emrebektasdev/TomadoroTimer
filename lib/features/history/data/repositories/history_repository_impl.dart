@@ -4,6 +4,7 @@
 library;
 
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -20,7 +21,20 @@ class HistoryRepositoryImpl implements HistoryRepository {
   final HistoryLocalDataSource _localDataSource;
   final HistoryRemoteDataSource _remoteDataSource;
 
-  HistoryRepositoryImpl(this._localDataSource, this._remoteDataSource);
+  final String? accountId;
+  final String? Function() _currentUid;
+  HistoryRepositoryImpl(
+    this._localDataSource,
+    this._remoteDataSource, {
+    this.accountId,
+    String? Function()? currentUid,
+  }) : _currentUid =
+           currentUid ?? (() => FirebaseAuth.instance.currentUser?.uid);
+  void _checkAccount(String uid) {
+    if (accountId == null || accountId != uid || _currentUid() != uid) {
+      throw StateError('Cannot synchronize another account or guest history');
+    }
+  }
 
   @override
   Future<Either<Failure, FocusSession>> recordSession(
@@ -244,6 +258,7 @@ class HistoryRepositoryImpl implements HistoryRepository {
   @override
   Future<Either<Failure, Unit>> syncUnsyncedSessions(String uid) async {
     try {
+      _checkAccount(uid);
       final unsynced = _localDataSource.getUnsyncedSessions();
       if (unsynced.isEmpty) return const Right(unit);
 
@@ -269,7 +284,9 @@ class HistoryRepositoryImpl implements HistoryRepository {
   @override
   Future<Either<Failure, Unit>> restoreSessionsFromBackend(String uid) async {
     try {
+      _checkAccount(uid);
       final sessions = await _remoteDataSource.getSessions(uid);
+      _checkAccount(uid);
 
       for (final session in sessions) {
         await _localDataSource.updateOrSaveSession(session);

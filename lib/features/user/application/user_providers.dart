@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/storage/account_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../core/constants/storage_keys.dart';
@@ -31,7 +32,10 @@ final userLocalDataSourceProvider = Provider<UserLocalDataSource>((ref) {
 /// Provides the user repository implementation.
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   final dataSource = ref.watch(userLocalDataSourceProvider);
-  return UserRepositoryImpl(dataSource);
+  return UserRepositoryImpl(
+    dataSource,
+    accountId: ref.watch(accountIdProvider),
+  );
 });
 
 // ============ Application Layer Providers ============

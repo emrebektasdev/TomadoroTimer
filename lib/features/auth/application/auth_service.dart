@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../user/application/user_providers.dart';
+import 'dart:async';
 
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
@@ -12,42 +12,23 @@ final authStateProvider = StateNotifierProvider<AuthStateNotifier, User?>((
   ref,
 ) {
   final authService = ref.watch(authServiceProvider);
-  void onAuthSuccess() {
-    ref.read(userNotifierProvider.notifier).initFromCloud();
-  }
-
-  void onAuthSignOut() {
-    ref.read(userNotifierProvider.notifier).clearUserData();
-  }
-
-  return AuthStateNotifier(authService, onAuthSuccess, onAuthSignOut);
+  return AuthStateNotifier(authService);
 });
 
 class AuthStateNotifier extends StateNotifier<User?> {
   final AuthService _authService;
-  final void Function() _onAuthSuccess;
-  final void Function() _onAuthSignOut;
+  late final StreamSubscription<User?> _subscription;
 
-  AuthStateNotifier(this._authService, this._onAuthSuccess, this._onAuthSignOut)
+  AuthStateNotifier(this._authService)
     : super(FirebaseAuth.instance.currentUser) {
-    _checkInitialAuth();
-  }
-
-  void _checkInitialAuth() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      Future.microtask(() {
-        final previousState = state;
-        state = user;
-
-        if (user != null && previousState == null) {
-          // User just logged in
-          _onAuthSuccess();
-        } else if (user == null && previousState != null) {
-          // User just logged out
-          _onAuthSignOut();
-        }
-      });
+    _subscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (mounted) state = user;
     });
+  }
+  @override
+  void dispose() {
+    unawaited(_subscription.cancel());
+    super.dispose();
   }
 
   Future<void> signInWithGoogle() async {
@@ -55,7 +36,6 @@ class AuthStateNotifier extends StateNotifier<User?> {
       await _authService.signInWithGoogle();
       // the authStateChanges listener will handle updating state and syncing
     } catch (e) {
-      print('Sign in failed: $e');
       rethrow;
     }
   }
@@ -91,7 +71,6 @@ class AuthService {
         credential,
       );
 
-      print('Login Success with Firebase Auth!');
       return userCredential.user;
     } catch (e) {
       rethrow;

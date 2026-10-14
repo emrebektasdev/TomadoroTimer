@@ -21,7 +21,15 @@ class UserNotifier extends StateNotifier<UserState> {
   UserNotifier(this._repository, this._historyRepository)
     : super(UserState.initial()) {
     // Load user data when notifier is created
-    Future.microtask(() => _loadUserData());
+    Future.microtask(() async {
+      await _loadUserData();
+      if (mounted) await initFromCloud();
+    });
+  }
+
+  @override
+  set state(UserState value) {
+    if (mounted) super.state = value;
   }
 
   // ============ Auth State Transitions ============
