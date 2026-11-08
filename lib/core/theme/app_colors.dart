@@ -15,7 +15,7 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════════
 
   /// Ana domates kırmızısı - Olgun, canlı, dikkat çekici
-  static const Color tomatoRed = Color(0xFFD84315);
+  static const Color tomatoRed = Color(0xFF9D393C);
 
   /// Koyu kırmızı - Gölgeler ve derinlik
   static const Color tomatoRedDark = Color(0xFFBF360C);
@@ -36,7 +36,7 @@ class AppColors {
   static const Color tomatoHalfRipeLight = Color(0xFFFFB300);
 
   /// Olgun domates - Başarı, ödül, tatmin
-  static const Color tomatoRipe = Color(0xFFD84315);
+  static const Color tomatoRipe = Color(0xFF9D393C);
   static const Color tomatoRipeGloss = Color(0xFFFF5722);
 
   // ═══════════════════════════════════════════════════════════════
@@ -56,7 +56,7 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════════
 
   /// Ana arka plan - Sıcak krem, gün ışığı hissi
-  static const Color backgroundLight = Color(0xFFFFF8E1);
+  static const Color backgroundLight = Color(0xFFFFF8ED);
 
   /// Kremsi arka plan - Yumuşak, davetkar
   static const Color backgroundCream = Color(0xFFFFECB3);
@@ -72,7 +72,7 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════════
 
   /// Ana metin - Koyu kahve, göz yormayan
-  static const Color textPrimary = Color(0xFF3E2723);
+  static const Color textPrimary = Color(0xFF492C30);
 
   /// İkincil metin - Yumuşak kahve
   static const Color textSecondary = Color(0xFF6D4C41);
@@ -97,7 +97,7 @@ class AppColors {
   static const Color navBarBackground = Color(0xFFFFFDF7);
   static const Color navBarShadow = Color(0x1A5D4037);
   static const Color navBarIconInactive = Color(0xFFBCAAA4);
-  static const Color navBarIconActive = Color(0xFFD84315);
+  static const Color navBarIconActive = Color(0xFF9D393C);
 
   // ═══════════════════════════════════════════════════════════════
   // MAĞAZA KATEGORİLERİ
@@ -113,16 +113,16 @@ class AppColors {
 
   static const Color success = Color(0xFF558B2F);
   static const Color warning = Color(0xFFFF8F00);
-  static const Color error = Color(0xFFD84315);
+  static const Color error = Color(0xFF9D393C);
 
   // ═══════════════════════════════════════════════════════════════
   // GRAFİK RENKLERİ
   // ═══════════════════════════════════════════════════════════════
 
-  static const Color chartPrimary = Color(0xFFD84315);
+  static const Color chartPrimary = Color(0xFF9D393C);
   static const Color chartSecondary = Color(0xFFFF8F00);
   static const Color chartTertiary = Color(0xFF558B2F);
-  static const Color chartBackground = Color(0xFFFFF8E1);
+  static const Color chartBackground = Color(0xFFFFF8ED);
 
   // ═══════════════════════════════════════════════════════════════
   // GRADİENTLER
@@ -143,7 +143,7 @@ class AppColors {
   static const LinearGradient tomatoGradientRipe = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFFF5722), Color(0xFFD84315)],
+    colors: [Color(0xFFFF5722), Color(0xFF9D393C)],
   );
 
   static const LinearGradient sunsetGradient = LinearGradient(

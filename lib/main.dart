@@ -15,26 +15,16 @@ void main() async {
   final soundService = SoundService();
   await soundService.initialize();
 
-  runApp(ProviderScope(child: TomadoroApp(soundService: soundService)));
+  runApp(
+    ProviderScope(
+      overrides: [soundServiceProvider.overrideWithValue(soundService)],
+      child: const TomadoroApp(),
+    ),
+  );
 }
 
 class TomadoroApp extends ConsumerWidget {
-  final SoundService soundService;
-
-  const TomadoroApp({super.key, required this.soundService});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Override the soundServiceProvider with the initialized instance
-    return ProviderScope(
-      overrides: [soundServiceProvider.overrideWithValue(soundService)],
-      child: const _AppRoot(),
-    );
-  }
-}
-
-class _AppRoot extends ConsumerWidget {
-  const _AppRoot();
+  const TomadoroApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

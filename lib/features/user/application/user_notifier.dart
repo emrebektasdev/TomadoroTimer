@@ -126,6 +126,15 @@ class UserNotifier extends StateNotifier<UserState> {
     );
   }
 
+  Future<void> refreshAfterHarvest() async {
+    await refresh();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      _historyRepository.syncUnsyncedSessions(uid);
+      _syncToCloudSilently();
+    }
+  }
+
   /// Reloads user data (pull to refresh, etc.)
   Future<void> refresh() => _loadUserData();
 
@@ -335,7 +344,11 @@ class UserNotifier extends StateNotifier<UserState> {
   /// Equips an accessory. Pass null to unequip.
   Future<void> equipAccessory(String? accessoryId) async {
     // Verify item is purchased (if not null)
-    if (accessoryId != null && !state.isItemPurchased(accessoryId)) return;
+    if (accessoryId != null &&
+        accessoryId != 'acc_sunglasses' &&
+        !state.isItemPurchased(accessoryId)) {
+      return;
+    }
 
     final result = await _repository.equipAccessory(accessoryId);
     result.fold(
@@ -371,7 +384,11 @@ class UserNotifier extends StateNotifier<UserState> {
 
   /// Equips a sound. Pass null to unequip.
   Future<void> equipSound(String? soundId) async {
-    if (soundId != null && !state.isItemPurchased(soundId)) return;
+    if (soundId != null &&
+        !const {'sound_rain', 'sound_cafe'}.contains(soundId) &&
+        !state.isItemPurchased(soundId)) {
+      return;
+    }
 
     final result = await _repository.equipSound(soundId);
     result.fold(
@@ -391,27 +408,18 @@ class UserNotifier extends StateNotifier<UserState> {
   /// Records a purchase. Deducts balance and adds to purchased list.
   /// Returns true if successful.
   Future<bool> purchaseItem(String itemId, int price) async {
-    // Check balance
-    if (state.tomatoBalance < price) return false;
-
-    // Check if already purchased
     if (state.isItemPurchased(itemId)) return false;
 
-    // Deduct balance
-    final spentSuccessfully = await spendTomatoes(price);
-    if (!spentSuccessfully) return false;
-
-    // Record purchase
-    final result = await _repository.addPurchasedItem(itemId);
+    final result = await _repository.purchaseItem(itemId, price);
     return result.fold(
       (failure) {
-        // Refund on failure
-        addTomatoes(price);
         state = state.copyWith(errorMessage: failure.displayMessage);
         return false;
       },
-      (_) {
+      (balance) {
+        if (balance == null) return false;
         state = state.copyWith(
+          profile: state.profile.copyWith(tomatoBalance: balance),
           purchasedItemIds: [...state.purchasedItemIds, itemId],
           errorMessage: null,
         );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,7 +56,7 @@ class AuthStateNotifier extends StateNotifier<User?> {
       await _authService.signInWithGoogle();
       // the authStateChanges listener will handle updating state and syncing
     } catch (e) {
-      print('Sign in failed: $e');
+      debugPrint('Oturum açılamadı: $e');
       rethrow;
     }
   }
@@ -91,7 +92,6 @@ class AuthService {
         credential,
       );
 
-      print('Login Success with Firebase Auth!');
       return userCredential.user;
     } catch (e) {
       rethrow;

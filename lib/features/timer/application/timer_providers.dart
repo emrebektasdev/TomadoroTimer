@@ -4,6 +4,8 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../history/application/history_providers.dart';
+import '../../history/domain/entities/focus_session.dart';
 import 'ticker.dart';
 import 'timer_notifier.dart';
 import 'timer_state.dart';
@@ -47,7 +49,25 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
   final repository = ref.watch(timerRepositoryProvider);
   final ticker = ref.watch(tickerProvider);
 
-  final notifier = TimerNotifier(repository, ticker);
+  final notifier = TimerNotifier(repository, ticker, (start, minutes) async {
+    final id = 'focus_${start.microsecondsSinceEpoch}';
+    final end = start.add(Duration(minutes: minutes));
+    final record = await ref
+        .read(historyRepositoryProvider)
+        .recordSession(
+          FocusSession(
+            id: id,
+            startTime: start,
+            endTime: end,
+            durationMinutes: minutes,
+            tomatoesEarned: 1,
+          ),
+        );
+    if (record.isLeft()) throw StateError('Hasat kaydedilemedi');
+    await ref.read(userLocalDataSourceProvider).creditHarvest(id, end, minutes);
+    await ref.read(userNotifierProvider.notifier).refreshAfterHarvest();
+    await ref.read(historyNotifierProvider.notifier).refresh();
+  });
 
   // Seed profile durations from current settings immediately
   final initialSettings = ref.read(userSettingsProvider);
@@ -66,7 +86,8 @@ final timerNotifierProvider = StateNotifierProvider<TimerNotifier, TimerState>((
     );
 
     // Calculate active durations based on the active profile
-    final currentMode = notifier.debugStateMode();
+    if (previous?.activeProfile == next.activeProfile) return;
+    final currentMode = notifier.mode;
     int nextDuration;
     switch (currentMode) {
       case TimerMode.focus:

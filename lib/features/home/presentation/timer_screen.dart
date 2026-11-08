@@ -1,442 +1,408 @@
-/// Main timer screen using Riverpod.
-library;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/models/tomato_state.dart' as legacy_tomato;
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_gradients.dart';
-import '../../../../widgets/break_choice_modal.dart';
-import '../../../../widgets/tomato/tomato_character.dart';
-import '../../history/application/history_providers.dart';
+import '../../../widgets/tomato/cozy_scene.dart';
+import '../../../core/di/core_providers.dart';
+import '../../../core/services/session_alert.dart';
+import '../../shop/data/datasources/default_shop_items.dart';
 import '../../timer/application/timer_providers.dart';
 import '../../timer/domain/entities/timer_mode.dart';
 import '../../user/application/user_providers.dart';
-import 'widgets/mode_selector.dart';
-import 'widgets/timer_controls.dart';
-import 'widgets/timer_display.dart';
-import '../../../../core/services/sound_service.dart';
-import '../../../../core/di/core_providers.dart';
-import 'widgets/timer_progress.dart';
+
+final focusBackdropProvider = Provider((ref) {
+  if (ref.watch(timerModeProvider) != TimerMode.focus) return null;
+  return DefaultShopItems.backgroundFor(ref.watch(equippedBackgroundProvider));
+});
 
 class TimerScreen extends ConsumerStatefulWidget {
   const TimerScreen({super.key});
-
   @override
   ConsumerState<TimerScreen> createState() => _TimerScreenState();
 }
 
-class _TimerScreenState extends ConsumerState<TimerScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
+class _TimerScreenState extends ConsumerState<TimerScreen> {
+  final alert = SessionAlert();
+  Future<void> audioChange = Future.value();
 
-  @override
-  void initState() {
-    super.initState();
-    _playPulseAnimation();
-  }
-
-  void _playPulseAnimation() {
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-    _pulseController.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
-  // Logic for collecting tomato
-  void _collectTomato() {
-    // 1. Logic to calculate reward (mock logic for now, or use UserNotifier)
-    const earned = 1; // Simplified for MVP refactor: 1 session = 1 tomato
-
-    final timerState = ref.read(timerNotifierProvider);
-    final durationMinutes = timerState.initialDuration;
-
-    // Record session
-    // NOTE: In production, we should use timerState.startTime to calculate actual duration if interrupted,
-    // but for now we trust initialDuration as the "focused" time.
-
-    // We call HistoryNotifier to record the session
-    // We use recordSession() which takes fields directly, NOT a FocusSession object (based on my previous read of history_notifier.dart line 82)
-    // Wait, history_notifier.dart line 82: recordSession({required DateTime startTime...})
-    // It does NOT take a FocusSession object. It creates one internally.
-
-    final now = DateTime.now();
-    final startTime =
-        timerState.startTime ??
-        now.subtract(Duration(minutes: durationMinutes));
-
-    ref
-        .read(historyNotifierProvider.notifier)
-        .recordSession(
-          startTime: startTime,
-          endTime: now,
-          durationMinutes: durationMinutes,
-          tomatoesEarned: earned,
-        );
-
-    // Update User Stats
-    ref.read(userNotifierProvider.notifier).addTomatoes(earned);
-    final activeProfileId = ref.read(userSettingsProvider).activeProfile.id;
-    // ignore: avoid_print
-    print(
-      '[DEBUG_SESSION] _collectTomato: profileId=$activeProfileId, minutes=$durationMinutes',
-    );
-    ref
-        .read(userNotifierProvider.notifier)
-        .recordFocusSession(durationMinutes, profileId: activeProfileId);
-
-    // Show animation
-    _showCollectAnimation(earned);
-
-    // Call Next Mode (usually Break)
-    ref.read(timerNotifierProvider.notifier).nextMode();
-  }
-
-  void _showCollectAnimation(int earned) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('🍅', style: TextStyle(fontSize: 24)),
-            const SizedBox(width: 8),
-            Text(
-              '+$earned ${earned == 1 ? 'Tomato' : 'Tomatoes'}!',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        backgroundColor: AppColors.tomatoRed,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  Future<void> _handleTimerCompletion() async {
-    // Show Break Choice Modal
-    // We need to know current user settings for break durations
-    final settings = ref.read(userSettingsProvider);
-
-    final choice = await BreakChoiceModal.show(
-      context,
-      shortBreakMinutes: settings.activeProfile.shortBreakMinutes,
-      longBreakMinutes: settings.activeProfile.longBreakMinutes,
-    );
-
-    if (choice == null) return;
-
-    final notifier = ref.read(timerNotifierProvider.notifier);
-
-    switch (choice) {
-      case BreakChoice.shortBreak:
-        notifier.setMode(TimerMode.shortBreak);
-        break;
-      case BreakChoice.longBreak:
-        notifier.setMode(TimerMode.longBreak);
-        break;
-      case BreakChoice.skipBreak:
-        // Force focus
-        notifier.setMode(TimerMode.focus);
-        break;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Listen for completion
-    ref.listen(isTimerCompletedProvider, (prev, isCompleted) {
-      if (isCompleted) {
-        // If it was a Focus session, show break choice
-        final mode = ref.read(timerModeProvider);
-        if (mode == TimerMode.focus) {
-          _handleTimerCompletion();
-        } else {
-          // Break over, automatically go to focus or notify?
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Break is over! Time to focus.')),
-          );
-          ref.read(timerNotifierProvider.notifier).nextMode(); // Reset to Focus
-        }
-      }
-    });
-
-    // Listen for timer functionality (Ambient Sound)
-    ref.listen(isTimerRunningProvider, (prev, isRunning) {
-      final soundService = ref.read(soundServiceProvider) as SoundService;
-      final equippedSound = ref.read(equippedSoundProvider);
-
-      if (isRunning && equippedSound != null) {
-        soundService.play(equippedSound);
-      } else {
-        soundService.stop();
-      }
-    });
-
-    // Also listen for equipped sound changes while running
-    ref.listen(equippedSoundProvider, (prev, next) {
-      final isRunning = ref.read(isTimerRunningProvider);
-      if (isRunning) {
-        final soundService = ref.read(soundServiceProvider) as SoundService;
-        if (next != null) {
-          soundService.play(next);
-        } else {
-          soundService.stop();
-        }
-      }
-    });
-
-    final backgroundId = ref.watch(equippedBackgroundProvider);
-    final accessoryId = ref.watch(equippedAccessoryProvider);
-
-    final isRunning = ref.watch(isTimerRunningProvider);
-    final progress = ref.watch(timerProgressProvider);
-    final mode = ref.watch(timerModeProvider);
-
-    // Determine Tomato State (Legacy enum) based on progress
-    legacy_tomato.TomatoState tomatoState;
-    if (progress < 0.5) {
-      tomatoState = legacy_tomato.TomatoState.unripe;
-    } else if (progress < 1.0) {
-      tomatoState = legacy_tomato.TomatoState.halfRipe;
-    } else {
-      tomatoState = legacy_tomato.TomatoState.ripe;
-    }
-
-    final isCollectible = (progress >= 1.0 && mode == TimerMode.focus);
-
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: AppGradients.forId(backgroundId)),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildTopBar(context, ref),
-              Expanded(
-                child: Column(
+  Future<void> editDuration() async {
+    final state = ref.read(timerNotifierProvider);
+    var minutes = state.initialDuration.clamp(1, 180);
+    final selected = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheet) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const GardenHeading('ZAMANLAYICI', 'Süreyi ayarla'),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const ModeSelector(),
-                    const SizedBox(height: 20),
-
-                    // Tomato Character - RESPONSIVE SIZE (45-50% of screen width)
-                    Builder(
-                      builder: (context) {
-                        final screenWidth = MediaQuery.of(context).size.width;
-                        // Target 48% of screen width, clamped for safety
-                        final tomatoSize = (screenWidth * 0.48).clamp(
-                          200.0,
-                          320.0,
-                        );
-
-                        return GestureDetector(
-                          onTap: isCollectible ? _collectTomato : null,
-                          child: AnimatedBuilder(
-                            animation: _pulseAnimation,
-                            builder: (context, child) {
-                              return Transform.scale(
-                                scale: isRunning ? _pulseAnimation.value : 1.0,
-                                child: TomatoCharacter(
-                                  state: tomatoState,
-                                  progress: progress,
-                                  accessory: accessoryId?.replaceFirst(
-                                    'acc_',
-                                    '',
-                                  ),
-                                  isCollectible: isCollectible,
-                                  size: tomatoSize,
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                    TextButton(
+                      onPressed: () =>
+                          setSheet(() => minutes = (minutes - 5).clamp(1, 180)),
+                      child: const Text('−5 dk'),
                     ),
-
-                    const SizedBox(height: 8),
-                    if (isCollectible)
-                      TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(milliseconds: 500),
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: const Text(
-                              'Tap to collect! 🍅',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.tomatoRed,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                    const SizedBox(height: 24),
-                    const TimerDisplay(),
-                    const SizedBox(height: 8),
-                    const TimerProgress(),
+                    Text(
+                      '$minutes dk',
+                      style: const TextStyle(fontSize: 30, color: ink),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          setSheet(() => minutes = (minutes + 5).clamp(1, 180)),
+                      child: const Text('+5 dk'),
+                    ),
                   ],
                 ),
-              ),
-              TimerControls(
-                onCollect: _collectTomato,
-                isCollectible: isCollectible,
-              ),
-
-              // ============ DEBUG BUTONLARI ============
-              // Bu butonlar SADECE test amaçlıdır
-              // Production'da kDebugMode kontrolü ile gizlenebilir
-              if (true) // TODO: kDebugMode ile değiştir
-                _buildDebugButtons(ref),
-
-              const SizedBox(height: 100), // Space for nav bar
-            ],
+                Slider(
+                  value: minutes.toDouble(),
+                  min: 1,
+                  max: 180,
+                  divisions: 179,
+                  label: '$minutes dakika',
+                  onChanged: (v) => setSheet(() => minutes = v.round()),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, minutes),
+                  child: const Text('Süreyi kaydet'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+    if (selected == null || !mounted) return;
+    final p = ref.read(userSettingsProvider).activeProfile;
+    final updated = switch (state.mode) {
+      TimerMode.focus => p.copyWith(focusDurationMinutes: selected),
+      TimerMode.shortBreak => p.copyWith(shortBreakMinutes: selected),
+      TimerMode.longBreak => p.copyWith(longBreakMinutes: selected),
+    };
+    await ref.read(userNotifierProvider.notifier).updateTimerProfile(updated);
   }
 
-  // ============ DEBUG WIDGET ============
-  // Test amaçlı - kolayca kaldırılabilir
-  int _debugClickCount = 0; // Zamanlayıcı butonu için tıklama sayacı
-
-  Widget _buildDebugButtons(WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // BUTON 1: Zamanlayıcı Kontrolü
-          Opacity(
-            opacity: 0.4, // Yarı saydam - dikkat çekmesin
-            child: IconButton(
-              icon: const Icon(Icons.fast_forward, size: 20),
-              onPressed: () {
-                final notifier = ref.read(timerNotifierProvider.notifier);
-                final state = ref.read(timerNotifierProvider);
-
-                _debugClickCount++;
-
-                if (_debugClickCount == 1) {
-                  // İlk tık: %50'ye düşür
-                  final halfTime = (state.initialDuration * 60) ~/ 2;
-                  notifier.debugSetRemainingSeconds(halfTime);
-                  debugPrint(
-                    '[DEBUG] Zamanlayıcı %50\'ye düşürüldü: $halfTime saniye',
-                  );
-                } else {
-                  // İkinci tık: Bitir
-                  notifier.debugSetRemainingSeconds(0);
-                  _debugClickCount = 0; // Sıfırla
-                  debugPrint('[DEBUG] Zamanlayıcı bitirildi');
-                }
-              },
-              tooltip: 'Debug: Hızlı İleri',
-              color: Colors.grey,
-            ),
-          ),
-
-          const SizedBox(width: 8),
-
-          // BUTON 2: Domates Ekleme
-          Opacity(
-            opacity: 0.4,
-            child: IconButton(
-              icon: const Icon(Icons.add_circle_outline, size: 20),
-              onPressed: () {
-                ref.read(userNotifierProvider.notifier).addTomatoes(100);
-                debugPrint('[DEBUG] +100 domates eklendi');
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('+100 🍅'),
-                    duration: Duration(milliseconds: 500),
+  void sounds() => showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (_) => Consumer(
+      builder: (context, ref, _) {
+        final current = ref.watch(equippedSoundProvider);
+        final userState = ref.watch(userNotifierProvider);
+        final user = ref.read(userNotifierProvider.notifier);
+        final settings = ref.watch(userSettingsProvider);
+        final soundOptions = <String?, String>{
+          null: 'Sessiz',
+          'sound_rain': 'Camda yağmur',
+          'sound_cafe': 'Kafe uğultusu',
+          if (userState.isItemPurchased('sound_forest'))
+            'sound_forest': 'Orman esintisi',
+          if (userState.isItemPurchased('sound_ocean'))
+            'sound_ocean': 'Okyanus dalgaları',
+          if (userState.isItemPurchased('sound_fireplace'))
+            'sound_fireplace': 'Şömine çıtırtısı',
+        };
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const GardenHeading('ÇALIŞMA KÖŞESİ', 'Ortam sesi'),
+                for (final entry in soundOptions.entries)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(entry.value),
+                    trailing: current == entry.key
+                        ? const Icon(Icons.check, color: sage)
+                        : null,
+                    onTap: () => user.equipSound(entry.key),
                   ),
-                );
-              },
-              tooltip: 'Debug: +100 Domates',
-              color: Colors.grey,
+                const Divider(),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Bitiş bildirimi'),
+                  value: settings.notificationsEnabled,
+                  onChanged: user.setNotificationsEnabled,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Seans sonu zili'),
+                  value: settings.soundEnabled,
+                  onChanged: settings.notificationsEnabled
+                      ? user.setSoundEnabled
+                      : null,
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTopBar(BuildContext context, WidgetRef ref) {
-    final balance = ref.watch(tomatoBalanceProvider);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Tomadoro',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.5,
-            ),
-          ),
-          _TomatoCounter(count: balance),
-        ],
-      ),
-    );
-  }
-}
-
-/// Helper for top bar counter
-class _TomatoCounter extends StatelessWidget {
-  final int count;
-  const _TomatoCounter({required this.count});
+        );
+      },
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('🍅', style: TextStyle(fontSize: 18)),
-          const SizedBox(width: 6),
-          Text(
-            '$count',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ],
+    final s = ref.watch(timerNotifierProvider);
+    final timer = ref.read(timerNotifierProvider.notifier);
+    final focus = s.mode == TimerMode.focus;
+    final sound = ref.watch(equippedSoundProvider);
+    ref.listen(_ambientProvider, (prev, next) {
+      audioChange = audioChange
+          .then((_) {
+            final player = ref.read(soundServiceProvider);
+            return next == null ? player.stop() : player.play(next);
+          })
+          .catchError((Object e) {
+            debugPrint('Ortam sesi çalınamadı: $e');
+          });
+    });
+    ref.listen(_alarmProvider, (previous, next) {
+      if (next.end == null && previous?.end == null) return;
+      // Let a notification already due reach the system.
+      if (next.end == null && ref.read(timerNotifierProvider).isCompleted) {
+        return;
+      }
+      alert.update(
+        end: next.end,
+        chime: next.bell,
+        vibrate: next.vibrate,
+        focus: next.focus,
+      );
+    });
+    final phase = focus
+        ? 'Odak'
+        : s.mode == TimerMode.shortBreak
+        ? 'Kısa mola'
+        : 'Uzun mola';
+    final pose = s.isCompleted && focus
+        ? GardenPose.harvest
+        : !focus
+        ? GardenPose.rest
+        : s.isRunning || s.progress > 0
+        ? GardenPose.focus
+        : GardenPose.ready;
+    final nextLong = s.sessionsCompleted > 0 && s.sessionsCompleted % 4 == 0;
+    final label = s.isCompleted
+        ? (focus
+              ? (nextLong ? 'Uzun molaya başla' : 'Kısa molaya başla')
+              : 'Odağa başla')
+        : s.isRunning
+        ? 'Duraklat'
+        : s.progress > 0
+        ? 'Devam et'
+        : focus
+        ? 'Odağa başla'
+        : 'Molaya başla';
+    final accessory = ref.watch(equippedAccessoryProvider);
+    final backdrop = ref.watch(focusBackdropProvider);
+    final lightHeading = const {
+      'bg_forest',
+      'bg_night',
+      'bg_ocean',
+    }.contains(backdrop?.id);
+    return Scaffold(
+      backgroundColor: backdrop == null
+          ? const Color(0xfff1f4e8)
+          : Colors.transparent,
+      body: SafeArea(
+        bottom: false,
+        child: LayoutBuilder(
+          builder: (context, box) {
+            final sceneHeight = (box.maxHeight * .36).clamp(140.0, 290.0);
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: box.maxHeight),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 530),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 14,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GardenHeading(
+                                  backdrop == null ||
+                                          backdrop ==
+                                              DefaultShopItems.sunnyGreenhouse
+                                      ? 'SABAH SERASI'
+                                      : backdrop.name,
+                                  'Tomadoro',
+                                  foreground: lightHeading ? parchment : null,
+                                ),
+                              ),
+                              IconButton.filledTonal(
+                                tooltip: 'Ortam sesi',
+                                onPressed: sounds,
+                                icon: Icon(
+                                  sound == null
+                                      ? Icons.volume_off_outlined
+                                      : Icons.volume_up_outlined,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: sceneHeight,
+                            width: double.infinity,
+                            child: CozyScene(
+                              pose: pose,
+                              accessory: accessory,
+                              showBackground: backdrop == null,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            s.isCompleted
+                                ? (focus ? 'HASAT ZAMANI' : 'MOLA TAMAMLANDI')
+                                : '${phase.toUpperCase()}   ·   ${s.sessionsCompleted % 4 + 1} / 4',
+                            style: const TextStyle(
+                              color: sage,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.8,
+                            ),
+                          ),
+                          Semantics(
+                            button: !s.isRunning && s.progress == 0,
+                            label: '${s.formattedTime}, $phase',
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: !s.isRunning && s.progress == 0
+                                  ? editDuration
+                                  : null,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  s.formattedTime,
+                                  style: const TextStyle(
+                                    color: ink,
+                                    height: 1.16,
+                                    fontSize: 72,
+                                    letterSpacing: -3,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 162,
+                            height: 18,
+                            child: CustomPaint(painter: LeafBranch(s.progress)),
+                          ),
+                          Text(
+                            s.isCompleted
+                                ? (focus
+                                      ? 'Bir domates hasadına eklendi.'
+                                      : 'Bir sonraki seansa hazırsın.')
+                                : s.isRunning
+                                ? (focus
+                                      ? 'Şimdi yalnızca önündeki işe odaklan.'
+                                      : 'Kısa bir nefes al.')
+                                : (s.progress > 0
+                                      ? 'Kaldığın yerden devam edebilirsin.'
+                                      : 'Süreyi değiştirmek için sayaca dokun.'),
+                            style: const TextStyle(color: Color(0xff715e56)),
+                          ),
+                          const SizedBox(height: 18),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 52,
+                            child: FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: focus ? berry : sage,
+                              ),
+                              onPressed: s.isLoading
+                                  ? null
+                                  : () {
+                                      if (s.isCompleted) timer.nextMode();
+                                      if (s.isRunning) {
+                                        timer.pause();
+                                      } else {
+                                        timer.start();
+                                      }
+                                    },
+                              icon: Icon(
+                                s.isRunning
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                              ),
+                              label: Text(
+                                label,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (s.isCompleted && focus)
+                            TextButton(
+                              onPressed: () => timer.setMode(TimerMode.focus),
+                              child: const Text('Molayı geç'),
+                            )
+                          else if (!focus || s.progress > 0 || s.isRunning)
+                            TextButton(
+                              onPressed: () => focus
+                                  ? timer.reset()
+                                  : timer.setMode(TimerMode.focus),
+                              child: Text(
+                                focus ? 'Seansı sıfırla' : 'Odağa dön',
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+
+final _ambientProvider = Provider<String?>((ref) {
+  final running = ref.watch(isTimerRunningProvider);
+  return running && ref.watch(timerModeProvider) == TimerMode.focus
+      ? ref.watch(equippedSoundProvider)
+      : null;
+});
+final _alarmProvider = Provider((ref) {
+  final anchor = ref.watch(
+    timerNotifierProvider.select(
+      (s) => (
+        start: s.startTime,
+        minutes: s.initialDuration,
+        focus: s.mode == TimerMode.focus,
+      ),
+    ),
+  );
+  final settings = ref.watch(userSettingsProvider);
+  final end = settings.notificationsEnabled
+      ? anchor.start?.add(Duration(minutes: anchor.minutes))
+      : null;
+  return (
+    end: end,
+    bell: settings.soundEnabled,
+    vibrate: settings.vibrationEnabled,
+    focus: anchor.focus,
+  );
+});

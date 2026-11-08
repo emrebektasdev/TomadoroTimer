@@ -102,6 +102,5 @@ final todayStatsProvider = Provider<DailyStats>((ref) {
     return state.selectedDayStats;
   }
 
-  // If today is not selected, return selected day stats as fallback
-  return state.selectedDayStats;
+  return ref.watch(historyLocalDataSourceProvider).getDailyStats(today);
 });

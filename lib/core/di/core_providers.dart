@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../constants/storage_keys.dart';
+import '../services/sound_service.dart';
 
 /// Provides access to Hive boxes.
 final hiveProvider = Provider<HiveInterface>((ref) => Hive);
@@ -28,6 +29,6 @@ final shopDataBoxProvider = Provider<Box>((ref) {
 });
 
 /// Provides the SoundService instance (overridden in main.dart).
-final soundServiceProvider = Provider<dynamic>((ref) {
+final soundServiceProvider = Provider<SoundService>((ref) {
   throw UnimplementedError('SoundService must be overridden in ProviderScope');
 });

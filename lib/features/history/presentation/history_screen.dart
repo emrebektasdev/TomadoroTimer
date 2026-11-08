@@ -11,7 +11,9 @@ import 'tabs/history_settings_tab.dart';
 import 'tabs/history_stats_tab.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
-  const HistoryScreen({super.key});
+  final int initialTabIndex;
+
+  const HistoryScreen({super.key, this.initialTabIndex = 0});
 
   @override
   ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
@@ -24,7 +26,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 2),
+    );
   }
 
   @override
@@ -37,6 +43,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(toolbarHeight:44, leading:const BackButton()),
       body: SafeArea(
         child: Column(
           children: [
@@ -52,7 +59,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 100), // Space for nav bar
+
           ],
         ),
       ),

@@ -31,13 +31,29 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, UserProfile>> getProfile() async {
     try {
+      final lastActiveDate = _localDataSource.getLastActiveDate();
+      var currentStreak = _localDataSource.getCurrentStreak();
+
+      if (lastActiveDate != null) {
+        final daysSinceLastActive = DateTime.now().dateOnly
+            .difference(lastActiveDate.dateOnly)
+            .inDays;
+        if (daysSinceLastActive > 1 && currentStreak != 0) {
+          currentStreak = 0;
+          await _localDataSource.setCurrentStreak(0);
+        }
+        if (daysSinceLastActive > 0) {
+          await _localDataSource.setDailyProfileSessions({});
+        }
+      }
+
       final profile = UserProfile(
         tomatoBalance: _localDataSource.getTomatoBalance(),
         totalTomatoesEarned: _localDataSource.getTotalTomatoesEarned(),
         totalFocusMinutes: _localDataSource.getTotalFocusMinutes(),
-        currentStreak: _localDataSource.getCurrentStreak(),
+        currentStreak: currentStreak,
         longestStreak: _localDataSource.getLongestStreak(),
-        lastActiveDate: _localDataSource.getLastActiveDate(),
+        lastActiveDate: lastActiveDate,
       );
       return Right(profile);
     } on CacheException catch (e) {
@@ -360,6 +376,20 @@ class UserRepositoryImpl implements UserRepository {
       return Left(
         Failure.unexpected(
           message: 'Failed to load purchases',
+          originalError: e,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, int?>> purchaseItem(String itemId, int price) async {
+    try {
+      return Right(await _localDataSource.purchaseItem(itemId, price));
+    } catch (e) {
+      return Left(
+        Failure.unexpected(
+          message: 'Failed to complete purchase',
           originalError: e,
         ),
       );

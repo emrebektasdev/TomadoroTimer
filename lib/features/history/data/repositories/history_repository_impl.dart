@@ -27,13 +27,8 @@ class HistoryRepositoryImpl implements HistoryRepository {
     FocusSession session,
   ) async {
     try {
-      await _localDataSource.saveSession(session);
-      // Update daily stats
-      await _localDataSource.updateDailyStats(
-        session.startTime,
-        session.durationMinutes,
-        session.tomatoesEarned,
-      );
+      await _localDataSource.updateOrSaveSession(session);
+      await _localDataSource.rebuildDailyStats(session.startTime);
       return Right(session);
     } on CacheException catch (e) {
       return Left(Failure.cache(message: e.message, originalError: e));

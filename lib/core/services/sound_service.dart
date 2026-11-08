@@ -34,18 +34,19 @@ class SoundService extends ChangeNotifier {
         'https://assets.mixkit.co/active_storage/sfx/2497/2497-preview.mp3',
   };
 
+  static Source? sourceFor(String soundId) => switch (soundId) {
+    'sound_rain' => AssetSource('sounds/rain.wav'),
+    'sound_cafe' => AssetSource('sounds/cafe.wav'),
+    _ => switch (_soundUrls[soundId]) {
+      final String url => UrlSource(url),
+      null => null,
+    },
+  };
+
   /// Initialize the audio player
   Future<void> initialize() async {
     _audioPlayer = AudioPlayer();
     _audioPlayer!.setReleaseMode(ReleaseMode.loop);
-
-    // Listen for completion to handle looping
-    _audioPlayer!.onPlayerComplete.listen((_) {
-      if (_isPlaying && _currentSoundId != null) {
-        // Restart the sound for seamless looping
-        _playCurrentSound();
-      }
-    });
   }
 
   /// Set the sound enabled state
@@ -79,16 +80,16 @@ class SoundService extends ChangeNotifier {
 
   /// Play the current sound
   Future<void> _playCurrentSound() async {
-    if (_currentSoundId == null) return;
-
-    final url = _soundUrls[_currentSoundId];
-    if (url == null) return;
+    final soundId = _currentSoundId;
+    if (soundId == null) return;
+    final source = sourceFor(soundId);
+    if (source == null) return;
 
     try {
       _audioPlayer ??= AudioPlayer();
       await _audioPlayer!.setVolume(_volume);
       await _audioPlayer!.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer!.play(UrlSource(url));
+      await _audioPlayer!.play(source);
       _isPlaying = true;
       notifyListeners();
     } catch (e) {

@@ -361,7 +361,7 @@ class HistorySettingsTab extends ConsumerWidget {
           ],
         );
       },
-    );
+    ).whenComplete(nameController.dispose);
   }
 
   void _showDeleteConfirmation(
@@ -610,9 +610,14 @@ class _GoalCalculatorSettingState extends State<_GoalCalculatorSetting> {
     // Refresh calculations if external settings override them natively or profiles change
     if (oldWidget.initialMinutes != widget.initialMinutes ||
         oldWidget.profiles != widget.profiles) {
+      final updatedSelected = widget.profiles.firstWhere(
+        (p) => p.id == _selectedProfile.id,
+        orElse: () => _selectedProfile,
+      );
       final supposedMinutes =
-          _selectedProfile.focusDurationMinutes * _repetitions;
-      if (supposedMinutes != widget.initialMinutes) {
+          updatedSelected.focusDurationMinutes * _repetitions;
+      if (supposedMinutes != widget.initialMinutes ||
+          updatedSelected != _selectedProfile) {
         _initializeValues();
       }
     }

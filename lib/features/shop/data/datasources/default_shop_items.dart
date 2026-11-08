@@ -8,19 +8,28 @@ import '../../domain/entities/shop_item.dart';
 
 /// Static data source for shop items.
 abstract final class DefaultShopItems {
+  static const sunnyGreenhouse = ShopItem(
+    id: 'bg_sunny',
+    name: 'Güneşli Sera',
+    description: 'Gün ışığıyla dolu bir sabah serası.',
+    category: ShopCategory.backgrounds,
+    price: 0,
+    assetPath: 'assets/images/morning_greenhouse.png',
+  );
+
   /// Sound items
   static const List<ShopItem> sounds = [
     ShopItem(
       id: 'sound_rain',
-      name: 'Rain Sound',
+      name: 'Camda yağmur',
       description: 'Relaxing rain ambience for deep focus',
       category: ShopCategory.sounds,
-      price: 10,
+      price: 0,
       assetPath: 'assets/sounds/rain.mp3',
     ),
     ShopItem(
       id: 'sound_forest',
-      name: 'Forest Sound',
+      name: 'Orman esintisi',
       description: 'Peaceful forest with birds chirping',
       category: ShopCategory.sounds,
       price: 15,
@@ -28,7 +37,7 @@ abstract final class DefaultShopItems {
     ),
     ShopItem(
       id: 'sound_ocean',
-      name: 'Ocean Sound',
+      name: 'Okyanus dalgaları',
       description: 'Calm ocean waves for serenity',
       category: ShopCategory.sounds,
       price: 15,
@@ -36,15 +45,15 @@ abstract final class DefaultShopItems {
     ),
     ShopItem(
       id: 'sound_cafe',
-      name: 'Café Ambience',
+      name: 'Kafe uğultusu',
       description: 'Coffee shop background noise',
       category: ShopCategory.sounds,
-      price: 20,
+      price: 0,
       assetPath: 'assets/sounds/cafe.mp3',
     ),
     ShopItem(
       id: 'sound_fireplace',
-      name: 'Fireplace',
+      name: 'Şömine çıtırtısı',
       description: 'Cozy crackling fireplace sounds',
       category: ShopCategory.sounds,
       price: 20,
@@ -55,52 +64,67 @@ abstract final class DefaultShopItems {
   /// Background items
   static const List<ShopItem> backgrounds = [
     ShopItem(
-      id: 'bg_sunset',
-      name: 'Sunset Theme',
-      description: 'Warm sunset gradient background',
+      id: 'bg_forest',
+      name: 'Yağmurlu Sera',
+      description: 'Yağmur damlaları, ortancalar ve fener ışığı.',
       category: ShopCategory.backgrounds,
-      price: 25,
-      assetPath: 'sunset',
+      price: 30,
+      assetPath: 'assets/images/rainy_greenhouse.png',
     ),
     ShopItem(
       id: 'bg_night',
-      name: 'Night Theme',
-      description: 'Calm night sky gradient',
+      name: 'Ay Işığı',
+      description: 'Yıldızların altında ışıkları yanan bir köy.',
       category: ShopCategory.backgrounds,
       price: 25,
-      assetPath: 'night',
+      assetPath: 'assets/images/moonlight.png',
     ),
     ShopItem(
-      id: 'bg_forest',
-      name: 'Forest Theme',
-      description: 'Peaceful green forest vibes',
+      id: 'bg_sunset',
+      name: 'Sonbahar Bahçesi',
+      description: 'Altın yapraklar arasında güneşli bir bahçe yolu.',
       category: ShopCategory.backgrounds,
-      price: 30,
-      assetPath: 'forest',
+      price: 25,
+      assetPath: 'assets/images/autumn_garden.png',
     ),
     ShopItem(
       id: 'bg_ocean',
-      name: 'Ocean Theme',
-      description: 'Serene blue ocean tones',
+      name: 'Kış Kulübesi',
+      description: 'Kar yağışını izlemek için sıcacık bir pencere.',
       category: ShopCategory.backgrounds,
       price: 30,
-      assetPath: 'ocean',
+      assetPath: 'assets/images/winter_cabin.png',
     ),
   ];
+
+  static ShopItem backgroundFor(String? id) {
+    for (final item in backgrounds) {
+      if (item.id == id) return item;
+    }
+    return sunnyGreenhouse;
+  }
 
   /// Accessory items
   static const List<ShopItem> accessories = [
     ShopItem(
       id: 'acc_sunglasses',
-      name: 'Sunglasses',
+      name: 'Yuvarlak gözlük',
       description: 'Cool sunglasses for your tomato',
       category: ShopCategory.accessories,
-      price: 30,
+      price: 0,
       assetPath: 'sunglasses',
     ),
     ShopItem(
+      id: 'acc_scarf',
+      name: 'Örgü atkı',
+      description: 'Cozy knitted scarf for chilly focus days',
+      category: ShopCategory.accessories,
+      price: 2,
+      assetPath: 'scarf',
+    ),
+    ShopItem(
       id: 'acc_eyepatch',
-      name: 'Pirate Eye Patch',
+      name: 'Korsan göz bandı',
       description: 'Arrr! A pirate eye patch',
       category: ShopCategory.accessories,
       price: 35,
@@ -108,7 +132,7 @@ abstract final class DefaultShopItems {
     ),
     ShopItem(
       id: 'acc_crown',
-      name: 'Golden Crown',
+      name: 'Altın taç',
       description: 'A royal crown for the focus king',
       category: ShopCategory.accessories,
       price: 50,
@@ -116,7 +140,7 @@ abstract final class DefaultShopItems {
     ),
     ShopItem(
       id: 'acc_hat',
-      name: 'Top Hat',
+      name: 'Silindir şapka',
       description: 'Classy top hat for distinguished tomatoes',
       category: ShopCategory.accessories,
       price: 40,
@@ -124,15 +148,15 @@ abstract final class DefaultShopItems {
     ),
     ShopItem(
       id: 'acc_headphones',
-      name: 'Headphones',
+      name: 'Kulaklık',
       description: 'Music lover headphones',
       category: ShopCategory.accessories,
-      price: 35,
+      price: 4,
       assetPath: 'headphones',
     ),
     ShopItem(
       id: 'acc_bowtie',
-      name: 'Bow Tie',
+      name: 'Papyon',
       description: 'Elegant bow tie accessory',
       category: ShopCategory.accessories,
       price: 25,

@@ -18,6 +18,35 @@ class UserLocalDataSource {
 
   // ============ Profile Data ============
 
+  Future<void> creditHarvest(String id, DateTime day, int minutes) async {
+    if (_userBox.get('last_harvest_id') == id) return;
+    final last = getLastActiveDate();
+    DateTime midnight(DateTime d) => DateTime.utc(d.year, d.month, d.day);
+    final gap = last == null
+        ? 2
+        : midnight(day).difference(midnight(last)).inDays;
+    final streak = gap == 0
+        ? getCurrentStreak()
+        : gap == 1
+        ? getCurrentStreak() + 1
+        : 1;
+    final counts = gap == 0 ? getDailyProfileSessions() : <String, int>{};
+    final profile = getActiveTimerProfileId();
+    counts[profile] = (counts[profile] ?? 0) + 1;
+    await _userBox.putAll({
+      'last_harvest_id': id,
+      UserProfileKeys.tomatoBalance: getTomatoBalance() + 1,
+      UserProfileKeys.totalTomatoesEarned: getTotalTomatoesEarned() + 1,
+      UserProfileKeys.totalFocusMinutes: getTotalFocusMinutes() + minutes,
+      UserProfileKeys.currentStreak: streak,
+      UserProfileKeys.longestStreak: streak > getLongestStreak()
+          ? streak
+          : getLongestStreak(),
+      UserProfileKeys.lastActiveDate: day.toIso8601String(),
+      UserProfileKeys.dailyProfileSessions: counts,
+    });
+  }
+
   /// Gets the tomato balance.
   int getTomatoBalance() {
     return _userBox.get(UserProfileKeys.tomatoBalance, defaultValue: 0) as int;
@@ -189,6 +218,18 @@ class UserLocalDataSource {
   }
 
   // ============ Purchased Items ============
+
+  Future<int?> purchaseItem(String itemId, int price) async {
+    final purchases = getPurchasedItemIds();
+    final balance = getTomatoBalance();
+    if (price < 0 || balance < price || purchases.contains(itemId)) return null;
+
+    await _userBox.putAll({
+      UserProfileKeys.tomatoBalance: balance - price,
+      UserProfileKeys.purchasedItemIds: [...purchases, itemId],
+    });
+    return getTomatoBalance();
+  }
 
   /// Gets list of purchased item IDs.
   List<String> getPurchasedItemIds() {

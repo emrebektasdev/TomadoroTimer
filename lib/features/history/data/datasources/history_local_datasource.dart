@@ -62,11 +62,13 @@ class HistoryLocalDataSource {
 
   /// Gets sessions in a date range.
   List<FocusSession> getSessionsInRange(DateTime start, DateTime end) {
+    final startDay = start.dateOnly;
+    final endNextDay = end.dateOnly.add(const Duration(days: 1));
     return getAllSessions()
         .where(
           (s) =>
-              s.startTime.isAfter(start.subtract(const Duration(days: 1))) &&
-              s.startTime.isBefore(end.add(const Duration(days: 1))),
+              !s.startTime.isBefore(startDay) &&
+              s.startTime.isBefore(endNextDay),
         )
         .toList()
       ..sort((a, b) => b.startTime.compareTo(a.startTime));
@@ -76,8 +78,16 @@ class HistoryLocalDataSource {
   Future<void> deleteSession(String sessionId) async {
     try {
       final sessions = _getSessions();
+      final removed = sessions.where((s) => s['id'] == sessionId).toList();
       sessions.removeWhere((s) => s['id'] == sessionId);
       await _historyBox.put(_sessionsKey, jsonEncode(sessions));
+      for (final s in removed) {
+        final startStr = s['startTime'] as String?;
+        final startTime = startStr != null ? DateTime.tryParse(startStr) : null;
+        if (startTime != null) {
+          await rebuildDailyStats(startTime);
+        }
+      }
     } catch (e, stackTrace) {
       throw CacheException(
         'Failed to delete session',
@@ -145,6 +155,9 @@ class HistoryLocalDataSource {
       return _calculateDailyStats(date);
     }
   }
+
+  Future<void> rebuildDailyStats(DateTime date) =>
+      saveDailyStats(_calculateDailyStats(date));
 
   /// Saves daily stats.
   Future<void> saveDailyStats(DailyStats stats) async {

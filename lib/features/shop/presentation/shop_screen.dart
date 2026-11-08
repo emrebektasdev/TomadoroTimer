@@ -37,6 +37,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(toolbarHeight:44, leading:const BackButton()),
       body: SafeArea(
         child: Column(
           children: [
@@ -64,7 +65,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 100), // Space for nav bar
+
           ],
         ),
       ),
@@ -192,7 +193,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen>
       tooltip: 'Profile',
       child: CircleAvatar(
         radius: 16,
-        backgroundColor: AppColors.tomatoRed.withOpacity(0.1),
+        backgroundColor: AppColors.tomatoRed.withValues(alpha:0.1),
         backgroundImage: authState?.photoURL != null
             ? NetworkImage(authState!.photoURL!)
             : null,

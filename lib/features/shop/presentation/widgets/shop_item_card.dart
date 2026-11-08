@@ -243,6 +243,8 @@ class ShopItemCard extends ConsumerWidget {
     switch (id) {
       case 'acc_sunglasses':
         return Icons.wb_sunny_rounded;
+      case 'acc_scarf':
+        return Icons.dry_cleaning_outlined;
       case 'acc_eyepatch':
         return Icons.visibility_off_rounded;
       case 'acc_crown':

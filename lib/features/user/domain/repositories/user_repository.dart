@@ -64,6 +64,10 @@ abstract class UserRepository {
 
   // ============ Purchase Tracking ============
 
+  /// Records ownership and deducts the price together.
+  /// Returns the new balance, or null when the purchase is unavailable.
+  Future<Either<Failure, int?>> purchaseItem(String itemId, int price);
+
   /// Gets the list of purchased item IDs.
   Future<Either<Failure, List<String>>> getPurchasedItemIds();
 

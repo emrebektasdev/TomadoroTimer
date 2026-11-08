@@ -146,10 +146,15 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
         state = state.copyWith(errorMessage: failure.displayMessage);
         return false;
       },
-      (_) {
+      (_) async {
+        final activityResult = await _repository.getDatesWithActivity();
+        activityResult.fold(
+          (_) {},
+          (dates) => state = state.copyWith(datesWithActivity: dates),
+        );
         // Refresh the day's data
-        _loadSelectedDayData();
-        _refreshWeekStats();
+        await _loadSelectedDayData();
+        await _refreshWeekStats();
         return true;
       },
     );

@@ -61,8 +61,10 @@ class UserState with _$UserState {
   String? get equippedBackground => equippedItems.backgroundId;
   String? get equippedSound => equippedItems.soundId;
 
-  /// Whether an item is purchased
-  bool isItemPurchased(String itemId) => purchasedItemIds.contains(itemId);
+  /// Whether an item is purchased (or free by default)
+  bool isItemPurchased(String itemId) =>
+      const {'acc_sunglasses', 'sound_rain', 'sound_cafe'}.contains(itemId) ||
+      purchasedItemIds.contains(itemId);
 
   /// Whether an item is equipped
   bool isItemEquipped(String itemId) =>
