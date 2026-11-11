@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -19,7 +20,12 @@ typedef _Frame = ({
   _Socket face,
 });
 
-typedef _SpriteImage = ({ui.Image image, Rect source, Rect destination});
+typedef _SpriteImage = ({
+  ui.Image image,
+  Rect source,
+  Rect destination,
+  Offset? contact,
+});
 
 class FocusClips {
   FocusClips._(
@@ -143,6 +149,9 @@ class FocusClips {
           image: decoded[region['page']]!,
           source: rect(region['source']),
           destination: rect(region['destination']),
+          contact: region['contact'] == null
+              ? null
+              : TomatoClip._offset(region['contact']),
         );
       }
     } catch (_) {
@@ -193,6 +202,42 @@ class TomatoClip {
   final _Socket _accessoryOrigin;
   final bool _blendArmOrder;
   final _Frame? _transitionFrom;
+
+  double get axisX => _frames.first.face.position.dx;
+
+  /// Find the actual supporting sole or crossed-leg seat, never the PNG edge.
+  double groundYAt(double progress) {
+    double ground(_Frame frame) {
+      var bottom = double.negativeInfinity;
+      for (final id in [
+        'Ayak_Sag',
+        'Ayak_Sol',
+        'Bacak_Sag',
+        'Bacak_Sol',
+        'Govde',
+      ]) {
+        final sprite = frame.sprites[id]!;
+        final point = _images[sprite.path]!.contact;
+        if (point == null) continue;
+        final delta = (point - sprite.pivot).scale(
+          sprite.scale.dx,
+          sprite.scale.dy,
+        );
+        bottom = math.max(
+          bottom,
+          sprite.position.dy +
+              math.sin(sprite.rotation) * delta.dx +
+              math.cos(sprite.rotation) * delta.dy,
+        );
+      }
+      return bottom;
+    }
+
+    final from = _transitionFrom;
+    if (from == null) return ground(_sample(progress));
+    final t = Curves.easeInOut.transform(progress.clamp(0.0, 1.0));
+    return ground(from) * (1 - t) + ground(_frames.first) * t;
+  }
 
   /// Retain the exact visible sample, then settle into the completion pose.
   /// Deformed PNGs blend in canvas space; shared rigid parts interpolate their
@@ -299,6 +344,7 @@ class TomatoClipPainter extends CustomPainter {
     required this.glasses,
     required this.scarf,
     this.otherAccessory,
+    this.grounded = false,
   }) : super(repaint: progress);
 
   final TomatoClip clip;
@@ -306,6 +352,7 @@ class TomatoClipPainter extends CustomPainter {
   final bool glasses;
   final bool scarf;
   final CustomPainter? otherAccessory;
+  final bool grounded;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -320,10 +367,19 @@ class TomatoClipPainter extends CustomPainter {
     final mix = Curves.easeInOut.transform(progress.value.clamp(0.0, 1.0));
 
     canvas.save();
-    canvas.scale(
-      size.width / clip._size.width,
-      size.height / clip._size.height,
-    );
+    if (grounded) {
+      final scale = size.width * .9 / clip._size.width;
+      canvas.translate(
+        size.width / 2 - clip.axisX * scale,
+        size.height * .85 - clip.groundYAt(progress.value) * scale,
+      );
+      canvas.scale(scale);
+    } else {
+      canvas.scale(
+        size.width / clip._size.width,
+        size.height / clip._size.height,
+      );
+    }
     final before = clip._frames[sampledFrame.floor()].drawOrder;
     final after = clip._frames[sampledFrame.ceil()].drawOrder;
     if (transition != null) {
@@ -442,5 +498,6 @@ class TomatoClipPainter extends CustomPainter {
       progress != oldDelegate.progress ||
       glasses != oldDelegate.glasses ||
       scarf != oldDelegate.scarf ||
+      grounded != oldDelegate.grounded ||
       otherAccessory != oldDelegate.otherAccessory;
 }

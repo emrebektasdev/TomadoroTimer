@@ -29,6 +29,7 @@ def main():
     sit = paths_by_clip[0]
     focus = sit | paths_by_clip[1]
     sprites = []
+    contacts = {}
     for path in sorted(set.union(*paths_by_clip)):
         # Match the previous runtime decode sizes before trimming. This keeps
         # shared rigid art at 360px, focus art at 256px and waiting art at 224px.
@@ -36,6 +37,9 @@ def main():
         with Image.open(EXPORT / path) as source:
             original_width, original_height = source.size
             image = source.convert('RGBA')
+        opaque = image.getchannel('A').point(lambda value: 255 if value >= 96 else 0).getbbox()
+        if opaque is not None:
+            contacts[path] = [(opaque[0] + opaque[2]) / 2, opaque[3] - .5]
         width = min(width, original_width)
         height = round(original_height * width / original_width)
         image = image.resize((width, height), Image.Resampling.LANCZOS)
@@ -71,6 +75,8 @@ def main():
         regions[path] = {'page': index,
                          'source': [x + PADDING, y + PADDING, image.width, image.height],
                          'destination': destination}
+        if path in contacts:
+            regions[path]['contact'] = contacts[path]
     OUTPUT.mkdir(parents=True, exist_ok=True)
     files = []
     pixels = 0

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../widgets/tomato/cozy_scene.dart';
 import '../../../widgets/tomato/tomato_clip.dart';
 import '../../../widgets/tomato/focus_progress_ring.dart';
+import '../../../widgets/tomato/focus_composition.dart';
 import '../../../core/di/core_providers.dart';
 import '../../../core/services/session_alert.dart';
 import '../../shop/data/datasources/default_shop_items.dart';
@@ -85,6 +86,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
   bool _debugFrozen = false;
   bool? _debugGlasses;
   bool? _debugScarf;
+  bool _debugPanelOpen = false;
 
   @override
   void initState() {
@@ -602,6 +604,25 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       'bg_night',
       'bg_ocean',
     }.contains(backdrop?.id);
+    if (focus) {
+      return _focusScreen(
+        s: s,
+        label: label,
+        pose: pose,
+        clip: clip,
+        accessory: accessory,
+        glasses: glasses,
+        scarf: scarf,
+        asset:
+            backdrop?.assetPath ?? DefaultShopItems.sunnyGreenhouse.assetPath!,
+        eyebrow:
+            backdrop == null || backdrop == DefaultShopItems.sunnyGreenhouse
+            ? 'SABAH SERASI'
+            : backdrop.name,
+        lightHeading: lightHeading,
+        muted: sound == null,
+      );
+    }
     return Scaffold(
       backgroundColor: backdrop == null
           ? const Color(0xfff1f4e8)
@@ -683,6 +704,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                           FocusProgressRing(
                             progress: s.progress,
                             glow: _completionGlow,
+                            strokeWidth: 3,
+                            foreground: sage,
+                            track: sage.withValues(alpha: .18),
                             label: focus
                                 ? 'Odak ilerlemesi'
                                 : 'Mola ilerlemesi',
@@ -813,6 +837,307 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
     );
   }
 
+  Widget _focusScreen({
+    required TimerState s,
+    required String label,
+    required GardenPose pose,
+    required TomatoClip? clip,
+    required String? accessory,
+    required bool glasses,
+    required bool scarf,
+    required String asset,
+    required String eyebrow,
+    required bool lightHeading,
+    required bool muted,
+  }) {
+    final media = MediaQuery.of(context);
+    final inherited = FocusCompositionScope.maybeOf(context);
+    final timer = ref.read(timerNotifierProvider.notifier);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: LayoutBuilder(
+        builder: (context, box) {
+          final spec = FocusBackdropSpec.forAsset(asset);
+          final layout =
+              inherited ??
+              FocusComposition.calculate(
+                viewport: media.size,
+                bodyHeight: box.maxHeight,
+                safeTop: media.padding.top,
+                backdrop: spec,
+                textScale: media.textScaler.scale(1),
+              );
+          final contentWidth = (box.maxWidth - 40).clamp(0.0, 490.0);
+          final inset = (box.maxWidth - contentWidth) / 2;
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              if (inherited == null)
+                Positioned.fill(
+                  child: FocusBackdrop(spec: spec, composition: layout),
+                ),
+              Positioned(
+                left: inset,
+                right: inset,
+                top: layout.headerTop,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GardenHeading(
+                        eyebrow,
+                        'Tomadoro',
+                        foreground: lightHeading ? parchment : null,
+                        fitTitle: true,
+                      ),
+                    ),
+                    IconButton.filledTonal(
+                      tooltip: 'Ortam sesi',
+                      onPressed: sounds,
+                      icon: Icon(
+                        muted
+                            ? Icons.volume_off_outlined
+                            : Icons.volume_up_outlined,
+                      ),
+                    ),
+                    if (kDebugMode)
+                      IconButton(
+                        tooltip: 'Klip testi',
+                        onPressed: clip == null
+                            ? null
+                            : () => setState(
+                                () => _debugPanelOpen = !_debugPanelOpen,
+                              ),
+                        icon: Icon(
+                          Icons.bug_report_outlined,
+                          size: 20,
+                          color: lightHeading ? parchment : ink,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned.fromRect(
+                rect: layout.ringRect,
+                child: FocusProgressRing(
+                  key: const ValueKey('focus-ring'),
+                  progress: s.progress,
+                  glow: _completionGlow,
+                  child: CozyScene(
+                    pose: pose,
+                    accessory: accessory,
+                    showBackground: false,
+                    grounded: true,
+                    motion: clip == null
+                        ? null
+                        : (
+                            clip: clip,
+                            progress: _clipProgress,
+                            glasses: glasses,
+                            scarf: scarf,
+                          ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: layout.ringRect.bottom + 8,
+                left: inset,
+                right: inset,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 16,
+                      child: s.isCompleted
+                          ? null
+                          : Text(
+                              'ODAK   ·   ${s.sessionsCompleted % 4 + 1} / 4',
+                              style: const TextStyle(
+                                color: sage,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                    ),
+                    SizedBox(
+                      height: layout.timerHeight,
+                      child: Semantics(
+                        button: !s.isRunning && s.progress == 0,
+                        label: '${s.formattedTime}, Odak',
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: !s.isRunning && s.progress == 0
+                              ? editDuration
+                              : null,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              s.formattedTime,
+                              style: TextStyle(
+                                color: ink,
+                                height: 1.12,
+                                fontSize: layout.timerFont,
+                                letterSpacing: -2.5,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      height: layout.captionHeight,
+                      child: Center(
+                        child: Text(
+                          s.isCompleted
+                              ? 'Oturum tamamlandı'
+                              : s.isRunning
+                              ? 'Şimdi yalnızca önündeki işe odaklan.'
+                              : s.progress > 0
+                              ? 'Kaldığın yerden devam edebilirsin.'
+                              : 'Süreyi değiştirmek için sayaca dokun.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: ink.withValues(alpha: .8),
+                            fontSize: 12.5,
+                            fontWeight: s.isCompleted
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(backgroundColor: berry),
+                        onPressed: s.isLoading
+                            ? null
+                            : () {
+                                if (s.isCompleted) timer.nextMode();
+                                if (s.isRunning) {
+                                  timer.pause();
+                                } else {
+                                  timer.start();
+                                }
+                              },
+                        icon: Icon(
+                          s.isRunning
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                        ),
+                        label: Text(
+                          label,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: s.isCompleted
+                          ? TextButton(
+                              onPressed: () => timer.setMode(TimerMode.focus),
+                              child: const Text('Molayı geç'),
+                            )
+                          : Visibility(
+                              visible: !_motion.isWaiting,
+                              maintainState: true,
+                              maintainAnimation: true,
+                              maintainSize: true,
+                              child: TextButton(
+                                onPressed: () {
+                                  timer.reset();
+                                  _resetFocusMotion();
+                                },
+                                child: const Text('Seansı sıfırla'),
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              if (kDebugMode && _clips != null)
+                Positioned(
+                  left: 12,
+                  right: 12,
+                  bottom: 8,
+                  child: Offstage(
+                    offstage: !_debugPanelOpen,
+                    child: Material(
+                      color: parchment,
+                      elevation: 5,
+                      borderRadius: BorderRadius.circular(18),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: (box.maxHeight * .42).clamp(160.0, 300.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 2, 10, 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                      'Klip testi',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Klip testini kapat',
+                                    onPressed: () =>
+                                        setState(() => _debugPanelOpen = false),
+                                    icon: const Icon(Icons.close, size: 20),
+                                  ),
+                                ],
+                              ),
+                              Flexible(
+                                fit: FlexFit.loose,
+                                child: SingleChildScrollView(
+                                  child: _clipDebugControls(
+                                    (s.isRunning ||
+                                            _motion.isCompletion &&
+                                                _motion !=
+                                                    _FocusMotion.completed) &&
+                                        clip != null,
+                                    _motion == _FocusMotion.idle &&
+                                        _canPlayWaiting(s),
+                                    glasses,
+                                    scarf,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _playDebugGesture(_FocusMotion gesture) {
+    setState(() => _debugPanelOpen = false);
+    _startWaitingGesture(gesture);
+  }
+
   Widget _clipDebugControls(
     bool active,
     bool canPlayGesture,
@@ -823,42 +1148,42 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
     crossAxisAlignment: WrapCrossAlignment.center,
     spacing: 6,
     children: [
-      const Text('Klip testi', style: TextStyle(fontSize: 11)),
       TextButton(
         onPressed: ref.watch(timerNotifierProvider).isRunning
             ? null
-            : () => ref
-                  .read(timerNotifierProvider.notifier)
-                  .debugStartShortFocus(),
+            : () {
+                setState(() => _debugPanelOpen = false);
+                ref.read(timerNotifierProvider.notifier).debugStartShortFocus();
+              },
         child: const Text('10 saniyelik odak'),
       ),
       TextButton(
         onPressed: canPlayGesture
-            ? () => _startWaitingGesture(_FocusMotion.thinking)
+            ? () => _playDebugGesture(_FocusMotion.thinking)
             : null,
         child: const Text('Düşünmeyi oynat'),
       ),
       TextButton(
         onPressed: canPlayGesture
-            ? () => _startWaitingGesture(_FocusMotion.fixingLeaf)
+            ? () => _playDebugGesture(_FocusMotion.fixingLeaf)
             : null,
         child: const Text('Yaprak düzeltmeyi oynat'),
       ),
       TextButton(
         onPressed: canPlayGesture
-            ? () => _startWaitingGesture(_FocusMotion.fidgeting)
+            ? () => _playDebugGesture(_FocusMotion.fidgeting)
             : null,
         child: const Text('Oyalanmayı oynat'),
       ),
       TextButton(
         onPressed: canPlayGesture
-            ? () => _startWaitingGesture(_FocusMotion.stretching)
+            ? () => _playDebugGesture(_FocusMotion.stretching)
             : null,
         child: const Text('Esnemeyi oynat'),
       ),
       TextButton(
         onPressed: canPlayGesture
-            ? () => _startWaitingGesture(_FocusMotion.rebalancing)
+            ? () => _playDebugGesture(_FocusMotion.rebalancing)
             : null,
         child: const Text('Denge toplamayı oynat'),
       ),

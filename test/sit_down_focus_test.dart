@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tomadoro/features/shell/presentation/shell_screen.dart';
 import 'package:tomadoro/core/error/failures.dart';
 import 'package:tomadoro/features/home/presentation/timer_screen.dart';
 import 'package:tomadoro/features/timer/application/timer_providers.dart';
@@ -70,6 +72,8 @@ Future<ProviderContainer> _openFocus(
   StateProvider<String?>? equipped,
   StateProvider<String?>? background,
   TimerNotifier? timer,
+  bool withNavigation = false,
+  bool withRouterShell = false,
 }) async {
   final container = ProviderContainer(
     overrides: [
@@ -88,19 +92,60 @@ Future<ProviderContainer> _openFocus(
     ],
   );
   addTearDown(container.dispose);
+  GoRouter? router;
+  if (withRouterShell) {
+    router = GoRouter(
+      initialLocation: '/focus',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, shell) =>
+              ShellScreen(navigationShell: shell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(path: '/harvest', builder: (_, _) => const SizedBox()),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(path: '/focus', builder: (_, _) => const TimerScreen()),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/shop',
+                  builder: (_, _) =>
+                      const Center(child: Text('Koleksiyon testi')),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+  }
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(
-        home: visible == null
-            ? const TimerScreen()
-            : ValueListenableBuilder(
-                valueListenable: visible,
-                builder: (_, enabled, child) =>
-                    TickerMode(enabled: enabled, child: child!),
-                child: const TimerScreen(),
-              ),
-      ),
+      child: router != null
+          ? MaterialApp.router(routerConfig: router)
+          : MaterialApp(
+              home: withNavigation
+                  ? const Scaffold(
+                      body: TimerScreen(),
+                      bottomNavigationBar: SizedBox(height: 88),
+                    )
+                  : visible == null
+                  ? const TimerScreen()
+                  : ValueListenableBuilder(
+                      valueListenable: visible,
+                      builder: (_, enabled, child) =>
+                          TickerMode(enabled: enabled, child: child!),
+                      child: const TimerScreen(),
+                    ),
+            ),
     ),
   );
   await tester.pump();
@@ -108,6 +153,26 @@ Future<ProviderContainer> _openFocus(
 }
 
 Future<void> _press(WidgetTester tester, String label) async {
+  const debugLabels = {
+    '10 saniyelik odak',
+    'Düşünmeyi oynat',
+    'Yaprak düzeltmeyi oynat',
+    'Oyalanmayı oynat',
+    'Esnemeyi oynat',
+    'Denge toplamayı oynat',
+    'Dondur',
+    'Sürdür',
+    'Gözlük',
+    'Atkı',
+  };
+  if (debugLabels.contains(label) && find.text(label).evaluate().isEmpty) {
+    await tester.tap(find.byTooltip('Klip testi'));
+    await tester.pump();
+  } else if (!debugLabels.contains(label) &&
+      find.byTooltip('Klip testini kapat').evaluate().isNotEmpty) {
+    await tester.tap(find.byTooltip('Klip testini kapat'));
+    await tester.pump();
+  }
   final button = find.text(label);
   expect(button, findsOneWidget);
   await tester.ensureVisible(button);
@@ -158,6 +223,73 @@ Future<List<int>> _plantedSole(
 
 void main() {
   setUp(rootBundle.clear);
+
+  testWidgets(
+    'Actual bottom navigation retains the loaded clip and sitting pose',
+    (tester) async {
+      tester.view.physicalSize = const Size(448, 997);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final container = await _openFocus(tester, withRouterShell: true);
+      await _waitForClips(tester);
+      await _press(tester, 'Odağa başla');
+      await tester.pump(const Duration(milliseconds: 400));
+      final clip = _painter(tester).clip;
+      final position = _painter(tester).progress.value;
+      await tester.tap(find.text('Gardırop'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 3));
+      await tester.tap(find.text('Odak'));
+      await tester.pump();
+      await _waitForClips(tester);
+      expect(_painter(tester).clip, same(clip));
+      expect(_painter(tester).progress.value, position);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(_painter(tester).progress.value, closeTo(position + .1, .01));
+      container.read(timerNotifierProvider.notifier).pause();
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
+  for (final size in [
+    const Size(320, 640),
+    const Size(384, 832),
+    const Size(448, 997),
+  ]) {
+    testWidgets('Focus ring surrounds mascot and fits controls at $size', (
+      tester,
+    ) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await _openFocus(
+        tester,
+        background: StateProvider<String?>((ref) => null),
+        withNavigation: true,
+      );
+      await _waitForClips(tester);
+      expect(find.descendant(of: _ring, matching: _painted), findsOneWidget);
+      final ring = tester.getRect(_ring);
+      final timer = tester.getRect(find.text('25:00'));
+      expect(timer.top, greaterThan(ring.bottom));
+      expect(
+        tester.getRect(find.text('Odağa başla')).bottom,
+        lessThan(size.height - 88),
+      );
+      expect(tester.getRect(find.text('Tomadoro')).bottom, lessThan(ring.top));
+      final shadow = tester.getRect(
+        find.byKey(const ValueKey('focus-ground-shadow')),
+      );
+      expect(shadow.center.dy, closeTo(ring.top + ring.height * .85 + 2, .001));
+      await tester.tap(find.byTooltip('Klip testi'));
+      await tester.pump();
+      expect(tester.getRect(_ring), ring);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
 
   testWidgets(
     'Hidden focus resumes its shown sitting and breathing poses without a jump',
@@ -494,6 +626,8 @@ void main() {
       final behind = await _armCrossingRed(leaf, 47);
       expect(crossing, greaterThan(behind + 25));
     });
+    await tester.tap(find.byTooltip('Klip testi'));
+    await tester.pump();
     expect(
       tester
           .widget<TextButton>(
