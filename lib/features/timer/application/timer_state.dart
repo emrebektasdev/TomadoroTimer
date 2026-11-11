@@ -19,6 +19,9 @@ class TimerState with _$TimerState {
     /// Initial duration in minutes
     required int initialDuration,
 
+    /// Exact duration for short debug sessions; normal profiles use minutes.
+    int? sessionDurationSeconds,
+
     /// Remaining seconds to display
     required int remainingSeconds,
 
@@ -50,11 +53,11 @@ class TimerState with _$TimerState {
   );
 
   /// Progress from 0.0 to 1.0
+  int get totalSeconds => sessionDurationSeconds ?? initialDuration * 60;
+
   double get progress {
-    if (initialDuration == 0) return 0.0;
-    final totalSeconds = initialDuration * 60;
-    if (totalSeconds == 0) return 0.0;
-    return 1.0 - (remainingSeconds / totalSeconds);
+    if (totalSeconds <= 0) return 0.0;
+    return (1.0 - remainingSeconds / totalSeconds).clamp(0.0, 1.0);
   }
 
   /// Formatted time (MM:SS)

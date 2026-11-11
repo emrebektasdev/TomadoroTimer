@@ -1,0 +1,6912 @@
+{
+  "schemaVersion": 1,
+  "action": "sit_down",
+  "fps": 24.0,
+  "durationSeconds": 1.0,
+  "startFrame": 1,
+  "endFrame": 25,
+  "canvas": {
+    "widthPx": 600,
+    "heightPx": 600,
+    "origin": "topLeft",
+    "xAxis": "right",
+    "yAxis": "down",
+    "rotation": "clockwiseRadians"
+  },
+  "playback": {
+    "frameSampling": "nearest",
+    "drawOrder": "backToFront",
+    "rigidTransform": "translate(positionPx), rotate(rotationRad), scale(scale), draw PNG at -sourcePivotPx",
+    "bakedTransform": "Draw bakedPng at [0,0] with the canvas dimensions. Ignore TRS for that sample.",
+    "sampleIndex": "Clamp floor(timeSeconds * fps + 0.5) to [0, frames.length - 1].",
+    "socketRotation": "Absolute direction of the projected Blender bone local +X axis. For an attachment authored at frame 1, use the change from its frame-1 rotation.",
+    "accessoryVisibility": "Skip drawOrder entries whose part accessory is disabled. Null accessory means always draw."
+  },
+  "accessories": {
+    "gozluk": {
+      "socket": "FACE_SOCKET",
+      "parts": [
+        "Gozluk"
+      ]
+    },
+    "atki": {
+      "socket": "SCARF_SOCKET",
+      "parts": [
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Atki_Dugum"
+      ]
+    }
+  },
+  "reference": {
+    "png": "reference_0013.png",
+    "frame": 13,
+    "timeSeconds": 0.5,
+    "enabledAccessories": [
+      "gozluk",
+      "atki"
+    ]
+  },
+  "bakedParts": [
+    "Bacak_Sag",
+    "Bacak_Sol",
+    "Yapraklar"
+  ],
+  "parts": {
+    "Govde": {
+      "objects": [
+        "Govde",
+        "Govde_Kontur"
+      ],
+      "bone": "CTRL_GOVDE",
+      "accessory": null,
+      "png": "parts/Govde.png",
+      "sourcePivotPx": [
+        306.122446,
+        428.57143
+      ],
+      "maxTrsErrorPx": 4.4e-05,
+      "maxAffineErrorPx": 4.3e-05
+    },
+    "Agiz": {
+      "objects": [
+        "Agiz",
+        "Agiz_Kontur",
+        "Agiz_Dil"
+      ],
+      "bone": "CTRL_AGIZ",
+      "accessory": null,
+      "png": "parts/Agiz.png",
+      "sourcePivotPx": [
+        306.122446,
+        336.734663
+      ],
+      "maxTrsErrorPx": 1.5e-05,
+      "maxAffineErrorPx": 1.5e-05
+    },
+    "Yapraklar": {
+      "objects": [
+        "Yaprak_Sap",
+        "Yaprak_Sap_Kontur",
+        "Yaprak_Arka_Sag",
+        "Yaprak_Arka_Sag_Kontur",
+        "Yaprak_Arka_Sol",
+        "Yaprak_Arka_Sol_Kontur",
+        "Yaprak_On_Sag",
+        "Yaprak_On_Sag_Kontur",
+        "Yaprak_On_Sol",
+        "Yaprak_On_Sol_Kontur",
+        "Yaprak_Orta",
+        "Yaprak_Orta_Kontur",
+        "Yaprak_Birlesim"
+      ],
+      "bone": "CTRL_YAPRAK",
+      "accessory": null,
+      "png": "parts/Yapraklar.png",
+      "sourcePivotPx": [
+        306.122446,
+        156.734697
+      ],
+      "maxTrsErrorPx": 3.1e-05,
+      "maxAffineErrorPx": 3.1e-05,
+      "bakeReason": "The world-space leaf shader changes shading as the geometry moves."
+    },
+    "Goz_Sag": {
+      "objects": [
+        "Goz_Sag",
+        "Goz_Sag_Parlama"
+      ],
+      "bone": "CTRL_GOZ_SAG",
+      "accessory": null,
+      "png": "parts/Goz_Sag.png",
+      "sourcePivotPx": [
+        254.693886,
+        276.734645
+      ],
+      "maxTrsErrorPx": 4.2e-05,
+      "maxAffineErrorPx": 4.2e-05
+    },
+    "Kas_Sag": {
+      "objects": [
+        "Kas_Sag"
+      ],
+      "bone": "CTRL_YUZ",
+      "accessory": null,
+      "png": "parts/Kas_Sag.png",
+      "sourcePivotPx": [
+        306.122446,
+        287.755072
+      ],
+      "maxTrsErrorPx": 6.5e-05,
+      "maxAffineErrorPx": 4.5e-05
+    },
+    "Yanak_Sag": {
+      "objects": [
+        "Yanak_Sag"
+      ],
+      "bone": "CTRL_YUZ",
+      "accessory": null,
+      "png": "parts/Yanak_Sag.png",
+      "sourcePivotPx": [
+        306.122446,
+        287.755072
+      ],
+      "maxTrsErrorPx": 1.6e-05,
+      "maxAffineErrorPx": 1.5e-05
+    },
+    "Kol_Sag": {
+      "objects": [
+        "Kol_Sag",
+        "Kol_Sag_Kontur"
+      ],
+      "bone": "CTRL_KOL_SAG",
+      "accessory": null,
+      "png": "parts/Kol_Sag.png",
+      "sourcePivotPx": [
+        171.42859,
+        364.897946
+      ],
+      "maxTrsErrorPx": 7.9e-05,
+      "maxAffineErrorPx": 2.8e-05
+    },
+    "Bacak_Sag": {
+      "objects": [
+        "Bacak_Sag",
+        "Bacak_Sag_Kontur"
+      ],
+      "bone": "CTRL_BACAK_SAG",
+      "accessory": null,
+      "png": "parts/Bacak_Sag.png",
+      "sourcePivotPx": [
+        243.673479,
+        428.57143
+      ],
+      "maxTrsErrorPx": 148.326916,
+      "maxAffineErrorPx": 73.52807,
+      "bakeReason": "Knee skinning cannot be reproduced with one position, rotation and scale.",
+      "bakedVisibility": "Per-frame PNG has character occlusion baked in. Glasses and scarf are excluded from that mask."
+    },
+    "Ayak_Sag": {
+      "objects": [
+        "Ayak_Sag",
+        "Ayak_Sag_Kontur"
+      ],
+      "bone": "CTRL_AYAK_SAG",
+      "accessory": null,
+      "png": "parts/Ayak_Sag.png",
+      "sourcePivotPx": [
+        243.673479,
+        502.040816
+      ],
+      "maxTrsErrorPx": 1.2e-05,
+      "maxAffineErrorPx": 1e-05
+    },
+    "Goz_Sol": {
+      "objects": [
+        "Goz_Sol",
+        "Goz_Sol_Parlama"
+      ],
+      "bone": "CTRL_GOZ_SOL",
+      "accessory": null,
+      "png": "parts/Goz_Sol.png",
+      "sourcePivotPx": [
+        357.551006,
+        276.734645
+      ],
+      "maxTrsErrorPx": 4.2e-05,
+      "maxAffineErrorPx": 4.1e-05
+    },
+    "Kas_Sol": {
+      "objects": [
+        "Kas_Sol"
+      ],
+      "bone": "CTRL_YUZ",
+      "accessory": null,
+      "png": "parts/Kas_Sol.png",
+      "sourcePivotPx": [
+        306.122446,
+        287.755072
+      ],
+      "maxTrsErrorPx": 5e-05,
+      "maxAffineErrorPx": 4.4e-05
+    },
+    "Yanak_Sol": {
+      "objects": [
+        "Yanak_Sol"
+      ],
+      "bone": "CTRL_YUZ",
+      "accessory": null,
+      "png": "parts/Yanak_Sol.png",
+      "sourcePivotPx": [
+        306.122446,
+        287.755072
+      ],
+      "maxTrsErrorPx": 1.6e-05,
+      "maxAffineErrorPx": 1.5e-05
+    },
+    "Kol_Sol": {
+      "objects": [
+        "Kol_Sol",
+        "Kol_Sol_Kontur"
+      ],
+      "bone": "CTRL_KOL_SOL",
+      "accessory": null,
+      "png": "parts/Kol_Sol.png",
+      "sourcePivotPx": [
+        440.816302,
+        364.897946
+      ],
+      "maxTrsErrorPx": 7.9e-05,
+      "maxAffineErrorPx": 2.8e-05
+    },
+    "Bacak_Sol": {
+      "objects": [
+        "Bacak_Sol",
+        "Bacak_Sol_Kontur"
+      ],
+      "bone": "CTRL_BACAK_SOL",
+      "accessory": null,
+      "png": "parts/Bacak_Sol.png",
+      "sourcePivotPx": [
+        358.775498,
+        428.57143
+      ],
+      "maxTrsErrorPx": 144.370067,
+      "maxAffineErrorPx": 76.193267,
+      "bakeReason": "Knee skinning cannot be reproduced with one position, rotation and scale.",
+      "bakedVisibility": "Per-frame PNG has character occlusion baked in. Glasses and scarf are excluded from that mask."
+    },
+    "Ayak_Sol": {
+      "objects": [
+        "Ayak_Sol",
+        "Ayak_Sol_Kontur"
+      ],
+      "bone": "CTRL_AYAK_SOL",
+      "accessory": null,
+      "png": "parts/Ayak_Sol.png",
+      "sourcePivotPx": [
+        358.775498,
+        502.04082
+      ],
+      "maxTrsErrorPx": 1.4e-05,
+      "maxAffineErrorPx": 1.1e-05
+    },
+    "Gozluk": {
+      "objects": [
+        "Gozluk_Cerceve_Sag",
+        "Gozluk_Cerceve_Sol",
+        "Gozluk_Kopru",
+        "Gozluk_Sap_-1",
+        "Gozluk_Sap_1"
+      ],
+      "bone": "FACE_SOCKET",
+      "accessory": "gozluk",
+      "png": "parts/Gozluk.png",
+      "sourcePivotPx": [
+        306.122446,
+        276.734645
+      ],
+      "maxTrsErrorPx": 4.2e-05,
+      "maxAffineErrorPx": 4.2e-05
+    },
+    "Atki_Saran": {
+      "objects": [
+        "Atki_Saran",
+        "Atki_Saran_Kontur",
+        "Atki_Saran_Dikis"
+      ],
+      "bone": "SCARF_SOCKET",
+      "accessory": "atki",
+      "png": "parts/Atki_Saran.png",
+      "sourcePivotPx": [
+        306.122446,
+        397.95917
+      ],
+      "maxTrsErrorPx": 2.1e-05,
+      "maxAffineErrorPx": 2.1e-05
+    },
+    "Atki_Sarkan_Uc": {
+      "objects": [
+        "Atki_Sarkan_Uc",
+        "Atki_Sarkan_Uc_Kontur",
+        "Atki_Uc_Dikis"
+      ],
+      "bone": "CTRL_ATKI_UCU",
+      "accessory": "atki",
+      "png": "parts/Atki_Sarkan_Uc.png",
+      "sourcePivotPx": [
+        400.408141,
+        396.734681
+      ],
+      "maxTrsErrorPx": 0.000117,
+      "maxAffineErrorPx": 2.3e-05
+    },
+    "Atki_Dugum": {
+      "objects": [
+        "Atki_Dugum",
+        "Atki_Dugum_Kontur"
+      ],
+      "bone": "SCARF_SOCKET",
+      "accessory": "atki",
+      "png": "parts/Atki_Dugum.png",
+      "sourcePivotPx": [
+        306.122446,
+        397.95917
+      ],
+      "maxTrsErrorPx": 2.1e-05,
+      "maxAffineErrorPx": 2.1e-05
+    }
+  },
+  "frames": [
+    {
+      "frame": 1,
+      "timeSeconds": 0.0,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122446,
+            428.57143
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            306.122446,
+            336.734663
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            306.122446,
+            156.734697
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0001.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.693886,
+            276.734645
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            306.122446,
+            287.755072
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            306.122446,
+            287.755072
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.42859,
+            364.897946
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            243.673479,
+            428.57143
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Bacak_Sag/0001.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.040816
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.551006,
+            276.734645
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            306.122446,
+            287.755072
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            306.122446,
+            287.755072
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.816302,
+            364.897946
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            358.775498,
+            428.57143
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Bacak_Sol/0001.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775498,
+            502.04082
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            306.122446,
+            276.734645
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.122446,
+            397.95917
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.408141,
+            396.734681
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.122446,
+            397.95917
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            306.122446,
+            276.734645
+          ],
+          "rotationRad": 0.0
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.122446,
+            397.95917
+          ],
+          "rotationRad": 0.0
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.408141,
+            396.734681
+          ],
+          "rotationRad": 2.99715058
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 2,
+      "timeSeconds": 0.041666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122445,
+            428.571431
+          ],
+          "rotationRad": -0.00055676,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            306.071316,
+            336.734714
+          ],
+          "rotationRad": -0.00055674,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            305.9711,
+            156.734761
+          ],
+          "rotationRad": -0.00055675,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0002.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.609362,
+            276.763334
+          ],
+          "rotationRad": -0.00055689,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            306.044046,
+            287.755137
+          ],
+          "rotationRad": -0.00055681,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            306.044055,
+            287.755114
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.393168,
+            364.972953
+          ],
+          "rotationRad": 0.01664075,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            243.673479,
+            428.57143
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Bacak_Sag/0002.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.040816
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.466462,
+            276.706067
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            306.044049,
+            287.755125
+          ],
+          "rotationRad": -0.00055681,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            306.04404,
+            287.755119
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.780831,
+            364.822971
+          ],
+          "rotationRad": -0.01775425,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            358.775498,
+            428.57143
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Bacak_Sol/0002.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775498,
+            502.04082
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            306.037911,
+            276.734699
+          ],
+          "rotationRad": -0.00055676,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.105402,
+            397.959183
+          ],
+          "rotationRad": -0.00055675,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.390407,
+            396.682201
+          ],
+          "rotationRad": -0.00055676,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.105397,
+            397.959183
+          ],
+          "rotationRad": -0.00055674,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            306.03791,
+            276.734704
+          ],
+          "rotationRad": -0.00055671
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.105403,
+            397.959184
+          ],
+          "rotationRad": -0.00055671
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.390412,
+            396.682204
+          ],
+          "rotationRad": 2.9965939
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 3,
+      "timeSeconds": 0.083333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122445,
+            428.573913
+          ],
+          "rotationRad": -0.0021621,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.923886,
+            336.737351
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            305.534708,
+            156.737804
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0003.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.365721,
+            276.848664
+          ],
+          "rotationRad": -0.00216212,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            305.817987,
+            287.757813
+          ],
+          "rotationRad": -0.00216234,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            305.81799,
+            287.757881
+          ],
+          "rotationRad": -0.00216204,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.291233,
+            365.19178
+          ],
+          "rotationRad": 0.05632162,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            243.505775,
+            428.570444
+          ],
+          "rotationRad": -0.00023823,
+          "scale": [
+            0.999989,
+            1.000037
+          ],
+          "bakedPng": "baked/Bacak_Sag/0003.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.040817
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.222603,
+            276.626278
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            305.81799,
+            287.757921
+          ],
+          "rotationRad": -0.00216215,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            305.817988,
+            287.757868
+          ],
+          "rotationRad": -0.00216204,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.678338,
+            364.609346
+          ],
+          "rotationRad": -0.06064582,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            358.943206,
+            428.576436
+          ],
+          "rotationRad": 0.00023821,
+          "scale": [
+            0.999989,
+            0.999922
+          ],
+          "bakedPng": "baked/Bacak_Sol/0003.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775498,
+            502.040813
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            305.79416,
+            276.737473
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.056259,
+            397.96173
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.339076,
+            396.533381
+          ],
+          "rotationRad": -0.00216213,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.056263,
+            397.961727
+          ],
+          "rotationRad": -0.00216207,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            305.79416,
+            276.737477
+          ],
+          "rotationRad": -0.00216222
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.056259,
+            397.961724
+          ],
+          "rotationRad": -0.0021621
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.339082,
+            396.533387
+          ],
+          "rotationRad": 2.99498851
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 4,
+      "timeSeconds": 0.125,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122449,
+            429.008558
+          ],
+          "rotationRad": -0.00471032,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.689867,
+            337.17283
+          ],
+          "rotationRad": -0.00471034,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            304.842011,
+            157.17483
+          ],
+          "rotationRad": -0.00471033,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0004.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            253.979259,
+            277.415691
+          ],
+          "rotationRad": -0.00471039,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            305.459141,
+            288.193783
+          ],
+          "rotationRad": -0.00471033,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            305.459155,
+            288.193787
+          ],
+          "rotationRad": -0.00471029,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.130142,
+            365.970229
+          ],
+          "rotationRad": 0.09218323,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            241.381588,
+            428.884916
+          ],
+          "rotationRad": -0.00327055,
+          "scale": [
+            0.997938,
+            0.997047
+          ],
+          "bakedPng": "baked/Bacak_Sag/0004.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673477,
+            502.040812
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            356.83524,
+            276.931203
+          ],
+          "rotationRad": -0.00471051,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            305.459153,
+            288.193785
+          ],
+          "rotationRad": -0.00471035,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            305.459155,
+            288.193779
+          ],
+          "rotationRad": -0.00471029,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.514882,
+            364.701334
+          ],
+          "rotationRad": -0.1016039,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            361.06825,
+            428.967022
+          ],
+          "rotationRad": 0.00327023,
+          "scale": [
+            0.997939,
+            0.995474
+          ],
+          "bakedPng": "baked/Bacak_Sol/0004.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775501,
+            502.040812
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            305.407248,
+            277.173447
+          ],
+          "rotationRad": -0.00471032,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.978254,
+            398.396642
+          ],
+          "rotationRad": -0.00471033,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.25714,
+            396.728051
+          ],
+          "rotationRad": -0.00471032,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.978251,
+            398.396645
+          ],
+          "rotationRad": -0.00471035,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            305.407248,
+            277.173462
+          ],
+          "rotationRad": -0.00471022
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.978253,
+            398.396643
+          ],
+          "rotationRad": -0.00471033
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.257141,
+            396.728054
+          ],
+          "rotationRad": 2.99244025
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 5,
+      "timeSeconds": 0.166666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122448,
+            430.136514
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.381188,
+            338.302784
+          ],
+          "rotationRad": -0.00807155,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            303.928324,
+            158.30863
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0005.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            253.470016,
+            278.719799
+          ],
+          "rotationRad": -0.00807154,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            304.985853,
+            289.324743
+          ],
+          "rotationRad": -0.00807172,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            304.985852,
+            289.324792
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            170.919053,
+            367.552271
+          ],
+          "rotationRad": 0.09310918,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            239.35817,
+            429.764497
+          ],
+          "rotationRad": -0.0062236,
+          "scale": [
+            0.992574,
+            0.98806
+          ],
+          "bakedPng": "baked/Bacak_Sag/0005.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673483,
+            502.040817
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            356.323783,
+            277.889619
+          ],
+          "rotationRad": -0.00807149,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            304.98585,
+            289.324838
+          ],
+          "rotationRad": -0.00807163,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            304.985849,
+            289.324793
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.29797,
+            365.377934
+          ],
+          "rotationRad": -0.10925229,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            363.093851,
+            429.919905
+          ],
+          "rotationRad": 0.00622298,
+          "scale": [
+            0.992577,
+            0.985084
+          ],
+          "bakedPng": "baked/Bacak_Sol/0005.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775499,
+            502.040817
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            304.8969,
+            278.304693
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.875361,
+            399.525265
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.148111,
+            397.539775
+          ],
+          "rotationRad": -0.00807159,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.875362,
+            399.525271
+          ],
+          "rotationRad": -0.00807162,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            304.896901,
+            278.304705
+          ],
+          "rotationRad": -0.00807151
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.87536,
+            399.525259
+          ],
+          "rotationRad": -0.00807151
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.148109,
+            397.539782
+          ],
+          "rotationRad": 2.98907902
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 6,
+      "timeSeconds": 0.208333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122444,
+            431.879712
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.013518,
+            340.04964
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            302.84002,
+            160.062795
+          ],
+          "rotationRad": -0.0120756,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0006.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            252.864209,
+            280.675024
+          ],
+          "rotationRad": -0.01207523,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            304.422089,
+            291.07367
+          ],
+          "rotationRad": -0.01207508,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            304.422093,
+            291.073622
+          ],
+          "rotationRad": -0.0120753,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            170.669555,
+            369.837306
+          ],
+          "rotationRad": 0.0554424,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            237.456446,
+            431.148242
+          ],
+          "rotationRad": -0.00911509,
+          "scale": [
+            0.984218,
+            0.973681
+          ],
+          "bakedPng": "baked/Bacak_Sag/0006.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673477,
+            502.040821
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            355.713832,
+            279.432994
+          ],
+          "rotationRad": -0.01207527,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            304.422086,
+            291.073606
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            304.422086,
+            291.073624
+          ],
+          "rotationRad": -0.0120753,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.037624,
+            366.584459
+          ],
+          "rotationRad": -0.07959294,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            364.998949,
+            431.373929
+          ],
+          "rotationRad": 0.00911425,
+          "scale": [
+            0.984223,
+            0.969359
+          ],
+          "bakedPng": "baked/Bacak_Sol/0006.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775497,
+            502.040816
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            304.289018,
+            280.054024
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.752802,
+            401.269697
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.016831,
+            398.906797
+          ],
+          "rotationRad": -0.01207532,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.752801,
+            401.269698
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            304.289019,
+            280.054016
+          ],
+          "rotationRad": -0.01207524
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.752803,
+            401.269694
+          ],
+          "rotationRad": -0.01207524
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.016837,
+            398.906796
+          ],
+          "rotationRad": 2.98507533
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 7,
+      "timeSeconds": 0.25,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            305.901376,
+            434.160071
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            304.386239,
+            342.335838
+          ],
+          "rotationRad": -0.01649891,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            301.416575,
+            162.360309
+          ],
+          "rotationRad": -0.01656501,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0007.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            251.974788,
+            283.192488
+          ],
+          "rotationRad": -0.01649899,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            303.578159,
+            293.362893
+          ],
+          "rotationRad": -0.01649905,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            303.578169,
+            293.362922
+          ],
+          "rotationRad": -0.01649878,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            170.175361,
+            372.71746
+          ],
+          "rotationRad": 0.00765119,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            235.53286,
+            432.992353
+          ],
+          "rotationRad": -0.01465843,
+          "scale": [
+            0.973549,
+            0.954056
+          ],
+          "bakedPng": "baked/Bacak_Sag/0007.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.040817
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            354.817912,
+            281.49551
+          ],
+          "rotationRad": -0.01649883,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            303.578171,
+            293.362843
+          ],
+          "rotationRad": -0.01649854,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            303.578171,
+            293.362902
+          ],
+          "rotationRad": -0.01649878,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            439.526392,
+            368.273063
+          ],
+          "rotationRad": -0.04064897,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            366.608065,
+            433.254323
+          ],
+          "rotationRad": 0.00927216,
+          "scale": [
+            0.972793,
+            0.949292
+          ],
+          "bakedPng": "baked/Bacak_Sol/0007.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775504,
+            502.040817
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            303.396351,
+            282.343985
+          ],
+          "rotationRad": -0.01649888,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.396332,
+            403.551984
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            399.648994,
+            400.772129
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.39633,
+            403.551984
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            303.396351,
+            282.343973
+          ],
+          "rotationRad": -0.01649884
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.396329,
+            403.551988
+          ],
+          "rotationRad": -0.01649884
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            399.648992,
+            400.772124
+          ],
+          "rotationRad": 2.9806517
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 8,
+      "timeSeconds": 0.291666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            304.919679,
+            436.899522
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            302.985183,
+            345.08315
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            299.193572,
+            165.123095
+          ],
+          "rotationRad": -0.02202213,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0008.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            250.30416,
+            286.179764
+          ],
+          "rotationRad": -0.02106602,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            301.953454,
+            296.114396
+          ],
+          "rotationRad": -0.02106612,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            301.953449,
+            296.11443
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            168.914482,
+            376.077431
+          ],
+          "rotationRad": -0.02031868,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            233.204396,
+            435.29205
+          ],
+          "rotationRad": -0.02902752,
+          "scale": [
+            0.962154,
+            0.928417
+          ],
+          "bakedPng": "baked/Bacak_Sag/0008.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.04081
+          ],
+          "rotationRad": -4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            353.138457,
+            284.013099
+          ],
+          "rotationRad": -0.02106603,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            301.953447,
+            296.114461
+          ],
+          "rotationRad": -0.0210662,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            301.953447,
+            296.114429
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            438.242388,
+            370.40291
+          ],
+          "rotationRad": -0.02181346,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            367.516224,
+            435.448837
+          ],
+          "rotationRad": 0.00093448,
+          "scale": [
+            0.957284,
+            0.927004
+          ],
+          "bakedPng": "baked/Bacak_Sol/0008.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775499,
+            502.040818
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            301.721313,
+            285.096446
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            304.274845,
+            406.294053
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            398.513826,
+            403.083761
+          ],
+          "rotationRad": -0.03232965,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            304.274842,
+            406.294055
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            301.721312,
+            285.096452
+          ],
+          "rotationRad": -0.02106608
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            304.274846,
+            406.29406
+          ],
+          "rotationRad": -0.02106608
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            398.513837,
+            403.083758
+          ],
+          "rotationRad": 2.96482092
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 9,
+      "timeSeconds": 0.333333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            303.282326,
+            440.019984
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            300.944595,
+            348.212981
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            296.362637,
+            168.271298
+          ],
+          "rotationRad": -0.03085118,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0009.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            248.005375,
+            289.541562
+          ],
+          "rotationRad": -0.0254581,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            299.697794,
+            299.249256
+          ],
+          "rotationRad": -0.02545814,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            299.697805,
+            299.249246
+          ],
+          "rotationRad": -0.02545818,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            167.011274,
+            379.795826
+          ],
+          "rotationRad": -0.02545802,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            230.546424,
+            438.000865
+          ],
+          "rotationRad": -0.0504176,
+          "scale": [
+            0.950678,
+            0.897392
+          ],
+          "bakedPng": "baked/Bacak_Sag/0009.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.67348,
+            502.040816
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            350.829169,
+            286.923269
+          ],
+          "rotationRad": -0.02545811,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            299.697808,
+            299.24925
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            299.697806,
+            299.249263
+          ],
+          "rotationRad": -0.02545818,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            436.311702,
+            372.938462
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            367.780976,
+            437.880309
+          ],
+          "rotationRad": -0.01269905,
+          "scale": [
+            0.937781,
+            0.903822
+          ],
+          "bakedPng": "baked/Bacak_Sol/0009.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775496,
+            502.040818
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            299.417275,
+            288.232403
+          ],
+          "rotationRad": -0.02545807,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            302.503083,
+            409.41765
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            396.72705,
+            405.793483
+          ],
+          "rotationRad": -0.0857262,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            302.503086,
+            409.417648
+          ],
+          "rotationRad": -0.02545806,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            299.417275,
+            288.232396
+          ],
+          "rotationRad": -0.02545799
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            302.503083,
+            409.417654
+          ],
+          "rotationRad": -0.02545811
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            396.727056,
+            405.793483
+          ],
+          "rotationRad": 2.91142442
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 10,
+      "timeSeconds": 0.375,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            301.194907,
+            443.443378
+          ],
+          "rotationRad": -0.02933787,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            298.500998,
+            351.646147
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            293.220942,
+            171.723594
+          ],
+          "rotationRad": -0.04728732,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0010.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            245.334551,
+            293.18054
+          ],
+          "rotationRad": -0.02933779,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            297.064238,
+            302.687663
+          ],
+          "rotationRad": -0.02933798,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            297.064254,
+            302.687651
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            164.691229,
+            383.748369
+          ],
+          "rotationRad": -0.02933784,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            227.706043,
+            441.051601
+          ],
+          "rotationRad": -0.07628154,
+          "scale": [
+            0.939325,
+            0.862254
+          ],
+          "bakedPng": "baked/Bacak_Sag/0010.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            243.673479,
+            502.04082
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            348.147406,
+            290.163362
+          ],
+          "rotationRad": -0.02933762,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            297.064246,
+            302.687678
+          ],
+          "rotationRad": -0.02933791,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            297.06424,
+            302.68765
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            433.963008,
+            375.846233
+          ],
+          "rotationRad": -0.02933783,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            367.538411,
+            440.496213
+          ],
+          "rotationRad": -0.02730575,
+          "scale": [
+            0.915121,
+            0.880357
+          ],
+          "bakedPng": "baked/Bacak_Sol/0010.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775499,
+            502.040817
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            296.74098,
+            291.671949
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            300.296938,
+            412.844304
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            394.506141,
+            408.854589
+          ],
+          "rotationRad": -0.14656764,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            300.296937,
+            412.844302
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            296.740979,
+            291.671959
+          ],
+          "rotationRad": -0.0293378
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            300.296936,
+            412.844299
+          ],
+          "rotationRad": -0.02933792
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            394.506151,
+            408.854588
+          ],
+          "rotationRad": 2.85058302
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sag",
+        "Ayak_Sol",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 11,
+      "timeSeconds": 0.416666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            298.958673,
+            447.091638
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            295.985127,
+            355.303031
+          ],
+          "rotationRad": -0.03238429,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            290.156975,
+            175.397423
+          ],
+          "rotationRad": -0.07330869,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0011.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            242.640813,
+            296.99969
+          ],
+          "rotationRad": -0.03238431,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            294.399231,
+            306.349171
+          ],
+          "rotationRad": -0.03238423,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            294.399239,
+            306.349131
+          ],
+          "rotationRad": -0.03238435,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            162.273776,
+            387.81273
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            224.554943,
+            444.499715
+          ],
+          "rotationRad": -0.12023577,
+          "scale": [
+            0.924195,
+            0.823209
+          ],
+          "bakedPng": "baked/Bacak_Sag/0011.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            244.481409,
+            501.560681
+          ],
+          "rotationRad": 0.0018675,
+          "scale": [
+            0.998038,
+            0.998039
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            345.444005,
+            293.669303
+          ],
+          "rotationRad": -0.03238432,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            294.399237,
+            306.349132
+          ],
+          "rotationRad": -0.03238427,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            294.399233,
+            306.349143
+          ],
+          "rotationRad": -0.03238435,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            431.520236,
+            379.090336
+          ],
+          "rotationRad": -0.03238426,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            367.004036,
+            443.26927
+          ],
+          "rotationRad": -0.03883623,
+          "scale": [
+            0.890723,
+            0.856165
+          ],
+          "bakedPng": "baked/Bacak_Sol/0011.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775491,
+            502.040821
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            294.04241,
+            295.334488
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            297.967491,
+            416.495435
+          ],
+          "rotationRad": -0.03238429,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            392.164093,
+            412.218726
+          ],
+          "rotationRad": -0.2049629,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            297.967493,
+            416.495438
+          ],
+          "rotationRad": -0.03238431,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            294.042409,
+            295.334477
+          ],
+          "rotationRad": -0.03238434
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            297.967489,
+            416.495431
+          ],
+          "rotationRad": -0.03238422
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            392.164097,
+            412.218742
+          ],
+          "rotationRad": 2.79218771
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 12,
+      "timeSeconds": 0.458333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            296.954521,
+            450.886668
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            293.802331,
+            359.104023
+          ],
+          "rotationRad": -0.0343306,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            287.624042,
+            179.210097
+          ],
+          "rotationRad": -0.10168644,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0012.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            240.344645,
+            300.904588
+          ],
+          "rotationRad": -0.0343305,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            292.121162,
+            310.153254
+          ],
+          "rotationRad": -0.03433061,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            292.121165,
+            310.153279
+          ],
+          "rotationRad": -0.03433063,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            160.154509,
+            391.873914
+          ],
+          "rotationRad": -0.03433056,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            218.625292,
+            449.121785
+          ],
+          "rotationRad": -0.29799466,
+          "scale": [
+            0.873444,
+            0.792453
+          ],
+          "bakedPng": "baked/Bacak_Sag/0012.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            252.618951,
+            496.808859
+          ],
+          "rotationRad": 0.02067637,
+          "scale": [
+            0.978281,
+            0.978281
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            343.141157,
+            297.374137
+          ],
+          "rotationRad": -0.0343306,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            292.12116,
+            310.153288
+          ],
+          "rotationRad": -0.03433047,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            292.121166,
+            310.153285
+          ],
+          "rotationRad": -0.03433063,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            429.383497,
+            382.62749
+          ],
+          "rotationRad": -0.03433054,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            366.462973,
+            446.190249
+          ],
+          "rotationRad": -0.0446132,
+          "scale": [
+            0.866144,
+            0.829826
+          ],
+          "bakedPng": "baked/Bacak_Sol/0012.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775499,
+            502.040818
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            291.742901,
+            299.139363
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            295.903793,
+            420.292454
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            390.091898,
+            415.832444
+          ],
+          "rotationRad": -0.25057257,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            295.903793,
+            420.29245
+          ],
+          "rotationRad": -0.03433055,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            291.742901,
+            299.139361
+          ],
+          "rotationRad": -0.03433056
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            295.903792,
+            420.292447
+          ],
+          "rotationRad": -0.03433056
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            390.0919,
+            415.832433
+          ],
+          "rotationRad": 2.74657812
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 13,
+      "timeSeconds": 0.5,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            295.571679,
+            454.750415
+          ],
+          "rotationRad": -0.03500001,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            292.358049,
+            362.969907
+          ],
+          "rotationRad": -0.03500004,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            286.059338,
+            183.080168
+          ],
+          "rotationRad": -0.11428486,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0013.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            238.861413,
+            304.806268
+          ],
+          "rotationRad": -0.03499996,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            290.644118,
+            314.020291
+          ],
+          "rotationRad": -0.03499999,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            290.644112,
+            314.020318
+          ],
+          "rotationRad": -0.03499993,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            158.732193,
+            395.829245
+          ],
+          "rotationRad": -0.03500003,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            210.782357,
+            454.000847
+          ],
+          "rotationRad": -0.47926555,
+          "scale": [
+            0.809571,
+            0.838674
+          ],
+          "bakedPng": "baked/Bacak_Sag/0013.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            267.165538,
+            489.571565
+          ],
+          "rotationRad": 0.05429917,
+          "scale": [
+            0.942963,
+            0.942963
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            341.65554,
+            301.207016
+          ],
+          "rotationRad": -0.03499991,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            290.644107,
+            314.020303
+          ],
+          "rotationRad": -0.0349999,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            290.644113,
+            314.020304
+          ],
+          "rotationRad": -0.03499993,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            427.954923,
+            386.402606
+          ],
+          "rotationRad": -0.035,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            366.216254,
+            449.253492
+          ],
+          "rotationRad": -0.04375736,
+          "scale": [
+            0.842634,
+            0.799647
+          ],
+          "bakedPng": "baked/Bacak_Sol/0013.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775499,
+            502.040817
+          ],
+          "rotationRad": 4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            290.258477,
+            303.006636
+          ],
+          "rotationRad": -0.03500003,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            294.500469,
+            424.156911
+          ],
+          "rotationRad": -0.035,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            388.685566,
+            419.63383
+          ],
+          "rotationRad": -0.27501867,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            294.500468,
+            424.156914
+          ],
+          "rotationRad": -0.03500005,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            290.258478,
+            303.006632
+          ],
+          "rotationRad": -0.03499997
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            294.500469,
+            424.156908
+          ],
+          "rotationRad": -0.03500003
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            388.685568,
+            419.633842
+          ],
+          "rotationRad": 2.72213199
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 14,
+      "timeSeconds": 0.541666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            295.102867,
+            458.604788
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            291.950681,
+            366.822144
+          ],
+          "rotationRad": -0.0343306,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            285.77239,
+            186.928229
+          ],
+          "rotationRad": -0.09371506,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0014.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            238.492994,
+            308.622708
+          ],
+          "rotationRad": -0.03433051,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            290.269511,
+            317.87137
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            290.269514,
+            317.8714
+          ],
+          "rotationRad": -0.03433063,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            158.302858,
+            399.592035
+          ],
+          "rotationRad": -0.03433056,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            202.999453,
+            458.037218
+          ],
+          "rotationRad": -0.55358857,
+          "scale": [
+            0.773492,
+            0.972957
+          ],
+          "bakedPng": "baked/Bacak_Sag/0014.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            285.207967,
+            485.044323
+          ],
+          "rotationRad": 0.09600214,
+          "scale": [
+            0.899157,
+            0.899157
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            341.289506,
+            305.092258
+          ],
+          "rotationRad": -0.03433063,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            290.26951,
+            317.871444
+          ],
+          "rotationRad": -0.03433069,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            290.269515,
+            317.871406
+          ],
+          "rotationRad": -0.03433063,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            427.531846,
+            390.345611
+          ],
+          "rotationRad": -0.03433053,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            366.4999,
+            452.440232
+          ],
+          "rotationRad": -0.03685703,
+          "scale": [
+            0.820948,
+            0.764631
+          ],
+          "bakedPng": "baked/Bacak_Sol/0014.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775494,
+            502.040819
+          ],
+          "rotationRad": -4e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            289.89125,
+            306.857482
+          ],
+          "rotationRad": -0.0343306,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            294.052138,
+            428.010575
+          ],
+          "rotationRad": -0.03433059,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            388.240236,
+            423.550553
+          ],
+          "rotationRad": -0.27386935,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            294.052143,
+            428.01057
+          ],
+          "rotationRad": -0.03433055,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            289.891251,
+            306.857481
+          ],
+          "rotationRad": -0.03433056
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            294.05214,
+            428.010567
+          ],
+          "rotationRad": -0.03433056
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            388.240249,
+            423.550554
+          ],
+          "rotationRad": 2.72328132
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Govde",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 15,
+      "timeSeconds": 0.583333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            295.651537,
+            462.37172
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            292.677991,
+            370.583113
+          ],
+          "rotationRad": -0.03238429,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            286.849841,
+            190.677495
+          ],
+          "rotationRad": -0.041722,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0015.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            239.333683,
+            312.279772
+          ],
+          "rotationRad": -0.03238423,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            291.092096,
+            321.629253
+          ],
+          "rotationRad": -0.03238422,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            291.092101,
+            321.629212
+          ],
+          "rotationRad": -0.03238435,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            158.966653,
+            403.092812
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            196.899557,
+            460.334777
+          ],
+          "rotationRad": -0.54597932,
+          "scale": [
+            0.762892,
+            1.148155
+          ],
+          "bakedPng": "baked/Bacak_Sag/0015.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            303.833038,
+            487.12134
+          ],
+          "rotationRad": 0.13905167,
+          "scale": [
+            0.853937,
+            0.853937
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            342.136871,
+            308.94937
+          ],
+          "rotationRad": -0.03238431,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            291.092104,
+            321.629214
+          ],
+          "rotationRad": -0.03238427,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            291.092098,
+            321.629224
+          ],
+          "rotationRad": -0.03238435,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            428.213106,
+            394.370418
+          ],
+          "rotationRad": -0.03238425,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            367.412157,
+            455.705227
+          ],
+          "rotationRad": -0.02535559,
+          "scale": [
+            0.801395,
+            0.725147
+          ],
+          "bakedPng": "baked/Bacak_Sol/0015.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.7755,
+            502.040816
+          ],
+          "rotationRad": 6e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            290.735274,
+            310.61457
+          ],
+          "rotationRad": -0.03238428,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            294.660355,
+            431.775517
+          ],
+          "rotationRad": -0.03238429,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            388.85696,
+            427.498825
+          ],
+          "rotationRad": -0.2476819,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            294.660355,
+            431.77552
+          ],
+          "rotationRad": -0.03238431,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            290.735274,
+            310.614559
+          ],
+          "rotationRad": -0.03238434
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            294.660355,
+            431.775513
+          ],
+          "rotationRad": -0.03238428
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            388.856967,
+            427.498824
+          ],
+          "rotationRad": 2.74946879
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 16,
+      "timeSeconds": 0.625,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            297.096826,
+            465.973117
+          ],
+          "rotationRad": -0.02933787,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            294.402916,
+            374.175886
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            289.122861,
+            194.253341
+          ],
+          "rotationRad": 0.01648913,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0016.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            241.236472,
+            315.710293
+          ],
+          "rotationRad": -0.0293378,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            292.966171,
+            325.217402
+          ],
+          "rotationRad": -0.02933797,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            292.966168,
+            325.21739
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            160.593165,
+            406.278097
+          ],
+          "rotationRad": -0.03319553,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            193.171039,
+            458.618246
+          ],
+          "rotationRad": -0.50263358,
+          "scale": [
+            0.760887,
+            1.308109
+          ],
+          "bakedPng": "baked/Bacak_Sag/0016.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            320.127548,
+            491.450218
+          ],
+          "rotationRad": 0.17671473,
+          "scale": [
+            0.814375,
+            0.814375
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            344.049324,
+            312.693087
+          ],
+          "rotationRad": -0.02933767,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            292.966163,
+            325.217417
+          ],
+          "rotationRad": -0.02933791,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            292.966161,
+            325.217389
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            429.864939,
+            398.375969
+          ],
+          "rotationRad": -0.02548018,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            368.883887,
+            458.971063
+          ],
+          "rotationRad": -0.01106073,
+          "scale": [
+            0.783977,
+            0.682954
+          ],
+          "bakedPng": "baked/Bacak_Sol/0016.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            358.775497,
+            502.04082
+          ],
+          "rotationRad": 6e-08,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            292.642895,
+            314.201688
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            296.198855,
+            435.374043
+          ],
+          "rotationRad": -0.02933788,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            390.408057,
+            431.384344
+          ],
+          "rotationRad": -0.20183626,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            296.198851,
+            435.374041
+          ],
+          "rotationRad": -0.02933786,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            292.642897,
+            314.201698
+          ],
+          "rotationRad": -0.02933792
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            296.198855,
+            435.374038
+          ],
+          "rotationRad": -0.02933786
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            390.408064,
+            431.384334
+          ],
+          "rotationRad": 2.7953144
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 17,
+      "timeSeconds": 0.666666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            299.13438,
+            469.330939
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            296.796647,
+            377.523943
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            292.214689,
+            197.582284
+          ],
+          "rotationRad": 0.05136557,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0017.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            243.857433,
+            318.852509
+          ],
+          "rotationRad": -0.0254581,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            295.549854,
+            328.560217
+          ],
+          "rotationRad": -0.02545809,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            295.549855,
+            328.560208
+          ],
+          "rotationRad": -0.02545818,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            162.863338,
+            409.106763
+          ],
+          "rotationRad": -0.07587874,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            191.936585,
+            452.874766
+          ],
+          "rotationRad": -0.45457606,
+          "scale": [
+            0.755335,
+            1.396517
+          ],
+          "bakedPng": "baked/Bacak_Sag/0017.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            331.178293,
+            491.545007
+          ],
+          "rotationRad": 0.20225719,
+          "scale": [
+            0.787545,
+            0.787545
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            346.681223,
+            316.23423
+          ],
+          "rotationRad": -0.02545807,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            295.549856,
+            328.560272
+          ],
+          "rotationRad": -0.02545844,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            295.549858,
+            328.560225
+          ],
+          "rotationRad": -0.02545818,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            432.16377,
+            402.249428
+          ],
+          "rotationRad": 0.02496259,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            371.546882,
+            462.222834
+          ],
+          "rotationRad": 0.0444538,
+          "scale": [
+            0.754901,
+            0.632217
+          ],
+          "bakedPng": "baked/Bacak_Sol/0017.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            356.716034,
+            500.669866
+          ],
+          "rotationRad": -0.00533724,
+          "scale": [
+            0.994394,
+            0.994394
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            295.269326,
+            317.54338
+          ],
+          "rotationRad": -0.02545807,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            298.355135,
+            438.728597
+          ],
+          "rotationRad": -0.02545808,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            392.5791,
+            435.104432
+          ],
+          "rotationRad": -0.14520399,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            298.355136,
+            438.728595
+          ],
+          "rotationRad": -0.02545806,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            295.269327,
+            317.543373
+          ],
+          "rotationRad": -0.02545811
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            298.355137,
+            438.728602
+          ],
+          "rotationRad": -0.02545811
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            392.579106,
+            435.104438
+          ],
+          "rotationRad": 2.85194668
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 18,
+      "timeSeconds": 0.708333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            301.371989,
+            472.367063
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            299.437494,
+            380.550698
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            295.645884,
+            200.590632
+          ],
+          "rotationRad": 0.05270607,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0018.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            246.75647,
+            321.647312
+          ],
+          "rotationRad": -0.02106602,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            298.405747,
+            331.581944
+          ],
+          "rotationRad": -0.02106612,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            298.405767,
+            331.581978
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            165.366769,
+            411.544956
+          ],
+          "rotationRad": -0.15894027,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            193.283987,
+            451.773858
+          ],
+          "rotationRad": -0.41383346,
+          "scale": [
+            0.741481,
+            1.373043
+          ],
+          "bakedPng": "baked/Bacak_Sag/0018.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285705,
+            491.303643
+          ],
+          "rotationRad": 0.20943961,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            349.590767,
+            319.480662
+          ],
+          "rotationRad": -0.02106608,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            298.40577,
+            331.582009
+          ],
+          "rotationRad": -0.0210662,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            298.405758,
+            331.581977
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            434.694708,
+            405.870441
+          ],
+          "rotationRad": 0.11680813,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            377.555347,
+            465.448905
+          ],
+          "rotationRad": 0.20179818,
+          "scale": [
+            0.690294,
+            0.586159
+          ],
+          "bakedPng": "baked/Bacak_Sol/0018.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            346.684804,
+            494.276986
+          ],
+          "rotationRad": -0.03133374,
+          "scale": [
+            0.967086,
+            0.967087
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            298.173624,
+            320.563994
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            300.727158,
+            441.761601
+          ],
+          "rotationRad": -0.02106607,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            394.966138,
+            438.551299
+          ],
+          "rotationRad": -0.08800207,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            300.72716,
+            441.761603
+          ],
+          "rotationRad": -0.02106609,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            298.173623,
+            320.564
+          ],
+          "rotationRad": -0.02106608
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            300.727157,
+            441.761608
+          ],
+          "rotationRad": -0.02106608
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            394.966148,
+            438.551306
+          ],
+          "rotationRad": 2.90914854
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 19,
+      "timeSeconds": 0.75,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            303.433176,
+            475.003452
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            301.918042,
+            383.179219
+          ],
+          "rotationRad": -0.01649891,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            298.948378,
+            203.203702
+          ],
+          "rotationRad": 0.03319287,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0019.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            249.50659,
+            324.03584
+          ],
+          "rotationRad": -0.01649899,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            301.109963,
+            334.206277
+          ],
+          "rotationRad": -0.01649905,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            301.109968,
+            334.206289
+          ],
+          "rotationRad": -0.01649878,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            167.707159,
+            413.560846
+          ],
+          "rotationRad": -0.2676837,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            195.366618,
+            452.486854
+          ],
+          "rotationRad": -0.37956804,
+          "scale": [
+            0.725495,
+            1.313407
+          ],
+          "bakedPng": "baked/Bacak_Sag/0019.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.28571,
+            490.845262
+          ],
+          "rotationRad": 0.20943951,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            352.349714,
+            322.338877
+          ],
+          "rotationRad": -0.0164988,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            301.109962,
+            334.206147
+          ],
+          "rotationRad": -0.01649835,
+          "scale": [
+            1.0,
+            0.999998
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            301.10997,
+            334.206268
+          ],
+          "rotationRad": -0.01649878,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            437.058206,
+            409.116439
+          ],
+          "rotationRad": 0.23468597,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            385.586681,
+            468.01148
+          ],
+          "rotationRad": 0.3130346,
+          "scale": [
+            0.645832,
+            0.622013
+          ],
+          "bakedPng": "baked/Bacak_Sol/0019.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            331.156875,
+            486.973352
+          ],
+          "rotationRad": -0.07157494,
+          "scale": [
+            0.924816,
+            0.924816
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            300.928153,
+            323.187366
+          ],
+          "rotationRad": -0.01649888,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            302.928131,
+            444.395365
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            397.18078,
+            441.615493
+          ],
+          "rotationRad": -0.03939189,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            302.928129,
+            444.395366
+          ],
+          "rotationRad": -0.01649889,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            300.928154,
+            323.187354
+          ],
+          "rotationRad": -0.01649884
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            302.928132,
+            444.395369
+          ],
+          "rotationRad": -0.0164989
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            397.180791,
+            441.615506
+          ],
+          "rotationRad": 2.95775869
+        }
+      },
+      "drawOrder": [
+        "Kol_Sag",
+        "Kol_Sol",
+        "Ayak_Sol",
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum"
+      ]
+    },
+    {
+      "frame": 20,
+      "timeSeconds": 0.791666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            305.024494,
+            477.162021
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            303.915564,
+            385.331956
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            301.742067,
+            205.345116
+          ],
+          "rotationRad": 0.01217915,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0020.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            251.766255,
+            325.957341
+          ],
+          "rotationRad": -0.01207523,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            303.324139,
+            336.355987
+          ],
+          "rotationRad": -0.01207508,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            303.324139,
+            336.355938
+          ],
+          "rotationRad": -0.0120753,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            169.571585,
+            415.119615
+          ],
+          "rotationRad": -0.38739471,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            197.025608,
+            453.091011
+          ],
+          "rotationRad": -0.35213333,
+          "scale": [
+            0.7123,
+            1.265223
+          ],
+          "bakedPng": "baked/Bacak_Sag/0020.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.28571,
+            490.468429
+          ],
+          "rotationRad": 0.20943953,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            354.615878,
+            324.715311
+          ],
+          "rotationRad": -0.01207527,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            303.324139,
+            336.355923
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            303.324132,
+            336.35594
+          ],
+          "rotationRad": -0.0120753,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            438.939655,
+            411.866756
+          ],
+          "rotationRad": 0.36324408,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            393.635243,
+            468.950439
+          ],
+          "rotationRad": 0.3397908,
+          "scale": [
+            0.639771,
+            0.750621
+          ],
+          "bakedPng": "baked/Bacak_Sol/0020.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            313.328014,
+            485.225833
+          ],
+          "rotationRad": -0.11777955,
+          "scale": [
+            0.876282,
+            0.876282
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            303.191064,
+            325.336327
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            304.65485,
+            446.552007
+          ],
+          "rotationRad": -0.01207528,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            398.918872,
+            444.18912
+          ],
+          "rotationRad": -0.00544334,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            304.654847,
+            446.552007
+          ],
+          "rotationRad": -0.01207529,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            303.191065,
+            325.336318
+          ],
+          "rotationRad": -0.01207524
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            304.654849,
+            446.552004
+          ],
+          "rotationRad": -0.0120753
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            398.918884,
+            444.189105
+          ],
+          "rotationRad": 2.99170723
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    },
+    {
+      "frame": 21,
+      "timeSeconds": 0.833333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            305.947141,
+            478.764681
+          ],
+          "rotationRad": -0.00807155,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.205884,
+            386.930922
+          ],
+          "rotationRad": -0.00807155,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            303.75302,
+            206.936806
+          ],
+          "rotationRad": 0.00023738,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0021.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            253.294713,
+            327.347951
+          ],
+          "rotationRad": -0.00807154,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            304.81055,
+            337.952879
+          ],
+          "rotationRad": -0.00807187,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            304.810549,
+            337.952944
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            170.743752,
+            416.180458
+          ],
+          "rotationRad": -0.5033162,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            198.066893,
+            453.639444
+          ],
+          "rotationRad": -0.33326394,
+          "scale": [
+            0.703016,
+            1.230788
+          ],
+          "bakedPng": "baked/Bacak_Sag/0021.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285708,
+            490.231786
+          ],
+          "rotationRad": 0.20943956,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            356.14848,
+            326.517757
+          ],
+          "rotationRad": -0.00807149,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            304.810546,
+            337.952972
+          ],
+          "rotationRad": -0.00807148,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            304.810546,
+            337.952945
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.12267,
+            414.00611
+          ],
+          "rotationRad": 0.48717311,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            400.122203,
+            464.235379
+          ],
+          "rotationRad": 0.3179294,
+          "scale": [
+            0.654163,
+            0.928938
+          ],
+          "bakedPng": "baked/Bacak_Sol/0021.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            296.393959,
+            486.998899
+          ],
+          "rotationRad": -0.16166496,
+          "scale": [
+            0.830184,
+            0.830184
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            304.721596,
+            326.93286
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.700056,
+            448.153431
+          ],
+          "rotationRad": -0.00807156,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            399.972804,
+            446.167949
+          ],
+          "rotationRad": 0.01201779,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.700059,
+            448.153437
+          ],
+          "rotationRad": -0.00807162,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            304.721596,
+            326.932871
+          ],
+          "rotationRad": -0.00807151
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.700056,
+            448.153425
+          ],
+          "rotationRad": -0.00807157
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            399.972805,
+            446.167955
+          ],
+          "rotationRad": 3.00916841
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sol",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    },
+    {
+      "frame": 22,
+      "timeSeconds": 0.875,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122449,
+            479.733365
+          ],
+          "rotationRad": -0.00471032,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.689867,
+            387.897644
+          ],
+          "rotationRad": -0.00471034,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            304.842012,
+            207.899632
+          ],
+          "rotationRad": -0.00292017,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0022.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            253.979259,
+            328.140505
+          ],
+          "rotationRad": -0.00471039,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            305.459141,
+            338.918548
+          ],
+          "rotationRad": -0.00471072,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            305.459155,
+            338.918602
+          ],
+          "rotationRad": -0.00471029,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.13015,
+            416.695043
+          ],
+          "rotationRad": -0.60063763,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            198.39596,
+            454.124155
+          ],
+          "rotationRad": -0.32385344,
+          "scale": [
+            0.698322,
+            1.211655
+          ],
+          "bakedPng": "baked/Bacak_Sag/0022.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285705,
+            490.162066
+          ],
+          "rotationRad": 0.20943961,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            356.83524,
+            327.656033
+          ],
+          "rotationRad": -0.00471051,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            305.459153,
+            338.918567
+          ],
+          "rotationRad": -0.00471013,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            305.459155,
+            338.918594
+          ],
+          "rotationRad": -0.00471029,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.514889,
+            415.426153
+          ],
+          "rotationRad": 0.591217,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            404.315228,
+            455.504013
+          ],
+          "rotationRad": 0.28960065,
+          "scale": [
+            0.668577,
+            1.086791
+          ],
+          "bakedPng": "baked/Bacak_Sol/0022.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            283.550467,
+            487.521347
+          ],
+          "rotationRad": -0.19494941,
+          "scale": [
+            0.795221,
+            0.795221
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            305.407248,
+            327.898262
+          ],
+          "rotationRad": -0.00471032,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            305.978254,
+            449.12145
+          ],
+          "rotationRad": -0.00471033,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.257139,
+            447.452867
+          ],
+          "rotationRad": 0.01540311,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            305.978251,
+            449.121453
+          ],
+          "rotationRad": -0.00471035,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            305.407248,
+            327.898277
+          ],
+          "rotationRad": -0.00471034
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            305.978253,
+            449.121451
+          ],
+          "rotationRad": -0.00471033
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.257141,
+            447.452861
+          ],
+          "rotationRad": 3.01255376
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Ayak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    },
+    {
+      "frame": 23,
+      "timeSeconds": 0.916666667,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122445,
+            480.000005
+          ],
+          "rotationRad": -0.0021621,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            305.923886,
+            388.163452
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            305.534707,
+            208.163891
+          ],
+          "rotationRad": -0.00198103,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0023.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.365721,
+            328.274751
+          ],
+          "rotationRad": -0.00216212,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            305.817987,
+            339.183915
+          ],
+          "rotationRad": -0.00216234,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            305.81799,
+            339.183982
+          ],
+          "rotationRad": -0.00216204,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.291234,
+            416.617895
+          ],
+          "rotationRad": -0.66449622,
+          "scale": [
+            1.000001,
+            0.999999
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            198.448552,
+            454.27656
+          ],
+          "rotationRad": -0.32149314,
+          "scale": [
+            0.697138,
+            1.206573
+          ],
+          "bakedPng": "baked/Bacak_Sag/0023.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285708,
+            490.152017
+          ],
+          "rotationRad": 0.20943961,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.222603,
+            328.052379
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            305.81799,
+            339.184022
+          ],
+          "rotationRad": -0.00216215,
+          "scale": [
+            1.0,
+            1.000001
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            305.817988,
+            339.18397
+          ],
+          "rotationRad": -0.00216204,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.678321,
+            416.035453
+          ],
+          "rotationRad": 0.66017207,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            406.051681,
+            451.319158
+          ],
+          "rotationRad": 0.27817297,
+          "scale": [
+            0.674899,
+            1.15961
+          ],
+          "bakedPng": "baked/Bacak_Sol/0023.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            277.993265,
+            487.957587
+          ],
+          "rotationRad": -0.20935109,
+          "scale": [
+            0.780093,
+            0.780093
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            305.79416,
+            328.163574
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.056259,
+            449.387824
+          ],
+          "rotationRad": -0.00216211,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.339073,
+            447.959475
+          ],
+          "rotationRad": 0.01022851,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.056263,
+            449.38782
+          ],
+          "rotationRad": -0.00216207,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            305.79416,
+            328.163578
+          ],
+          "rotationRad": -0.0021621
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.056259,
+            449.387818
+          ],
+          "rotationRad": -0.0021621
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.339082,
+            447.959474
+          ],
+          "rotationRad": 3.0073791
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Ayak_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    },
+    {
+      "frame": 24,
+      "timeSeconds": 0.958333333,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122445,
+            480.000004
+          ],
+          "rotationRad": -0.00055676,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            306.071316,
+            388.163267
+          ],
+          "rotationRad": -0.00055674,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            305.9711,
+            208.163315
+          ],
+          "rotationRad": -0.00055358,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0024.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.609362,
+            328.191887
+          ],
+          "rotationRad": -0.00055689,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            306.044046,
+            339.18369
+          ],
+          "rotationRad": -0.00055681,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            306.044055,
+            339.183667
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.393158,
+            416.401535
+          ],
+          "rotationRad": -0.68123546,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            198.448552,
+            454.27656
+          ],
+          "rotationRad": -0.32149314,
+          "scale": [
+            0.697138,
+            1.206573
+          ],
+          "bakedPng": "baked/Bacak_Sag/0024.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285708,
+            490.152017
+          ],
+          "rotationRad": 0.20943961,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.466462,
+            328.134635
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            306.044049,
+            339.183679
+          ],
+          "rotationRad": -0.00055681,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            306.04404,
+            339.183672
+          ],
+          "rotationRad": -0.00055679,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.780805,
+            416.251542
+          ],
+          "rotationRad": 0.68012193,
+          "scale": [
+            1.0,
+            0.999999
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            406.062613,
+            451.292362
+          ],
+          "rotationRad": 0.27811762,
+          "scale": [
+            0.674943,
+            1.160087
+          ],
+          "bakedPng": "baked/Bacak_Sol/0024.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            277.959181,
+            487.960439
+          ],
+          "rotationRad": -0.20943962,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            306.037911,
+            328.163252
+          ],
+          "rotationRad": -0.00055676,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.105402,
+            449.387751
+          ],
+          "rotationRad": -0.00055675,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.390404,
+            448.110773
+          ],
+          "rotationRad": 0.00319123,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.105397,
+            449.387751
+          ],
+          "rotationRad": -0.00055674,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            306.03791,
+            328.163257
+          ],
+          "rotationRad": -0.00055671
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.105403,
+            449.387752
+          ],
+          "rotationRad": -0.00055677
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.390412,
+            448.110772
+          ],
+          "rotationRad": 3.00034185
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Ayak_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    },
+    {
+      "frame": 25,
+      "timeSeconds": 1.0,
+      "parts": {
+        "Govde": {
+          "positionPx": [
+            306.122446,
+            479.999998
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Agiz": {
+          "positionPx": [
+            306.122446,
+            388.163246
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yapraklar": {
+          "positionPx": [
+            306.122446,
+            208.163251
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ],
+          "bakedPng": "baked/Yapraklar/0025.png"
+        },
+        "Goz_Sag": {
+          "positionPx": [
+            254.693886,
+            328.163228
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sag": {
+          "positionPx": [
+            306.122446,
+            339.183655
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sag": {
+          "positionPx": [
+            306.122446,
+            339.183655
+          ],
+          "rotationRad": -0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sag": {
+          "positionPx": [
+            171.42859,
+            416.326528
+          ],
+          "rotationRad": -0.68067874,
+          "scale": [
+            1.000001,
+            0.999999
+          ]
+        },
+        "Bacak_Sag": {
+          "positionPx": [
+            198.448552,
+            454.27656
+          ],
+          "rotationRad": -0.32149314,
+          "scale": [
+            0.697138,
+            1.206573
+          ],
+          "bakedPng": "baked/Bacak_Sag/0025.png"
+        },
+        "Ayak_Sag": {
+          "positionPx": [
+            334.285708,
+            490.152017
+          ],
+          "rotationRad": 0.20943961,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Goz_Sol": {
+          "positionPx": [
+            357.551006,
+            328.163228
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kas_Sol": {
+          "positionPx": [
+            306.122446,
+            339.183655
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Yanak_Sol": {
+          "positionPx": [
+            306.122446,
+            339.183655
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Kol_Sol": {
+          "positionPx": [
+            440.816302,
+            416.326528
+          ],
+          "rotationRad": 0.68067874,
+          "scale": [
+            1.000001,
+            0.999999
+          ]
+        },
+        "Bacak_Sol": {
+          "positionPx": [
+            406.062613,
+            451.292362
+          ],
+          "rotationRad": 0.27811762,
+          "scale": [
+            0.674943,
+            1.160087
+          ],
+          "bakedPng": "baked/Bacak_Sol/0025.png"
+        },
+        "Ayak_Sol": {
+          "positionPx": [
+            277.959181,
+            487.960439
+          ],
+          "rotationRad": -0.20943962,
+          "scale": [
+            0.78,
+            0.78
+          ]
+        },
+        "Gozluk": {
+          "positionPx": [
+            306.122446,
+            328.163228
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Saran": {
+          "positionPx": [
+            306.122446,
+            449.387752
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Sarkan_Uc": {
+          "positionPx": [
+            400.408141,
+            448.163263
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        },
+        "Atki_Dugum": {
+          "positionPx": [
+            306.122446,
+            449.387752
+          ],
+          "rotationRad": 0.0,
+          "scale": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "sockets": {
+        "FACE_SOCKET": {
+          "positionPx": [
+            306.122446,
+            328.163228
+          ],
+          "rotationRad": 0.0
+        },
+        "SCARF_SOCKET": {
+          "positionPx": [
+            306.122446,
+            449.387752
+          ],
+          "rotationRad": 0.0
+        },
+        "CTRL_ATKI_UCU": {
+          "positionPx": [
+            400.408141,
+            448.163263
+          ],
+          "rotationRad": 2.99715058
+        }
+      },
+      "drawOrder": [
+        "Govde",
+        "Ayak_Sag",
+        "Yanak_Sag",
+        "Yanak_Sol",
+        "Goz_Sag",
+        "Goz_Sol",
+        "Kas_Sag",
+        "Kas_Sol",
+        "Ayak_Sol",
+        "Agiz",
+        "Yapraklar",
+        "Bacak_Sag",
+        "Bacak_Sol",
+        "Atki_Saran",
+        "Atki_Sarkan_Uc",
+        "Gozluk",
+        "Atki_Dugum",
+        "Kol_Sag",
+        "Kol_Sol"
+      ]
+    }
+  ]
+}

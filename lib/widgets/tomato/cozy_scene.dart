@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+import 'tomato_clip.dart';
+
 const parchment = Color(0xfffff8ed);
 const ink = Color(0xff492c30);
 const sage = Color(0xff566e46);
@@ -46,6 +48,14 @@ class CozyScene extends StatelessWidget {
   final bool showBackground;
   final String backgroundAsset;
   final Alignment backgroundAlignment;
+  final ({
+    TomatoClip clip,
+    Animation<double> progress,
+    bool glasses,
+    bool scarf,
+  })?
+  motion;
+
   const CozyScene({
     super.key,
     required this.pose,
@@ -53,6 +63,7 @@ class CozyScene extends StatelessWidget {
     this.showBackground = true,
     this.backgroundAsset = 'assets/images/windowsill.webp',
     this.backgroundAlignment = Alignment.bottomCenter,
+    this.motion,
   });
   @override
   Widget build(BuildContext context) => ClipRRect(
@@ -60,6 +71,7 @@ class CozyScene extends StatelessWidget {
     child: LayoutBuilder(
       builder: (context, box) {
         final size = math.min(box.maxHeight * .78, box.maxWidth * .58);
+        final clip = motion;
         return Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -89,44 +101,68 @@ class CozyScene extends StatelessWidget {
             ),
             Positioned(
               bottom: box.maxHeight * .07,
-              child: TweenAnimationBuilder<double>(
-                key: ValueKey(pose),
-                duration: Duration(
-                  milliseconds: MediaQuery.disableAnimationsOf(context)
-                      ? 0
-                      : 650,
-                ),
-                tween: Tween(begin: 0, end: 1),
-                builder: (context, value, child) => Transform.translate(
-                  offset: Offset(
-                    0,
-                    pose == GardenPose.harvest
-                        ? -16 * math.sin(value * math.pi)
-                        : 0,
-                  ),
-                  child: Transform.rotate(
-                    angle: pose == GardenPose.ready
-                        ? 0.06 * math.sin(2 * math.pi * value)
-                        : 0,
-                    child: child,
-                  ),
-                ),
-                child: SizedBox.square(
-                  dimension: size,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        'assets/images/${pose.name}.png',
-                        semanticLabel: 'Domates maskotu',
-                        gaplessPlayback: true,
+              child: clip != null
+                  ? SizedBox.square(
+                      dimension: size,
+                      child: RepaintBoundary(
+                        child: CustomPaint(
+                          painter: TomatoClipPainter(
+                            clip: clip.clip,
+                            progress: clip.progress,
+                            glasses: clip.glasses,
+                            scarf: clip.scarf,
+                            otherAccessory:
+                                accessory == null ||
+                                    accessory == 'acc_sunglasses' ||
+                                    accessory == 'acc_scarf'
+                                ? null
+                                : _Wearable(accessory!, GardenPose.focus),
+                          ),
+                          child: Semantics(
+                            image: true,
+                            label: 'Domates maskotu',
+                          ),
+                        ),
                       ),
-                      if (accessory != null)
-                        CustomPaint(painter: _Wearable(accessory!, pose)),
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  : TweenAnimationBuilder<double>(
+                      key: ValueKey(pose),
+                      duration: Duration(
+                        milliseconds: MediaQuery.disableAnimationsOf(context)
+                            ? 0
+                            : 650,
+                      ),
+                      tween: Tween(begin: 0, end: 1),
+                      builder: (context, value, child) => Transform.translate(
+                        offset: Offset(
+                          0,
+                          pose == GardenPose.harvest
+                              ? -16 * math.sin(value * math.pi)
+                              : 0,
+                        ),
+                        child: Transform.rotate(
+                          angle: pose == GardenPose.ready
+                              ? 0.06 * math.sin(2 * math.pi * value)
+                              : 0,
+                          child: child,
+                        ),
+                      ),
+                      child: SizedBox.square(
+                        dimension: size,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.asset(
+                              'assets/images/${pose.name}.png',
+                              semanticLabel: 'Domates maskotu',
+                              gaplessPlayback: true,
+                            ),
+                            if (accessory != null)
+                              CustomPaint(painter: _Wearable(accessory!, pose)),
+                          ],
+                        ),
+                      ),
+                    ),
             ),
           ],
         );

@@ -82,6 +82,16 @@ flutter:
   assets:
     - assets/images/
     - assets/sounds/
+    - assets/animations/focus/
+    - preview/sit_down/sit_down.json
+    - preview/sit_down/focus_breathe.json
+    - preview/sit_down/idle_breathe.json
+    - preview/sit_down/think.json
+    - preview/sit_down/fix_leaf.json
+    - preview/sit_down/fidget.json
+    - preview/sit_down/stretch.json
+    - preview/sit_down/rebalance.json
+    - preview/sit_down/focus_complete.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

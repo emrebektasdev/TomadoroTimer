@@ -21,6 +21,7 @@ mixin _$TimerSnapshot {
 
   /// Initial duration in minutes
   int get initialDuration => throw _privateConstructorUsedError;
+  int? get sessionDurationSeconds => throw _privateConstructorUsedError;
 
   /// Remaining seconds at the time of snapshot
   int get remainingSeconds => throw _privateConstructorUsedError;
@@ -48,6 +49,7 @@ abstract class $TimerSnapshotCopyWith<$Res> {
   $Res call(
       {TimerMode mode,
       int initialDuration,
+      int? sessionDurationSeconds,
       int remainingSeconds,
       bool isRunning,
       DateTime? startTime,
@@ -69,6 +71,7 @@ class _$TimerSnapshotCopyWithImpl<$Res, $Val extends TimerSnapshot>
   $Res call({
     Object? mode = null,
     Object? initialDuration = null,
+    Object? sessionDurationSeconds = freezed,
     Object? remainingSeconds = null,
     Object? isRunning = null,
     Object? startTime = freezed,
@@ -83,6 +86,10 @@ class _$TimerSnapshotCopyWithImpl<$Res, $Val extends TimerSnapshot>
           ? _value.initialDuration
           : initialDuration // ignore: cast_nullable_to_non_nullable
               as int,
+      sessionDurationSeconds: freezed == sessionDurationSeconds
+          ? _value.sessionDurationSeconds
+          : sessionDurationSeconds // ignore: cast_nullable_to_non_nullable
+              as int?,
       remainingSeconds: null == remainingSeconds
           ? _value.remainingSeconds
           : remainingSeconds // ignore: cast_nullable_to_non_nullable
@@ -114,6 +121,7 @@ abstract class _$$TimerSnapshotImplCopyWith<$Res>
   $Res call(
       {TimerMode mode,
       int initialDuration,
+      int? sessionDurationSeconds,
       int remainingSeconds,
       bool isRunning,
       DateTime? startTime,
@@ -133,6 +141,7 @@ class __$$TimerSnapshotImplCopyWithImpl<$Res>
   $Res call({
     Object? mode = null,
     Object? initialDuration = null,
+    Object? sessionDurationSeconds = freezed,
     Object? remainingSeconds = null,
     Object? isRunning = null,
     Object? startTime = freezed,
@@ -147,6 +156,10 @@ class __$$TimerSnapshotImplCopyWithImpl<$Res>
           ? _value.initialDuration
           : initialDuration // ignore: cast_nullable_to_non_nullable
               as int,
+      sessionDurationSeconds: freezed == sessionDurationSeconds
+          ? _value.sessionDurationSeconds
+          : sessionDurationSeconds // ignore: cast_nullable_to_non_nullable
+              as int?,
       remainingSeconds: null == remainingSeconds
           ? _value.remainingSeconds
           : remainingSeconds // ignore: cast_nullable_to_non_nullable
@@ -173,6 +186,7 @@ class _$TimerSnapshotImpl implements _TimerSnapshot {
   const _$TimerSnapshotImpl(
       {required this.mode,
       required this.initialDuration,
+      this.sessionDurationSeconds,
       required this.remainingSeconds,
       required this.isRunning,
       this.startTime,
@@ -185,6 +199,8 @@ class _$TimerSnapshotImpl implements _TimerSnapshot {
   /// Initial duration in minutes
   @override
   final int initialDuration;
+  @override
+  final int? sessionDurationSeconds;
 
   /// Remaining seconds at the time of snapshot
   @override
@@ -205,7 +221,7 @@ class _$TimerSnapshotImpl implements _TimerSnapshot {
 
   @override
   String toString() {
-    return 'TimerSnapshot(mode: $mode, initialDuration: $initialDuration, remainingSeconds: $remainingSeconds, isRunning: $isRunning, startTime: $startTime, sessionsCompleted: $sessionsCompleted)';
+    return 'TimerSnapshot(mode: $mode, initialDuration: $initialDuration, sessionDurationSeconds: $sessionDurationSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, startTime: $startTime, sessionsCompleted: $sessionsCompleted)';
   }
 
   @override
@@ -216,6 +232,8 @@ class _$TimerSnapshotImpl implements _TimerSnapshot {
             (identical(other.mode, mode) || other.mode == mode) &&
             (identical(other.initialDuration, initialDuration) ||
                 other.initialDuration == initialDuration) &&
+            (identical(other.sessionDurationSeconds, sessionDurationSeconds) ||
+                other.sessionDurationSeconds == sessionDurationSeconds) &&
             (identical(other.remainingSeconds, remainingSeconds) ||
                 other.remainingSeconds == remainingSeconds) &&
             (identical(other.isRunning, isRunning) ||
@@ -227,8 +245,15 @@ class _$TimerSnapshotImpl implements _TimerSnapshot {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, mode, initialDuration,
-      remainingSeconds, isRunning, startTime, sessionsCompleted);
+  int get hashCode => Object.hash(
+      runtimeType,
+      mode,
+      initialDuration,
+      sessionDurationSeconds,
+      remainingSeconds,
+      isRunning,
+      startTime,
+      sessionsCompleted);
 
   @JsonKey(ignore: true)
   @override
@@ -241,6 +266,7 @@ abstract class _TimerSnapshot implements TimerSnapshot {
   const factory _TimerSnapshot(
       {required final TimerMode mode,
       required final int initialDuration,
+      final int? sessionDurationSeconds,
       required final int remainingSeconds,
       required final bool isRunning,
       final DateTime? startTime,
@@ -254,6 +280,8 @@ abstract class _TimerSnapshot implements TimerSnapshot {
 
   /// Initial duration in minutes
   int get initialDuration;
+  @override
+  int? get sessionDurationSeconds;
   @override
 
   /// Remaining seconds at the time of snapshot

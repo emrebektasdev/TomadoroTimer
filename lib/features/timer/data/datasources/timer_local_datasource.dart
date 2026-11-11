@@ -60,6 +60,7 @@ class TimerLocalDataSource {
     return {
       'mode': snapshot.mode.index,
       'initialDuration': snapshot.initialDuration,
+      'sessionDurationSeconds': snapshot.sessionDurationSeconds,
       'remainingSeconds': snapshot.remainingSeconds,
       'isRunning': snapshot.isRunning,
       'startTime': snapshot.startTime?.toIso8601String(),
@@ -71,6 +72,7 @@ class TimerLocalDataSource {
     return TimerSnapshot(
       mode: TimerMode.values[json['mode'] as int],
       initialDuration: json['initialDuration'] as int,
+      sessionDurationSeconds: json['sessionDurationSeconds'] as int?,
       remainingSeconds: json['remainingSeconds'] as int,
       isRunning: json['isRunning'] as bool,
       startTime: json['startTime'] != null

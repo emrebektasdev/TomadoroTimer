@@ -20,6 +20,8 @@ class TimerSnapshot with _$TimerSnapshot {
     /// Initial duration in minutes
     required int initialDuration,
 
+    int? sessionDurationSeconds,
+
     /// Remaining seconds at the time of snapshot
     required int remainingSeconds,
 

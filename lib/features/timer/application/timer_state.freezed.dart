@@ -22,6 +22,9 @@ mixin _$TimerState {
   /// Initial duration in minutes
   int get initialDuration => throw _privateConstructorUsedError;
 
+  /// Exact duration for short debug sessions; normal profiles use minutes.
+  int? get sessionDurationSeconds => throw _privateConstructorUsedError;
+
   /// Remaining seconds to display
   int get remainingSeconds => throw _privateConstructorUsedError;
 
@@ -55,6 +58,7 @@ abstract class $TimerStateCopyWith<$Res> {
   $Res call(
       {TimerMode mode,
       int initialDuration,
+      int? sessionDurationSeconds,
       int remainingSeconds,
       bool isRunning,
       DateTime? startTime,
@@ -78,6 +82,7 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
   $Res call({
     Object? mode = null,
     Object? initialDuration = null,
+    Object? sessionDurationSeconds = freezed,
     Object? remainingSeconds = null,
     Object? isRunning = null,
     Object? startTime = freezed,
@@ -94,6 +99,10 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
           ? _value.initialDuration
           : initialDuration // ignore: cast_nullable_to_non_nullable
               as int,
+      sessionDurationSeconds: freezed == sessionDurationSeconds
+          ? _value.sessionDurationSeconds
+          : sessionDurationSeconds // ignore: cast_nullable_to_non_nullable
+              as int?,
       remainingSeconds: null == remainingSeconds
           ? _value.remainingSeconds
           : remainingSeconds // ignore: cast_nullable_to_non_nullable
@@ -133,6 +142,7 @@ abstract class _$$TimerStateImplCopyWith<$Res>
   $Res call(
       {TimerMode mode,
       int initialDuration,
+      int? sessionDurationSeconds,
       int remainingSeconds,
       bool isRunning,
       DateTime? startTime,
@@ -154,6 +164,7 @@ class __$$TimerStateImplCopyWithImpl<$Res>
   $Res call({
     Object? mode = null,
     Object? initialDuration = null,
+    Object? sessionDurationSeconds = freezed,
     Object? remainingSeconds = null,
     Object? isRunning = null,
     Object? startTime = freezed,
@@ -170,6 +181,10 @@ class __$$TimerStateImplCopyWithImpl<$Res>
           ? _value.initialDuration
           : initialDuration // ignore: cast_nullable_to_non_nullable
               as int,
+      sessionDurationSeconds: freezed == sessionDurationSeconds
+          ? _value.sessionDurationSeconds
+          : sessionDurationSeconds // ignore: cast_nullable_to_non_nullable
+              as int?,
       remainingSeconds: null == remainingSeconds
           ? _value.remainingSeconds
           : remainingSeconds // ignore: cast_nullable_to_non_nullable
@@ -204,6 +219,7 @@ class _$TimerStateImpl extends _TimerState {
   const _$TimerStateImpl(
       {required this.mode,
       required this.initialDuration,
+      this.sessionDurationSeconds,
       required this.remainingSeconds,
       required this.isRunning,
       this.startTime,
@@ -219,6 +235,10 @@ class _$TimerStateImpl extends _TimerState {
   /// Initial duration in minutes
   @override
   final int initialDuration;
+
+  /// Exact duration for short debug sessions; normal profiles use minutes.
+  @override
+  final int? sessionDurationSeconds;
 
   /// Remaining seconds to display
   @override
@@ -250,7 +270,7 @@ class _$TimerStateImpl extends _TimerState {
 
   @override
   String toString() {
-    return 'TimerState(mode: $mode, initialDuration: $initialDuration, remainingSeconds: $remainingSeconds, isRunning: $isRunning, startTime: $startTime, sessionsCompleted: $sessionsCompleted, isLoading: $isLoading, isCompleted: $isCompleted)';
+    return 'TimerState(mode: $mode, initialDuration: $initialDuration, sessionDurationSeconds: $sessionDurationSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, startTime: $startTime, sessionsCompleted: $sessionsCompleted, isLoading: $isLoading, isCompleted: $isCompleted)';
   }
 
   @override
@@ -261,6 +281,8 @@ class _$TimerStateImpl extends _TimerState {
             (identical(other.mode, mode) || other.mode == mode) &&
             (identical(other.initialDuration, initialDuration) ||
                 other.initialDuration == initialDuration) &&
+            (identical(other.sessionDurationSeconds, sessionDurationSeconds) ||
+                other.sessionDurationSeconds == sessionDurationSeconds) &&
             (identical(other.remainingSeconds, remainingSeconds) ||
                 other.remainingSeconds == remainingSeconds) &&
             (identical(other.isRunning, isRunning) ||
@@ -280,6 +302,7 @@ class _$TimerStateImpl extends _TimerState {
       runtimeType,
       mode,
       initialDuration,
+      sessionDurationSeconds,
       remainingSeconds,
       isRunning,
       startTime,
@@ -298,6 +321,7 @@ abstract class _TimerState extends TimerState {
   const factory _TimerState(
       {required final TimerMode mode,
       required final int initialDuration,
+      final int? sessionDurationSeconds,
       required final int remainingSeconds,
       required final bool isRunning,
       final DateTime? startTime,
@@ -314,6 +338,10 @@ abstract class _TimerState extends TimerState {
 
   /// Initial duration in minutes
   int get initialDuration;
+  @override
+
+  /// Exact duration for short debug sessions; normal profiles use minutes.
+  int? get sessionDurationSeconds;
   @override
 
   /// Remaining seconds to display

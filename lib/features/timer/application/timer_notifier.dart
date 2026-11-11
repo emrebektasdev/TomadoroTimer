@@ -5,6 +5,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/entities/timer_mode.dart';
@@ -27,9 +28,15 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
   final Future<void> Function(DateTime, int) onHarvest;
   bool _finishing = false;
+  final DateTime Function() _now;
 
-  TimerNotifier(this._repository, this._ticker, this.onHarvest)
-    : super(TimerState.initial().copyWith(isLoading: true)) {
+  TimerNotifier(
+    this._repository,
+    this._ticker,
+    this.onHarvest, {
+    DateTime Function()? now,
+  }) : _now = now ?? DateTime.now,
+       super(TimerState.initial().copyWith(isLoading: true)) {
     Future.microtask(() => _restoreState());
   }
 
@@ -58,6 +65,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
           state = state.copyWith(
             mode: snapshot.mode,
             initialDuration: snapshot.initialDuration,
+            sessionDurationSeconds: snapshot.sessionDurationSeconds,
             remainingSeconds: snapshot.remainingSeconds,
             isRunning: snapshot.isRunning,
             isCompleted: !snapshot.isRunning && snapshot.remainingSeconds == 0,
@@ -89,9 +97,8 @@ class TimerNotifier extends StateNotifier<TimerState> {
   void start() {
     if (state.isRunning || state.isLoading || state.isCompleted) return;
 
-    final now = DateTime.now();
-    final elapsedSeconds =
-        (state.initialDuration * 60) - state.remainingSeconds;
+    final now = _now();
+    final elapsedSeconds = state.totalSeconds - state.remainingSeconds;
     state = state.copyWith(
       isRunning: true,
       startTime: now.subtract(Duration(seconds: elapsedSeconds)),
@@ -121,7 +128,15 @@ class TimerNotifier extends StateNotifier<TimerState> {
     _tickerSubscription?.cancel();
     state = state.copyWith(
       isRunning: false,
-      remainingSeconds: state.initialDuration * 60,
+      initialDuration: state.sessionDurationSeconds == null
+          ? state.initialDuration
+          : _focusDuration,
+      remainingSeconds:
+          (state.sessionDurationSeconds == null
+              ? state.initialDuration
+              : _focusDuration) *
+          60,
+      sessionDurationSeconds: null,
       startTime: null,
       isCompleted: false,
     );
@@ -142,10 +157,10 @@ class TimerNotifier extends StateNotifier<TimerState> {
 
   void _resumeTicker() {
     // Check if we already finished while backgrounded
-    final now = DateTime.now();
+    final now = _now();
     if (state.startTime != null) {
       final elapsed = now.difference(state.startTime!).inSeconds;
-      final totalSeconds = state.initialDuration * 60;
+      final totalSeconds = state.totalSeconds;
       final remaining = totalSeconds - elapsed;
 
       if (remaining <= 0) {
@@ -162,9 +177,9 @@ class TimerNotifier extends StateNotifier<TimerState> {
   void _onTick() {
     if (!state.isRunning || state.startTime == null) return;
 
-    final now = DateTime.now();
+    final now = _now();
     final elapsed = now.difference(state.startTime!).inSeconds;
-    final totalSeconds = state.initialDuration * 60;
+    final totalSeconds = state.totalSeconds;
     final remaining = totalSeconds - elapsed;
 
     if (remaining <= 0) {
@@ -256,6 +271,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
     state = state.copyWith(
       mode: mode,
       initialDuration: duration,
+      sessionDurationSeconds: null,
       remainingSeconds: duration * 60,
       isRunning: false,
       startTime: null,
@@ -270,6 +286,18 @@ class TimerNotifier extends StateNotifier<TimerState> {
   /// Extracted for provider configuration to fetch inner mode without triggering infinite cycle
   TimerMode get mode => state.mode;
 
+  /// Uses the normal ticker, persistence and harvest path for the debug UI.
+  void debugStartShortFocus() {
+    if (!kDebugMode || state.isLoading || _finishing) return;
+    _setMode(TimerMode.focus);
+    state = state.copyWith(
+      initialDuration: 0,
+      sessionDurationSeconds: 10,
+      remainingSeconds: 10,
+    );
+    start();
+  }
+
   /// Updates configuration (e.g. user changed settings).
   void updateDuration(int minutes) {
     if (!state.isRunning &&
@@ -278,6 +306,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
         minutes > 0) {
       state = state.copyWith(
         initialDuration: minutes,
+        sessionDurationSeconds: null,
         remainingSeconds: minutes * 60,
       );
       _saveState();
@@ -288,6 +317,7 @@ class TimerNotifier extends StateNotifier<TimerState> {
     final snapshot = TimerSnapshot(
       mode: state.mode,
       initialDuration: state.initialDuration,
+      sessionDurationSeconds: state.sessionDurationSeconds,
       remainingSeconds: state.remainingSeconds,
       isRunning: state.isRunning,
       startTime: state.startTime,
